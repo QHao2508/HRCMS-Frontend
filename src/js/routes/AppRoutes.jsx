@@ -5,6 +5,7 @@ import Register from "../pages/auth/Register";
 import ProtectedRoute from "./ProtectedRoute";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 import OtpVerification from "../pages/auth/OtpVerification";
+import TrainingDashboard from "../pages/training/TrainingDashboard";
 
 function AppRoutes() {
     return (
@@ -27,6 +28,15 @@ function AppRoutes() {
             <Route
                 path="/otp-verification"
                 element={<OtpVerification />}
+            />
+
+            <Route
+                path="/training"
+                element={
+                    <ProtectedRoute>
+                        <TrainingDashboard />
+                    </ProtectedRoute>
+                }
             />
 
             <Route
