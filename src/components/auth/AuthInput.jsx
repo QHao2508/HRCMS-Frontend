@@ -1,3 +1,7 @@
+/**
+ * Nối label, input/textarea, trợ giúp và lỗi bằng ID/ARIA; nhận props từ hook form để giữ trường controlled.
+ * @param options0 Đối tượng destructuring: { label, name, error, help, multiline = false, ...props }. Các props/callback lấy từ caller.
+ */
 export default function AuthInput({ label, name, error, help, multiline = false, ...props }) {
     const id = `auth-${name}`;
     const Input = multiline ? "textarea" : "input";

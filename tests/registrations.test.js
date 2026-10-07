@@ -166,18 +166,18 @@ for (const status of ["Draft", "RevisionRequired", "PendingReview", "Approved", 
         const editable = ["Draft", "RevisionRequired"].includes(status);
         assert.equal(canEditRegistration(status), editable);
         assert.equal(!!button("Lưu bản nháp"), editable);
-        assert.equal(!!button("Tải file lên"), editable);
+        assert.equal(!!button("Tải tệp lên"), editable);
         assert.equal(!!button("Hủy hồ sơ"), editable);
         assert.equal(!!button(status === "RevisionRequired" ? "Gửi lại hồ sơ" : "Gửi hồ sơ"), editable);
         if (!editable) { assert.match(html, /chỉ được xem/); assert.match(html, /fieldset disabled/); }
         if (status === "RevisionRequired") assert.match(html, /Add a clearer certificate/);
-        if (status === "UnexpectedStatus") { assert.match(html, /Unknown status/); assert.doesNotMatch(html, /UnexpectedStatus/); }
+        if (status === "UnexpectedStatus") { assert.match(html, /Chưa xác định/); assert.doesNotMatch(html, /UnexpectedStatus/); }
         assert.ok(button("Tải xuống"));
     });
 }
 test("unknown status labels fail safely even for inherited object-property names", () => {
     for (const status of ["Submitted", "__proto__", "constructor", undefined, 0]) {
-        assert.equal(canEditRegistration(status), false); assert.equal(statusDisplay(status).label, "Unknown status");
+        assert.equal(canEditRegistration(status), false); assert.equal(statusDisplay(status).label, "Chưa xác định");
     }
 });
 test("staff directory filters each allowed role on the server, follows pagination and removes wrong-role results", async () => {
@@ -207,8 +207,8 @@ test("attachment list is a plain array with metadata and authenticated downloads
 });
 test("attachment empty state and absence of invented delete/replace controls", () => {
     const html = render(h(Attachments, { registrationId: draft.id, attachments: [], editable: true }));
-    assert.match(html, /Chưa có file đính kèm/);
-    assert.match(html, /Các file đã tải lên được giữ trong hồ sơ/);
+    assert.match(html, /Chưa có tệp đính kèm/);
+    assert.match(html, /Các tệp đã tải lên được giữ trong hồ sơ/);
     assert.ok(globalThis.__intake.buttons.every((props) => !/delete|replace|remove/i.test(String(props.children))));
     assert.doesNotMatch(html, /IncidentPhoto/);
     assert.deepEqual(ATTACHMENT_TYPES, ["HorsePhoto", "Certificate", "MedicalDocument"]);
@@ -254,8 +254,8 @@ test("download fetches a protected blob with the shared Bearer client", async ()
 test("submit completeness requires exactly the verified fields plus HorsePhoto and Certificate", () => {
     assert.deepEqual(submissionMissing(draft, attachments), []);
     assert.equal(submissionMissing({}, []).length, 13);
-    assert.deepEqual(submissionMissing(draft, [attachments[0]]), ["Certificate attachment"]);
-    assert.deepEqual(submissionMissing(draft, [attachments[1]]), ["Horse photo attachment"]);
+    assert.deepEqual(submissionMissing(draft, [attachments[0]]), ["Tệp chứng nhận"]);
+    assert.deepEqual(submissionMissing(draft, [attachments[1]]), ["Tệp ảnh ngựa"]);
     const optionalEmpty = { ...draft, registrationNumber: null, healthNotes: null, boardingEnd: null, preferredHeadTrainerId: null, preferredGroomId: null, preferredVeterinarianId: null };
     assert.deepEqual(submissionMissing(optionalEmpty, attachments), []);
 });
@@ -264,7 +264,7 @@ test("incomplete saved draft cannot invoke submit from the rendered detail", asy
     const html = detail({ ...draft, sire: null }, []);
     assert.equal(button("Gửi hồ sơ").disabled, true);
     await button("Gửi hồ sơ").onClick();
-    assert.equal(calls, 0); assert.match(html, /Horse photo attachment/); assert.match(html, /Certificate attachment/);
+    assert.equal(calls, 0); assert.match(html, /Tệp ảnh ngựa/); assert.match(html, /Tệp chứng nhận/);
 });
 for (const status of ["Draft", "RevisionRequired"]) {
     test(`${status} submission invokes the same POST, then fetches PendingReview instead of inventing Submitted`, async () => {
@@ -297,7 +297,7 @@ for (const status of [400, 403, 404, 409]) {
     test(`${status} registration failure uses normalized errors without refreshing or logging out`, async () => {
         const previous = store.getSession(); let calls = 0;
         api.defaults.adapter = async (config) => { calls++; reject(config, status, { title: "Request rejected", detail: "The registration cannot be changed." }); };
-        await assert.rejects(services.updateRegistration(draft.id, registrationForm(draft)), (error) => error.status === status && error.message === "The registration cannot be changed.");
+        await assert.rejects(services.updateRegistration(draft.id, registrationForm(draft)), (error) => error.status === status && error.serverMessage === "The registration cannot be changed." && !error.message.includes("The registration"));
         assert.equal(calls, 1); assert.equal(store.getSession(), previous);
     });
 }
@@ -347,7 +347,7 @@ test("chỉ được xem detail rejects even a directly invoked save handler", a
 });
 test("download JSON errors in Blob responses remain normalized", async () => {
     api.defaults.adapter = async (config) => reject(config, 404, new Blob([JSON.stringify({ detail: "Stored attachment is unavailable." })], { type: "application/json" }));
-    await assert.rejects(files.fetchAttachment(draft.id, "missing"), { status: 404, message: "Stored attachment is unavailable." });
+    await assert.rejects(files.fetchAttachment(draft.id, "missing"), { status: 404, message: "Tệp đã lưu hiện không có sẵn." });
 });
 test("server diagnostics and restricted-resource details are not rendered", () => {
     assert.doesNotMatch(render(h(ErrorView, { error: { status: 500, message: "Sensitive stack trace" } })), /Sensitive stack trace/);

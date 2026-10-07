@@ -117,7 +117,7 @@ test("unauthenticated protected route redirects to login and preserves the compl
 
 test("restoration loading blocks content and makes no authentication or permission redirect", () => {
     const html = renderRestricted(ROLES.ClubManager, authValue({ loading: true, isAuthenticated: false, user: null }));
-    assert.match(html, /Loading/);
+    assert.match(html, /Đang tải/);
     assert.equal(html.includes("Restricted content"), false);
     assert.deepEqual(globalThis.__hrcmsRoutingTest.redirects, []);
 });
@@ -171,20 +171,20 @@ test("unknown role and invalid or empty allowlists fail closed for restricted ro
 
 test("unknown authenticated role retains a safe home, a readable warning and no role navigation", () => {
     const html = render(h(AppRoutes), authValue({ user: { ...owner, role: "UnknownRole" } }));
-    assert.match(html, /Unrecognized role/);
-    assert.match(html, /Contact club management/);
-    assert.match(html, /No navigation options/);
+    assert.match(html, /Vai trò chưa được nhận diện/);
+    assert.match(html, /liên hệ ban quản lý/);
+    assert.match(html, /chưa có mục điều hướng/);
     assert.equal(html.includes("UnknownRole"), false);
     assert.deepEqual(globalThis.__hrcmsRoutingTest.redirects, []);
 });
 
 test("navigation uses exact roles and exposes only implemented links for each role", () => {
     for (const role of ALL_ROLES) {
-        const expected = [{ to: "/dashboard", label: "Dashboard" }, { to: "/horses", label: "Horses" }];
-        if (role === ROLES.HorseOwner) expected.push({ to: "/registrations", label: "Horse registrations" });
-        if (role === ROLES.ClubManager) expected.push({ to: "/reviews", label: "Registration review" });
-        if ([ROLES.ClubManager,ROLES.HeadTrainer,ROLES.Trainer].includes(role)) expected.push({ to:"/training/templates",label:"Training templates" });
-        if (role !== ROLES.Groom) expected.push({to:"/training/plans",label:"Training plans"},{to:"/training/sessions",label:"Training sessions"});
+        const expected = [{ to: "/dashboard", label: "Tổng quan" }, { to: "/horses", label: "Ngựa của tôi" }];
+        if (role === ROLES.HorseOwner) expected.push({ to: "/registrations", label: "Yêu cầu đăng ký ngựa" });
+        if (role === ROLES.ClubManager) expected.push({ to: "/reviews", label: "Duyệt hồ sơ" });
+        if ([ROLES.ClubManager,ROLES.HeadTrainer,ROLES.Trainer].includes(role)) expected.push({ to:"/training/templates",label:"Giáo án mẫu" });
+        if (role !== ROLES.Groom) expected.push({to:"/training/plans",label:"Kế hoạch huấn luyện"},{to:"/training/sessions",label:"Buổi tập"});
         assert.deepEqual(getNavigationForRole(role).map(({ to, label }) => ({ to, label })), expected);
     }
     for (const role of ["Horse Owner", "horseowner", "Admin", "__proto__", 0, null]) assert.deepEqual(getNavigationForRole(role), []);
@@ -195,8 +195,8 @@ test("shell displays the current user, readable role, navigation and nested Outl
         h(Route, { element: h(AppLayout) }, h(Route, { path: "/dashboard", element: h("p", null, "Nested page content") }))));
     assert.match(html, /<header/);
     assert.match(html, /Test Owner/);
-    assert.match(html, /Horse Owner/);
-    assert.match(html, /aria-label="Main navigation"/);
+    assert.match(html, /Chủ ngựa/);
+    assert.match(html, /aria-label="Điều hướng chính"/);
     assert.match(html, /aria-current="page"/);
     assert.match(html, /Nested page content/);
     assert.match(html, /Đăng xuất/);
@@ -208,7 +208,7 @@ test("shell user display falls back to username without showing a token or email
     const html = render(h(AppLayout), authValue({ user }));
     assert.match(html, /test.owner/);
     assert.equal(html.includes(user.email), false);
-    assert.equal(getUserDisplayName(null), "Club member");
+    assert.equal(getUserDisplayName(null), "Thành viên câu lạc bộ");
 });
 
 test("shell sign-out invokes the existing logout service, sends Bearer and clears session on 204", async () => {
@@ -237,13 +237,13 @@ test("shell sign-out failure still clears locally and preserves the existing log
     assert.equal(store.getSession().status, "anonymous");
     const [destination, options] = globalThis.__hrcmsRoutingTest.navigations[0];
     assert.equal(destination, "/login");
-    assert.match(options.state.logoutError, /Unable to reach the server/);
+    assert.match(options.state.logoutError, /Không kết nối được máy chủ/);
 });
 
 test("permission-denied page is authenticated-only and provides a safe dashboard link", () => {
     const html = render(h(AppRoutes), authValue(), "/permission-denied");
-    assert.match(html, /Permission denied/);
-    assert.match(html, /Back to dashboard/);
+    assert.match(html, /Không có quyền truy cập/);
+    assert.match(html, /Về trang tổng quan/);
     render(h(AppRoutes), authValue({ isAuthenticated: false, user: null }), "/permission-denied");
     assert.equal(globalThis.__hrcmsRoutingTest.redirects[0].to, "/login");
 });
@@ -252,7 +252,7 @@ test("login redirects authenticated users to their intended route and waits duri
     render(h(AppRoutes), authValue(), { pathname: "/login", state: { from: { pathname: "/dashboard", search: "?view=home", hash: "" } } });
     assert.equal(globalThis.__hrcmsRoutingTest.redirects[0].to, "/dashboard?view=home");
     globalThis.__hrcmsRoutingTest.redirects.length = 0;
-    assert.match(render(h(AppRoutes), authValue({ loading: true, isAuthenticated: false, user: null }), "/login"), /Loading/);
+    assert.match(render(h(AppRoutes), authValue({ loading: true, isAuthenticated: false, user: null }), "/login"), /Đang kiểm tra phiên đăng nhập/);
     assert.deepEqual(globalThis.__hrcmsRoutingTest.redirects, []);
 });
 
@@ -268,7 +268,7 @@ test("lifecycle forms remain directly accessible with or without an existing aut
 test("unknown routes offer login or dashboard appropriately without exposing the requested path", () => {
     for (const authenticated of [false, true]) {
         const html = render(h(AppRoutes), authValue({ isAuthenticated: authenticated, user: authenticated ? owner : null }), "/private-looking-path");
-        assert.match(html, /Page not found/);
+        assert.match(html, /Không tìm thấy trang/);
         assert.ok(html.includes(authenticated ? 'href="/dashboard"' : 'href="/login"'));
         assert.equal(html.includes("private-looking-path"), false);
     }

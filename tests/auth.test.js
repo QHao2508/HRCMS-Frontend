@@ -70,14 +70,14 @@ scenario("login persists tokens first, then authenticates only after /me", `
 scenario("invalid login never refreshes and reports backend credentials error", `
     let calls = 0;
     api.defaults.adapter = async config => { calls++; return reject(config, 401, { error: 'invalid_credentials' }); };
-    await assert.rejects(auth.login({}), /Invalid email or password/);
+    await assert.rejects(auth.login({}), /mật khẩu không đúng/);
     assert.equal(calls, 1);
     assert.equal(store.getSession().status, 'anonymous');
 `);
 
 scenario("malformed token response or failed profile never leaves a session", `
     api.defaults.adapter = async config => reply(config, { accessToken: 'incomplete' });
-    await assert.rejects(auth.login({}), /invalid authentication response/);
+    await assert.rejects(auth.login({}), /Phản hồi xác thực không hợp lệ/);
     assert.equal(storage.has('hrcms.session'), false);
     api.defaults.adapter = async config => config.url.endsWith('/login') ? reply(config, tokens) : reject(config, 503);
     await assert.rejects(auth.login({}));
@@ -189,7 +189,7 @@ scenario("403 and 409 never trigger refresh or clear an authenticated session", 
     seed();
     let calls = 0;
     api.defaults.adapter = async config => { calls++; return reject(config, Number(config.url.slice(1)), { detail: 'Not allowed', title: 'forbidden' }); };
-    for (const status of [403, 409]) await assert.rejects(api.get('/' + status), /Not allowed/);
+    for (const status of [403, 409]) await assert.rejects(api.get('/' + status), error => error.status === status && error.serverMessage === 'Not allowed' && !error.message.includes('Not allowed'));
     assert.equal(calls, 2);
     assert.equal(store.getSession().status, 'authenticated');
 `);
@@ -205,7 +205,7 @@ scenario("logout sends bearer token, handles 204, and always clears even on netw
     assert.equal(store.getSession().status, 'anonymous');
     seed();
     api.defaults.adapter = async config => { throw new axios.AxiosError('offline', 'ERR_NETWORK', config); };
-    await assert.rejects(auth.logout(), /Unable to reach/);
+    await assert.rejects(auth.logout(), /Không kết nối được máy chủ/);
     assert.equal(store.getSession().status, 'anonymous');
     assert.equal(storage.has('hrcms.session'), false);
 `);
@@ -273,13 +273,14 @@ scenario("errors normalize detail/message/title/error, blobs, and empty bodies",
     const { normalizeApiError } = await import('./src/services/apiError.js');
     for (const data of [{ detail: 'Details' }, { message: 'Details' }, { title: 'Details' }, { error: 'Details' }, { error: { message: 'Details' } }, new Blob([JSON.stringify({ detail: 'Details' })])]) {
         const error = await normalizeApiError({ response: { status: 400, data } });
-        assert.equal(error.message, 'Details');
+        assert.equal(error.serverMessage, 'Details');
+        assert.equal(error.message, 'Vui lòng kiểm tra thông tin đã nhập.');
     }
     for (const data of ['', '<html>Proxy error</html>', null]) {
         const error = await normalizeApiError({ response: { status: 429, data } });
-        assert.match(error.message, /Too many requests/);
+        assert.match(error.message, /quá nhiều yêu cầu/);
     }
     const error = await normalizeApiError({ response: { status: 409, data: { detail: 'Conflict', traceId: 'trace', referenceId: 'record', errors: { name: ['Required'] } } } });
     assert.equal(error.traceId, 'trace'); assert.equal(error.referenceId, 'record');
-    assert.deepEqual(error.validationErrors, { name: ['Required'] });
+    assert.deepEqual(error.validationErrors, { name: ['Thông tin nhập không hợp lệ. Vui lòng kiểm tra lại.'] });
 `);

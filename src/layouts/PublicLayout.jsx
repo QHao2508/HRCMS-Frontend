@@ -1,18 +1,25 @@
+import BrandMark from "../components/BrandMark.jsx";
+import { MSG, msg } from "../messages/index.js";
 import { Link } from "react-router-dom";
 
-export default function PublicLayout({ children }) {
-    return <div className="public-layout">
+/**
+ * Dựng header/logo trỏ về Home, nội dung và footer cho các trang public; className chỉ điều chỉnh theme của màn hình gọi.
+ * Nhãn/thông báo lấy từ catalog; enum và dữ liệu người dùng giữ nguyên giá trị.
+ * @param options0 Đối tượng destructuring: { children, className = "" }. Các props/callback lấy từ caller.
+ */
+export default function PublicLayout({ children, className = "" }) {
+    return <div className={`public-layout${className ? ` ${className}` : ""}`}>
         <header className="public-header">
-            <Link className="brand" to="/login"><span className="brand-mark" aria-hidden="true" />HRCMS</Link>
-            <span className="portal-title">CỔNG QUẢN TRỊ CHIẾN MÃ HOÀNG GIA</span>
+            <Link className="brand" to="/" aria-label={msg(MSG.HRCMS_TRANG_CHU)}><BrandMark /><span>{msg(MSG.HRCMS)}</span></Link>
+            <span className="portal-title">{msg(MSG.CONG_QUAN_TRI_CHIEN_MA_HOANG_GIA)}</span>
         </header>
         {children}
         <footer className="public-footer">
             <div className="footer-columns">
-                <div><div className="footer-title">HRCMS</div><p>Hệ thống Quản lý và Huấn luyện Chiến mã Hoàng Gia. Bảo mật, tối ưu và chuyên nghiệp cho các câu lạc bộ đua ngựa quy mô lớn.</p></div>
-                <div><div className="footer-support">Liên hệ hỗ trợ</div><p>Liên hệ ban quản lý câu lạc bộ để được hỗ trợ tài khoản và hồ sơ.</p></div>
+                <div><div className="footer-title">{msg(MSG.HRCMS)}</div><p>{msg(MSG.HE_THONG_QUAN_LY_VA_HUAN_LUYEN_CHIEN_MA_HOANG_GIA_BAO_MAT_TOI_UU_VA_CHUY)}</p></div>
+                <div><div className="footer-support">{msg(MSG.LIEN_HE_HO_TRO)}</div><p>{msg(MSG.LIEN_HE_BAN_QUAN_LY_CAU_LAC_BO_DE_DUOC_HO_TRO_TAI_KHOAN_VA_HO_SO)}</p></div>
             </div>
-            <div className="footer-copyright">HRCMS · Hệ thống quản lý câu lạc bộ và huấn luyện ngựa</div>
+            <div className="footer-copyright">{msg(MSG.HRCMS_HE_THONG_QUAN_LY_CAU_LAC_BO_VA_HUAN_LUYEN_NGUA)}</div>
         </footer>
     </div>;
 }

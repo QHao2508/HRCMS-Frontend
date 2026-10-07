@@ -1,4 +1,4 @@
-import { Routes,Route,Navigate } from "react-router-dom";
+import { Routes,Route } from "react-router-dom";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import ForgotPassword from "../pages/auth/ForgotPassword";
@@ -7,6 +7,7 @@ import ResetPassword from "../pages/auth/ResetPassword";
 import AcceptInvitation from "../pages/auth/AcceptInvitation";
 import AppLayout from "../layouts/AppLayout";
 import Dashboard from "../pages/Dashboard";
+import Home from "../pages/Home.jsx";
 import PermissionDenied from "../pages/PermissionDenied";
 import NotFound from "../pages/NotFound";
 import RoleRoute from "./RoleRoute";
@@ -20,8 +21,11 @@ import { HorseList,HorseDetail } from "../pages/horses/HorsePages.jsx";
 import { TemplateList } from "../pages/training/TemplatePages.jsx";
 import { PlanList,PlanCreate,PlanDetail } from "../pages/training/PlanPages.jsx";
 import { SessionList,SessionCreate,SessionDetail } from "../pages/training/SessionPages.jsx";
+/**
+ * Khai báo route public/protected và giới hạn role; nối URL với page/layout tương ứng.
+ */
 export default function AppRoutes() {return <Routes>
-    <Route path="/" element={<Navigate to="/dashboard" replace/>}/>
+    <Route path="/" element={<Home/>}/>
     <Route path="/login" element={<Login/>}/><Route path="/register" element={<Register/>}/>
     <Route path="/forgot-password" element={<ForgotPassword/>}/><Route path="/verify-email" element={<VerifyEmail/>}/>
     <Route path="/reset-password" element={<ResetPassword/>}/><Route path="/accept-invitation" element={<AcceptInvitation/>}/>

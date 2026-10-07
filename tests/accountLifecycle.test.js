@@ -22,7 +22,7 @@ const registration = {
     phone: "0900000000", address: "Test address", nationalId: "",
     password: "TestPassword123!", confirmPassword: "TestPassword123!",
 };
-const passwordRequest = { email: registration.email, code: "A".repeat(64),
+const passwordRequest = { email: registration.email, code: "123456",
     password: registration.password, confirmPassword: registration.confirmPassword };
 const owner = { id: "owner-id", email: registration.email, role: "HorseOwner", active: true, emailVerified: false };
 const reply = (config, data, status = 200) => ({ config, data, status, statusText: "", headers: {} });
@@ -88,7 +88,8 @@ test("registration displays normalized backend validation and account conflict e
                 reply(config, { detail: "Please check your registration details.", title: "validation_error", traceId: "test-trace" }, status));
         };
         await assert.rejects(auth.register(registration), (error) => {
-            assert.equal(error.message, "Please check your registration details.");
+            assert.equal(error.serverMessage, "Please check your registration details.");
+            assert.ok(!error.message.includes("Please check"));
             assert.equal(error.status, status);
             assert.equal(error.traceId, "test-trace");
             return true;
@@ -107,7 +108,7 @@ test("verification requires verified=true and never authenticates", async () => 
 
 test("verification HTTP 200 with verified=false is a business failure", async () => {
     const verify = expectRequest("/api/auth/verify-email", { email: registration.email, code: "123456" }, { verified: false });
-    await assert.rejects(auth.verifyEmail({ email: registration.email, code: "123456" }), /could not verify/);
+    await assert.rejects(auth.verifyEmail({ email: registration.email, code: "123456" }), /Mã OTP chưa được xác thực/);
     verify();
     assert.equal(store.getSession().status, "anonymous");
 });
@@ -131,8 +132,8 @@ test("forgot-password returns the same generic result for any email", async () =
 });
 
 for (const [method, path, errorText] of [
-    ["resetPassword", "/api/auth/reset-password", /could not reset/],
-    ["acceptInvitation", "/api/auth/accept-invitation", /could not accept/],
+    ["resetPassword", "/api/auth/reset-password", /Chưa thể đặt lại mật khẩu/],
+    ["acceptInvitation", "/api/auth/accept-invitation", /Chưa thể kích hoạt tài khoản/],
 ]) {
     test(`${method}: changed=true requires a fresh login and sends only the ResetRequest contract`, async () => {
         seedSession();
@@ -172,7 +173,7 @@ test("all lifecycle methods reuse normalized network errors without refresh or s
         ["forgotPassword", passwordRequest], ["resetPassword", passwordRequest], ["acceptInvitation", passwordRequest]]) {
         let calls = 0;
         api.defaults.adapter = async (config) => { calls++; throw new axios.AxiosError("offline", "ERR_NETWORK", config); };
-        await assert.rejects(auth[method](payload), /Unable to reach the server/);
+        await assert.rejects(auth[method](payload), /Không kết nối được máy chủ/);
         assert.equal(calls, 1);
         assert.equal(store.getSession(), previous);
     }
@@ -224,12 +225,12 @@ test("password forms enforce configured length, uppercase, lowercase, digit and 
     assert.deepEqual(validatePasswordSetup({ ...passwordRequest, password: boundary, confirmPassword: boundary }), {});
 });
 
-test("verification accepts six-digit OTPs while password setup accepts the full emailed code", () => {
+test("verification and password setup require six-digit OTPs", () => {
     assert.deepEqual(validateVerification({ email: registration.email, code: "123456" }), {});
     for (const code of ["", "12345", "1234567", "ABCDEF"]) assert.ok(validateVerification({ email: registration.email, code }).code);
     assert.deepEqual(validatePasswordSetup(passwordRequest), {});
     assert.ok(validatePasswordSetup({ ...passwordRequest, code: " " }).code);
-    assert.ok(validatePasswordSetup({ ...passwordRequest, code: "A".repeat(4001) }).code);
+    for (const code of ["12345", "1234567", "ABCDEF", "A".repeat(64), "１２３４５６"]) assert.ok(validatePasswordSetup({ ...passwordRequest, code }).code);
     assert.ok(validateEmail({ email: "invalid" }).email);
 });
 

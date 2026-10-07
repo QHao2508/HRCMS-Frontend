@@ -1,3 +1,4 @@
+import noHardcodedUiText from './eslint-rules/no-hardcoded-ui-text.js'
 import js from '@eslint/js'
 import globals from 'globals'
 import reactHooks from 'eslint-plugin-react-hooks'
@@ -6,6 +7,11 @@ import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
   globalIgnores(['dist']),
+  {
+    files: ['src/**/*.{js,jsx}'],
+    plugins: { local: { rules: { 'no-hardcoded-ui-text': noHardcodedUiText } } },
+    rules: { 'local/no-hardcoded-ui-text': 'error' },
+  },
   {
     files: ['**/*.{js,jsx}'],
     extends: [

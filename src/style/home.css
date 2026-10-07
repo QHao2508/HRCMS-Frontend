@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap');
+
+/* Background source: https://images.unsplash.com/photo-1553284965-83fd3e82fa5a */
+/* Template styles are scoped to Home, including its shared header and footer. */
+.home-layout {
+    --home-gold: #d4af37;
+    color: #fff;
+    font-family: 'Inter', Arial, sans-serif;
+    background: linear-gradient(rgba(18,15,12,.7), rgba(18,15,12,.8)), url('/images/home-horse.jpg') center / cover no-repeat;
+    background-attachment: fixed;
+    min-height: 100svh;
+}
+.home-layout .public-header {
+    padding: 20px 50px;
+    background: rgba(255,255,255,.05);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,.1);
+}
+.home-layout .brand { gap: 15px; color: #fff; font-family: 'Playfair Display', Georgia, serif; font-size: 24px; letter-spacing: 1px; }
+.home-layout .brand:hover { color: var(--home-gold); }
+.home-layout .public-header .portal-title { font-size: 14px; font-weight: 600; letter-spacing: 2px; color: var(--home-gold); text-transform: uppercase; text-align: center; }
+.home-main { flex: 1; display: flex; justify-content: center; align-items: center; padding: 40px 20px; min-width: 0; }
+.home-hero-card { background: rgba(255,255,255,.1); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,.2); border-radius: 16px; padding: 50px; text-align: center; width: 100%; max-width: 600px; box-shadow: 0 25px 50px rgba(0,0,0,.3); }
+.home-hero-card h1 { font-family: 'Playfair Display', Georgia, serif; font-size: 42px; font-weight: 700; margin: 0 0 15px; color: #fff; line-height: 1.2; }
+.home-hero-card h2 { font-size: 18px; font-weight: 500; color: var(--home-gold); margin: 0 0 25px; line-height: 1.5; }
+.home-hero-card > p { font-size: 16px; color: #e0e0e0; line-height: 1.6; margin: 0 0 40px; }
+.home-login-button { display: inline-block; background: var(--home-gold); color: #1a1a1a; padding: 15px 40px; font-size: 16px; font-weight: 600; text-decoration: none; border-radius: 8px; border: 2px solid var(--home-gold); transition: background-color .2s, color .2s, transform .2s; }
+.home-login-button:hover { background: transparent; color: var(--home-gold); transform: translateY(-2px); }
+.home-login-button:focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
+.home-hero-card .home-session-status { margin-bottom: 0; }
+.home-layout .public-footer { background: rgba(18,15,12,.95); border-top: 1px solid rgba(255,255,255,.1); padding: 40px 50px 20px; }
+.home-layout .footer-columns { max-width: 1200px; margin: 0 auto 30px; gap: 40px; }
+.home-layout .footer-columns > div { max-width: 45%; }
+.home-layout .footer-title, .home-layout .footer-support { font-family: 'Playfair Display', Georgia, serif; font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 15px; }
+.home-layout .footer-columns p { font-size: 14px; line-height: 1.6; color: #b8b3ac; max-width: none; margin: 0; }
+.home-layout .footer-copyright { margin: 0; padding-top: 20px; border-top: 1px solid rgba(255,255,255,.1); font-size: 13px; color: #aaa49c; }
+@media (max-width: 768px) {
+    .home-layout { background-attachment: scroll; }
+    .home-layout .public-header { flex-direction: column; gap: 15px; padding: 20px; }
+    .home-layout .public-header .portal-title { display: block; font-size: 11px; line-height: 1.7; }
+    .home-layout .public-footer { padding: 30px 20px 20px; }
+    .home-layout .footer-columns { flex-direction: column; gap: 30px; }
+    .home-layout .footer-columns > div { max-width: 100%; }
+    .home-hero-card { padding: 30px 20px; }
+    .home-hero-card h1 { font-size: 32px; }
+    .home-login-button { padding: 14px 22px; }
+}
+@media (prefers-reduced-motion: reduce) { .home-login-button { transition: none; } .home-login-button:hover { transform: none; } }
+
+/* Original Azure logo, displayed without modifying the source image. */
+.home-hero-card { max-width: 1060px; padding: 38px; display: grid; grid-template-columns: 1.05fr 1fr; gap: 36px; align-items: center; background: rgba(15,19,21,.72); border-color: #d4af3745; }
+.home-logo-panel { min-width: 0; border-radius: 18px; overflow: hidden; background: #0e1317; border: 1px solid #d4af3740; box-shadow: 0 14px 34px #0006, 0 0 24px #d4af370e; }
+.home-hero-logo { display: block; width: 100%; height: auto; }
+.home-hero-content { min-width: 0; text-align: left; }
+.home-hero-content h1 { font-size: 36px; }
+.home-hero-content h2 { font-size: 16px; margin-bottom: 18px; }
+.home-hero-content > p { color: #e0e0e0; font-size: 15px; line-height: 1.75; margin-bottom: 28px; }
+.home-logo-panel .brand-logo-fallback { display: block; padding: 28px; color: #d4af37; font: 700 42px 'Playfair Display', Georgia, serif; text-align: center; }
+@media (max-width: 768px) {
+    .home-layout .public-header { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 12px; }
+    .home-layout .public-header .portal-title { flex-basis: 100%; }
+    .home-hero-card { grid-template-columns: minmax(0,1fr); gap: 26px; padding: 24px; max-width: 560px; }
+    .home-logo-panel { max-width: 420px; width: 100%; margin: 0 auto; }
+    .home-hero-content { text-align: center; }
+    .home-hero-content h1 { font-size: 30px; }
+}

@@ -1,9 +1,10 @@
+import { MSG, msg } from "../messages/index.js";
 import axios from "axios";
 import { normalizeApiError } from "./apiError.js";
 import { assertCurrentSession, clearSession, getSession, setTokens } from "./sessionStore.js";
 
 const api = axios.create({
-    baseURL: import.meta.env?.VITE_API_BASE_URL,
+    baseURL: import.meta.env?.VITE_API_BASE_URL?.trim() || "",
     timeout: 15000,
 });
 
@@ -36,12 +37,17 @@ api.interceptors.request.use((config) => {
 let refreshPromise = null;
 let refreshGeneration = null;
 
+/**
+ * Dùng chung một request refresh cho nhiều lỗi 401 đồng thời; kiểm generation để response muộn không phục hồi phiên đã đăng xuất.
+ * Có request ghi; pending/lock và trạng thái không chắc chắn bảo vệ việc thử lại.
+ * Nhãn/thông báo lấy từ catalog; enum và dữ liệu người dùng giữ nguyên giá trị.
+ */
 export function refreshSession() {
     const { refreshToken, generation } = getSession();
     if (refreshPromise && refreshGeneration === generation) return refreshPromise;
     if (!refreshToken) {
         clearSession(generation);
-        return Promise.reject(new Error("Please sign in again."));
+        return Promise.reject(new Error(msg(MSG.PLEASE_SIGN_IN_AGAIN)));
     }
     refreshGeneration = generation;
     const pending = (async () => {

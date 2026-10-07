@@ -1,0 +1,91 @@
+import { MSG, msg } from './index.js';
+const ERROR_MESSAGES = Object.freeze({
+    "Record changed. Reload and retry.": "API_RECORD_CHANGED_RELOAD_AND_RETRY",
+    "Duplicate data or conflicting update.": "API_DUPLICATE_DATA_OR_CONFLICTING_UPDATE",
+    "Invalid request body.": "API_INVALID_REQUEST_BODY",
+    "Unexpected server error.": "API_UNEXPECTED_SERVER_ERROR",
+    "Record not found.": "API_RECORD_NOT_FOUND",
+    "Permission denied.": "API_PERMISSION_DENIED",
+    "Authentication required.": "API_AUTHENTICATION_REQUIRED",
+    "Account or token is no longer valid.": "API_ACCOUNT_OR_TOKEN_IS_NO_LONGER_VALID",
+    "Horse is archived.": "API_HORSE_IS_ARCHIVED",
+    "Horse is outside your assigned scope.": "API_HORSE_IS_OUTSIDE_YOUR_ASSIGNED_SCOPE",
+    "Only the current assigned Trainer may change training.": "API_ONLY_THE_CURRENT_ASSIGNED_TRAINER_MAY_CHANGE_TRAINING",
+    "Passwords do not match.": "API_PASSWORDS_DO_NOT_MATCH",
+    "National ID is required by club policy.": "API_NATIONAL_IDIS_REQUIRED_BY_CLUB_POLICY",
+    "Invalid national ID format.": "API_INVALID_NATIONAL_IDFORMAT",
+    "Email or username is already registered.": "API_EMAIL_OR_USERNAME_IS_ALREADY_REGISTERED",
+    "Use this endpoint for internal staff roles only.": "API_USE_THIS_ENDPOINT_FOR_INTERNAL_STAFF_ROLES_ONLY",
+    "Registration cannot be edited in this state.": "API_REGISTRATION_CANNOT_BE_EDITED_IN_THIS_STATE",
+    "Only drafts or revisions may be submitted.": "API_ONLY_DRAFTS_OR_REVISIONS_MAY_BE_SUBMITTED",
+    "Add a horse photo before submission.": "API_ADD_AHORSE_PHOTO_BEFORE_SUBMISSION",
+    "Add a certificate before submission.": "API_ADD_ACERTIFICATE_BEFORE_SUBMISSION",
+    "Registration is not pending review.": "API_REGISTRATION_IS_NOT_PENDING_REVIEW",
+    "A revision reason is required.": "API_AREVISION_REASON_IS_REQUIRED",
+    "Assignments start today or earlier; future scheduling is not supported.": "API_ASSIGNMENTS_START_TODAY_OR_EARLIER_FUTURE_SCHEDULING_IS_NOT",
+    "Only the assigned Head Trainer can assign a Trainer.": "API_ONLY_THE_ASSIGNED_HEAD_TRAINER_CAN_ASSIGN_ATRAINER",
+    "Unsupported administrative assignment role.": "API_UNSUPPORTED_ADMINISTRATIVE_ASSIGNMENT_ROLE",
+    "Replacement assignment cannot precede the current assignment.": "API_REPLACEMENT_ASSIGNMENT_CANNOT_PRECEDE_THE_CURRENT_ASSIGNMENT",
+    "Date of birth must be valid and not in the future.": "API_DATE_OF_BIRTH_MUST_BE_VALID_AND_NOT_IN",
+    "Measurement date is invalid.": "API_MEASUREMENT_DATE_IS_INVALID",
+    "Boarding dates are invalid.": "API_BOARDING_DATES_ARE_INVALID",
+    "Current health status prevents this training.": "API_CURRENT_HEALTH_STATUS_PREVENTS_THIS_TRAINING",
+    "Template is archived.": "API_TEMPLATE_IS_ARCHIVED",
+    "Invalid plan dates.": "API_INVALID_PLAN_DATES",
+    "Plan is not active.": "API_PLAN_IS_NOT_ACTIVE",
+    "Only unstarted sessions can be edited.": "API_ONLY_UNSTARTED_SESSIONS_CAN_BE_EDITED",
+    "Session must fall within plan dates in the club time zone.": "API_SESSION_MUST_FALL_WITHIN_PLAN_DATES_IN_THE_CLUB",
+    "Schedule sessions in the future.": "API_SCHEDULE_SESSIONS_IN_THE_FUTURE",
+    "Rider already has a session at this time.": "API_RIDER_ALREADY_HAS_ASESSION_AT_THIS_TIME",
+    "Session is not assigned to you.": "API_SESSION_IS_NOT_ASSIGNED_TO_YOU",
+    "Session is not assigned/ready.": "API_SESSION_IS_NOT_ASSIGNED_READY",
+    "Session is not due to start yet.": "API_SESSION_IS_NOT_DUE_TO_START_YET",
+    "Plan is outside its active dates.": "API_PLAN_IS_OUTSIDE_ITS_ACTIVE_DATES",
+    "Rider or horse already has an active session.": "API_RIDER_OR_HORSE_ALREADY_HAS_AN_ACTIVE_SESSION",
+    "Start session before submitting results.": "API_START_SESSION_BEFORE_SUBMITTING_RESULTS",
+    "Result already exists.": "API_RESULT_ALREADY_EXISTS",
+    "Photo unavailable.": "API_PHOTO_UNAVAILABLE",
+    "Cannot add documents in this state.": "API_CANNOT_ADD_DOCUMENTS_IN_THIS_STATE",
+    "multipart/form-data required.": "API_MULTIPART_FORM_DATA_REQUIRED",
+    "Attachment limit reached.": "API_ATTACHMENT_LIMIT_REACHED",
+    "Invalid attachment type.": "API_INVALID_ATTACHMENT_TYPE",
+    "Only valid PNG, JPEG or PDF files are accepted; horse photo must be an image.": "API_ONLY_VALID_PNGJPEGOR_PDFFILES_ARE_ACCEPTED",
+    "File extension must match its content.": "API_FILE_EXTENSION_MUST_MATCH_ITS_CONTENT",
+    "Certificate dates are invalid.": "API_CERTIFICATE_DATES_ARE_INVALID",
+    "Filename or certificate number is too long.": "API_FILENAME_OR_CERTIFICATE_NUMBER_IS_TOO_LONG",
+    "Stored attachment is unavailable.": "API_STORED_ATTACHMENT_IS_UNAVAILABLE",
+    "Date must be yyyy-MM-dd.": "API_DATE_MUST_BE_YYYY_MMDD",
+    "Only staff accounts can be changed here.": "API_ONLY_STAFF_ACCOUNTS_CAN_BE_CHANGED_HERE",
+    "Only draft/revision registrations may be cancelled.": "API_ONLY_DRAFT_REVISION_REGISTRATIONS_MAY_BE_CANCELLED",
+    "Invalid measurement date.": "API_INVALID_MEASUREMENT_DATE",
+    "Finish active sessions before archiving.": "API_FINISH_ACTIVE_SESSIONS_BEFORE_ARCHIVING",
+    "Invalid file or size limit exceeded.": "API_INVALID_FILE_OR_SIZE_LIMIT_EXCEEDED",
+    "Upload a PNG or JPEG image.": "API_UPLOAD_APNGOR_JPEGIMAGE",
+    "Filename is too long.": "API_FILENAME_IS_TOO_LONG",
+    "Plan cannot be edited in this state.": "API_PLAN_CANNOT_BE_EDITED_IN_THIS_STATE",
+    "Horse and template cannot be changed after plan creation.": "API_HORSE_AND_TEMPLATE_CANNOT_BE_CHANGED_AFTER_PLAN_CREATION",
+    "Invalid dates.": "API_INVALID_DATES",
+    "Dates would exclude existing sessions.": "API_DATES_WOULD_EXCLUDE_EXISTING_SESSIONS",
+    "Completed/archived plans cannot be reopened.": "API_COMPLETED_ARCHIVED_PLANS_CANNOT_BE_REOPENED",
+    "Finish active sessions first.": "API_FINISH_ACTIVE_SESSIONS_FIRST",
+    "Complete or skip pending sessions first.": "API_COMPLETE_OR_SKIP_PENDING_SESSIONS_FIRST",
+    "Session is already final.": "API_SESSION_IS_ALREADY_FINAL",
+    "Only results can be evaluated.": "API_ONLY_RESULTS_CAN_BE_EVALUATED",
+    "Evaluation already exists.": "API_EVALUATION_ALREADY_EXISTS",
+    "Manager may only edit horse name, registration number and boarding dates during review. Request revision for other intake fields.": "API_MANAGER_MAY_ONLY_EDIT_ADMINISTRATIVE_REGISTRATION_FIELDS",
+    "Horse height or weight is outside the configured limits.": "API_HORSE_MEASUREMENTS_OUTSIDE_CONFIGURED_LIMITS"
+});
+/** Translate known API business errors; unknown server text is never shown verbatim. */
+export function backendErrorMessage(text, fallback) {
+    if (typeof text !== 'string') return fallback;
+    if (Object.hasOwn(ERROR_MESSAGES, text)) return msg(ERROR_MESSAGES[text]);
+    const password = /^Password needs (\d+)–(\d+) characters including uppercase, lowercase and a digit\.$/.exec(text);
+    if (password) return msg(MSG.API_PASSWORD_POLICY, { min: password[1], max: password[2] });
+    const upload = /^Upload one file up to (\d+) bytes\.$/.exec(text);
+    if (upload) return msg(MSG.API_UPLOAD_SIZE, { size: upload[1] });
+    if (/^Complete the registration fields before submission or approval:/.test(text)) return msg(MSG.API_MISSING_REGISTRATION);
+    if (/^Training blocked:/.test(text)) return msg(MSG.API_TRAINING_BLOCKED);
+    if (/^Staff must be an active /.test(text)) return msg(MSG.API_STAFF_ROLE);
+    if (/^(Invalid |.* exceeds 4000 characters\.|page must be positive)/.test(text)) return msg(MSG.API_INVALID_FIELD);
+    return fallback;
+}

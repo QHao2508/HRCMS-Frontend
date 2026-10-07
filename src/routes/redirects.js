@@ -1,7 +1,15 @@
+/**
+ * Tạo redirect login cùng pathname/search/hash đích để sau đăng nhập quay lại đúng màn hình.
+ * @param location Giá trị location truyền vào getLoginRedirect; tham chiếu phần thân để xem cách dùng.
+ */
 export function getLoginRedirect(location) {
     return { to: "/login", replace: true, state: { from: location } };
 }
 
+/**
+ * Chọn URL nội bộ an toàn từ state, chặn URL ngoài và vòng lặp login; fallback về dashboard.
+ * @param state Giá trị state truyền vào getLoginDestination; tham chiếu phần thân để xem cách dùng.
+ */
 export function getLoginDestination(state) {
     const from = state?.from;
     const pathname = from?.pathname;

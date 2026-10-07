@@ -1,5 +1,8 @@
 # HRCMS-Frontend
 
+**Cập nhật 07/10/2026:** đã cấu hình kết nối API local qua Vite proxy và kiểm service với SQL Server thật. Danh sách màn hình, cách chạy và phạm vi kiểm chứng ở [docs/API_INTEGRATION.md](docs/API_INTEGRATION.md). Các phần Phase bên dưới là ghi nhận triển khai theo thời điểm; kết quả live hiện tại thay thế trạng thái environment-blocked trước đây.
+
+
 **Cập nhật 07/10/2026:** đã bổ sung giao diện theo Figma cho Login/Owner intake và nối Manager review, horse profile/assignment, Template/Plan/Session/Result/Evaluation, dashboard KPI. Xem [phạm vi, cách test và giới hạn](FIGMA_BE02_UI.md). Các phase bên dưới mô tả quá trình triển khai trước cập nhật này.
 
 Repository frontend riêng cho hệ thống quản lý câu lạc bộ và huấn luyện ngựa đua HorseClub. Thiết kế đã hoàn thành trên Figma theo thông tin nhóm; frontend hiện có baseline React/Vite và hạ tầng phiên đăng nhập.
@@ -65,7 +68,7 @@ are no links to unimplemented modules.
 | `/` | Redirect to `/dashboard`, then apply the authentication guard. |
 | `/login` | Public; wait for restoration, then redirect an authenticated user to a safe intended destination or `/dashboard`. |
 | `/register`, `/verify-email`, `/forgot-password`, `/reset-password`, `/accept-invitation` | Public lifecycle forms remain accessible with or without an existing session. |
-| `/dashboard` | Authenticated shell and current-user summary, no business data. |
+| `/dashboard` | Authenticated shell, current-user summary and live scoped dashboard counters. |
 | `/permission-denied` | Authenticated shell, permission explanation and link back to Dashboard. |
 | `/registrations`, `/registrations/new`, `/registrations/:id` | HorseOwner only; Phase 4 registration list, create draft and detail/edit. |
 | Other paths | Generic not-found page with a login or dashboard link, according to session state. |
@@ -216,3 +219,11 @@ Frontend không lưu SQL connection string, password database hoặc SMTP secret
 ## Bàn giao pull request
 
 Ghi màn hình/module, endpoint tích hợp, cấu hình môi trường cần thêm, cách chạy/test và ảnh UI. Không đưa mật khẩu, OTP, thông tin cá nhân thật hoặc secrets vào commit.
+
+## Đọc và bảo trì code
+
+- [Chức năng từng folder](docs/FOLDERS.md)
+- [Tra cứu từng function](docs/FUNCTION_REFERENCE.md)
+- [Nội dung dọn dẹp](docs/CLEANUP.md)
+
+Chú thích XML/JSDoc giải thích mục đích, đầu vào và điểm cần lưu ý ngay trước function. Giữ migration, package lock và Data Protection keys khi dọn project.
