@@ -17,6 +17,14 @@ export const TRAINING_PLAN_ROLES = Object.freeze([
     ROLES.Veterinarian,
 ]);
 
+export const TRAINING_HISTORY_ROLES = Object.freeze([
+    ROLES.ClubManager,
+    ROLES.HorseOwner,
+    ROLES.HeadTrainer,
+    ROLES.Trainer,
+    ROLES.Veterinarian,
+]);
+
 export const TRAINING_PLAN_STATUSES = Object.freeze(["Active", "Paused", "Completed", "Archived"]);
 
 export const TRAINING_TYPES = Object.freeze(["Walk", "Trot", "Canter", "Gallop", "Sprint", "Recovery"]);
@@ -37,6 +45,8 @@ export const SESSION_RESULT_LIMITS = Object.freeze({
     maxHeartRate: 300,
     skipReason: 2000,
 });
+
+export const TRAINER_EVALUATION_LIMITS = Object.freeze({ comment: 4000 });
 
 export const TEMPLATE_LIMITS = Object.freeze({
     name: 200,

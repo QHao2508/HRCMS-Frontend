@@ -254,6 +254,8 @@ test("failed or contradictory authoritative refetch after start is uncertain", a
     installExecutionAdapter((config) => reply(config, "", 204), assigned);
     await assert.rejects(service.startTrainingSession(detail, assigned, riderUser), (error) => error.requiresReload);
 });
-test("execution service introduces no Evaluation or future-adjustment operation", () => {
-    assert.equal(service.evaluateTrainingSession, undefined); assert.equal(service.adjustFutureSessions, undefined);
+test("execution service introduces no future-session adjustment or evaluation edit/delete operation", () => {
+    assert.equal(service.adjustFutureSessions, undefined);
+    assert.equal(service.updateTrainingEvaluation, undefined);
+    assert.equal(service.deleteTrainingEvaluation, undefined);
 });

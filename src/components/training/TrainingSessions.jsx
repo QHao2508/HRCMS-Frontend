@@ -1,11 +1,13 @@
 import { TRAINING_SESSION_EDITABLE_STATUSES } from "../../constants/training.js";
 import { isAssignedWorkRider } from "../../services/trainingSessionModel.js";
 
-export default function TrainingSessions({ detail, user, canManage, busy, blocked, onCreate, onEdit, onAssign, onStart, onResult, onSkip, onPage }) {
+export default function TrainingSessions({ detail, user, canManage, busy, blocked, onCreate, onEdit, onAssign, onStart, onResult, onSkip, onReview, onPage }) {
     const { plan, sessions, sessionPage, sessionPageSize, sessionTotal } = detail;
     const pages = Math.max(1, Math.ceil(sessionTotal / sessionPageSize));
     const permitsMutation = canManage && plan.status === "Active" && !blocked;
-    const showActions = (canManage || user?.role === "WorkRider") && !blocked;
+    const hasReviewableSession = sessions.some((session) => ["Completed", "IssueReported"].includes(session.status)
+        && (user?.role !== "WorkRider" || isAssignedWorkRider(user, session)));
+    const showActions = ((canManage || user?.role === "WorkRider") && !blocked) || !!onReview && hasReviewableSession;
     return <section className="border rounded p-3 mb-3" aria-label="Training Sessions">
         <div className="d-flex flex-wrap justify-content-between align-items-center gap-2"><div><h2 className="h5">Training Sessions</h2>
             <p className="mb-0">{sessionTotal} sessions are recorded.</p></div>
@@ -19,6 +21,8 @@ export default function TrainingSessions({ detail, user, canManage, busy, blocke
                 const canStart = assignedRider && session.status === "Assigned" && plan.status === "Active";
                 const canResult = assignedRider && session.status === "InProgress";
                 const canSkip = (assignedRider || canManage) && ["Planned", "Assigned", "InProgress"].includes(session.status);
+                const canReview = !!onReview && ["Completed", "IssueReported"].includes(session.status)
+                    && (user?.role !== "WorkRider" || assignedRider);
                 return <tr key={session.id}><td><time dateTime={session.scheduledAt}>{session.scheduledAt}</time></td><td>{session.trainingType}</td>
                     <td>{session.distanceMetres} m</td><td>{session.intensity}</td><td>{session.surface}<br />{session.target}<br />{session.notes || "No notes"}</td>
                     <td>{session.riderId || "Unassigned"}</td><td>{session.status}</td><td>{session.startedAt || "Not started"}</td>
@@ -28,7 +32,8 @@ export default function TrainingSessions({ detail, user, canManage, busy, blocke
                         {canStart && <button className="btn btn-sm btn-primary" disabled={busy} onClick={() => onStart(session)}>Start session</button>}
                         {canResult && <button className="btn btn-sm btn-primary" disabled={busy} onClick={() => onResult(session)}>Submit result</button>}
                         {canSkip && <button className="btn btn-sm btn-outline-danger" disabled={busy} onClick={() => onSkip(session)}>Skip session</button>}
-                        {!editable && !canStart && !canResult && !canSkip && <span>Read only after start / terminal</span>}
+                        {canReview && <button className="btn btn-sm btn-outline-primary" disabled={busy} onClick={() => onReview(session)}>Review result</button>}
+                        {!editable && !canStart && !canResult && !canSkip && !canReview && <span>Read only after start / terminal</span>}
                     </div></td>}</tr>;
             })}</tbody>
         </table></div>}

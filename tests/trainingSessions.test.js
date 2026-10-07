@@ -268,7 +268,7 @@ test("malformed success and failed authoritative refetch are uncertain", async (
     api.defaults.adapter = async (config) => config.method === "post" ? reply(config, session, 201) : reply(config, null);
     await assert.rejects(service.createTrainingSession(detail, values, null), (error) => error.requiresReload);
 });
-test("training service introduces no evaluation or future-adjustment operation", () => {
-    for (const name of ["evaluateTrainingSession", "adjustFutureSessions"])
+test("training service has no separate future-session adjustment or evaluation edit/delete operation", () => {
+    for (const name of ["adjustFutureSessions", "updateTrainingEvaluation", "deleteTrainingEvaluation"])
         assert.equal(service[name], undefined);
 });

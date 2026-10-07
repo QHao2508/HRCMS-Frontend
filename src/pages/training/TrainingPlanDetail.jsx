@@ -10,6 +10,9 @@ import TrainingSessions from "../../components/training/TrainingSessions.jsx";
 import TrainingSessionForm, { RiderAssignmentForm } from "../../components/training/TrainingSessionForm.jsx";
 import TrainingSessionError from "../../components/training/TrainingSessionError.jsx";
 import { SkipSessionForm, StartSessionConfirmation, TrainingResultForm } from "../../components/training/TrainingExecutionForms.jsx";
+import SessionReview from "../../components/training/TrainerEvaluation.jsx";
+import TrainingHistory from "../../components/training/TrainingHistory.jsx";
+import { TRAINING_HISTORY_ROLES } from "../../constants/training.js";
 import { assignTrainingSession, createSessionMutation, createTrainingSession, listWorkRiderCandidates, skipTrainingSession,
     startTrainingSession, submitTrainingSessionResult, updateTrainingSession } from "../../services/trainingSessionService.js";
 
@@ -33,7 +36,7 @@ export function PlanStatusControls({ plan, busy, selected, onSelect, onCancel, o
 
 export function TrainingPlanDetailContent({ detail, user, canManage, editing, statusChoice, busy, error, sessionBusy = false, sessionError,
     onEdit, onCancelEdit, onSave, onSelectStatus, onCancelStatus, onStatus, onReload, onCreateSession, onEditSession, onAssignSession,
-    onStartSession, onResultSession, onSkipSession, onSessionPage }) {
+    onStartSession, onResultSession, onSkipSession, onReviewSession, onSessionPage, historyVersion = 0 }) {
     const { plan, horseDetail, restrictions } = detail;
     return <>
         <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mt-3"><div><h1>{plan.goal || "Training Plan"}</h1>
@@ -53,7 +56,8 @@ export function TrainingPlanDetailContent({ detail, user, canManage, editing, st
             <button className="btn btn-outline-primary ms-2" onClick={onReload}>Reload plan</button></div>}</>}
         <TrainingSessions detail={detail} user={user} canManage={canManage} busy={sessionBusy} blocked={!!sessionError?.requiresReload}
             onCreate={onCreateSession} onEdit={onEditSession} onAssign={onAssignSession} onStart={onStartSession}
-            onResult={onResultSession} onSkip={onSkipSession} onPage={onSessionPage} />
+            onResult={onResultSession} onSkip={onSkipSession} onReview={onReviewSession} onPage={onSessionPage} />
+        {TRAINING_HISTORY_ROLES.includes(user?.role) && <TrainingHistory key={historyVersion} planId={plan.id} />}
         {canManage && !editing && <PlanStatusControls plan={plan} busy={busy || !!error?.requiresReload} selected={statusChoice}
             onSelect={onSelectStatus} onCancel={onCancelStatus} onConfirm={onStatus} />}
     </>;
@@ -67,6 +71,7 @@ function LoadedPlan({ initialDetail, user, onReload }) {
     const [error, setError] = useState(null);
     const [sessionError, setSessionError] = useState(null);
     const [sessionMode, setSessionMode] = useState(null);
+    const [historyVersion, setHistoryVersion] = useState(0);
     const [sessionBusy, setSessionBusy] = useState(false);
     const mutation = useRef(createPlanMutation((operation) => operation()));
     const sessionMutation = useRef(createSessionMutation((operation) => operation()));
@@ -97,7 +102,7 @@ function LoadedPlan({ initialDetail, user, onReload }) {
         catch (failure) { setSessionError(failure); }
         finally { saving.current = false; setSessionBusy(false); }
     }
-    return <><TrainingPlanDetailContent {...{ detail, user, canManage, editing, statusChoice, busy, error, sessionBusy, sessionError }}
+    return <><TrainingPlanDetailContent {...{ detail, user, canManage, editing, statusChoice, busy, error, sessionBusy, sessionError, historyVersion }}
         onEdit={() => { setEditing(true); setStatusChoice(""); setError(null); }} onCancelEdit={() => setEditing(false)}
         onSave={(values) => perform(() => updateTrainingPlan(detail, values))}
         onSelectStatus={(status) => { setStatusChoice(status); setError(null); }} onCancelStatus={() => setStatusChoice("")}
@@ -107,7 +112,8 @@ function LoadedPlan({ initialDetail, user, onReload }) {
         onAssignSession={(session) => { setSessionMode({ type: "assign", session }); setSessionError(null); }}
         onStartSession={(session) => { setSessionMode({ type: "start", session }); setSessionError(null); }}
         onResultSession={(session) => { setSessionMode({ type: "result", session }); setSessionError(null); }}
-        onSkipSession={(session) => { setSessionMode({ type: "skip", session }); setSessionError(null); }} onSessionPage={sessionPage} />
+        onSkipSession={(session) => { setSessionMode({ type: "skip", session }); setSessionError(null); }}
+        onReviewSession={(session) => { setSessionMode({ type: "review", session }); setSessionError(null); }} onSessionPage={sessionPage} />
         {sessionMode && ["create", "edit", "assign"].includes(sessionMode.type) && canManage && <SessionPlanningEditor detail={detail} mode={sessionMode} busy={sessionBusy || !!sessionError?.requiresReload}
             onCancel={() => setSessionMode(null)} onCreate={(values, rider) => performSession(() => createTrainingSession(detail, values, rider))}
             onEdit={(session, values, rider) => performSession(() => updateTrainingSession(detail, session, values, rider))}
@@ -117,6 +123,8 @@ function LoadedPlan({ initialDetail, user, onReload }) {
                 onStart={(session) => performSession(() => startTrainingSession(detail, session, user))}
                 onResult={(session, values) => performSession(() => submitTrainingSessionResult(detail, session, user, values))}
                 onSkip={(session, reason) => performSession(() => skipTrainingSession(detail, session, user, reason))} />}
+        {sessionMode?.type === "review" && <SessionReview session={sessionMode.session} planDetail={detail} user={user} canEvaluate={canManage}
+            onClose={() => setSessionMode(null)} onEvaluated={() => setHistoryVersion((value) => value + 1)} />}
     </>;
 }
 
