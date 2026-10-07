@@ -10,7 +10,7 @@ function MedicalLayout({ children }) {
 
                 <div>
                     <div className="medical-header-small">
-                        SWP391 - Racehorse Management - Flow 2
+                        SWP391 - Racehorse Management - Flow 3
                     </div>
 
                     <div className="medical-header-title">
@@ -75,6 +75,24 @@ function MedicalLayout({ children }) {
                             }
                         >
                             F03-D Phác Đồ Điều Trị
+                        </NavLink>
+
+                        <NavLink
+                            to="/medical/restrictions"
+                            className={({ isActive }) =>
+                                `medical-nav-link ${isActive ? "active" : ""}`
+                            }
+                        >
+                            F03-E Hạn Chế / Training Lock
+                        </NavLink>
+
+                        <NavLink
+                            to="/medical/follow-up"
+                            className={({ isActive }) =>
+                                `medical-nav-link ${isActive ? "active" : ""}`
+                            }
+                        >
+                            F03-F Follow-up / Clearance
                         </NavLink>
 
                     </nav>

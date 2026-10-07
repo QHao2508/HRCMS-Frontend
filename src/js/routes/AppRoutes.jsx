@@ -12,6 +12,11 @@ import TrainingSessions from "../pages/training/TrainingSessions";
 import WorkRiderExecution from "../pages/training/WorkRiderExecution";
 import TrainerEvaluation from "../pages/training/TrainerEvaluation";
 import MedicalDashboard from "../pages/medical/MedicalDashboard";
+import MedicalInjury from "../pages/medical/MedicalInjury";
+import MedicalExamination from "../pages/medical/MedicalExamination";
+import MedicalTreatment from "../pages/medical/MedicalTreatment";
+import MedicalRestrictions from "../pages/medical/MedicalRestrictions";
+import MedicalFollowUp from "../pages/medical/MedicalFollowUp";
 
 function AppRoutes() {
     return (
@@ -95,6 +100,51 @@ function AppRoutes() {
                 element={
                     <ProtectedRoute>
                         <MedicalDashboard />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/medical/injury"
+                element={
+                    <ProtectedRoute>
+                        <MedicalInjury />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/medical/examination"
+                element={
+                    <ProtectedRoute>
+                        <MedicalExamination />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/medical/treatment"
+                element={
+                    <ProtectedRoute>
+                        <MedicalTreatment />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/medical/restrictions"
+                element={
+                    <ProtectedRoute>
+                        <MedicalRestrictions />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/medical/follow-up"
+                element={
+                    <ProtectedRoute>
+                        <MedicalFollowUp />
                     </ProtectedRoute>
                 }
             />
