@@ -1,0 +1,263 @@
+@import url("https://fonts.googleapis.com/css2?family=Merriweather:wght@900&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap");
+
+.hrcms-app-shell {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--hrcms-border);
+    border-radius: 16px;
+    background: var(--hrcms-background);
+    color: var(--hrcms-text-primary);
+    font-family: var(--hrcms-font-body);
+    font-size: 14px;
+}
+
+.hrcms-app-shell :is(a, button, select):focus-visible,
+.hrcms-app-skip:focus-visible {
+    outline: 3px solid var(--hrcms-accent);
+    outline-offset: 3px;
+}
+
+.hrcms-app-skip {
+    position: absolute;
+    z-index: 10;
+    top: -100px;
+    left: 16px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    background: var(--hrcms-primary);
+    color: #fff;
+}
+
+.hrcms-app-skip:focus {
+    top: 8px;
+}
+
+.hrcms-app-topbar {
+    min-height: 65px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 16px 32px;
+    border-bottom: 1px solid var(--hrcms-border);
+    background: var(--hrcms-surface);
+}
+
+.hrcms-app-brand {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: 12px;
+    color: var(--hrcms-text-primary);
+    font: 900 20px/25px var(--hrcms-font-heading);
+    text-decoration: none;
+}
+
+.hrcms-app-brand:hover {
+    color: var(--hrcms-text-primary);
+}
+
+.hrcms-app-brand-mark {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: var(--hrcms-primary);
+}
+
+.hrcms-app-user-controls {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    min-width: 0;
+}
+
+.hrcms-app-user-identity {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    min-width: 0;
+    line-height: 16px;
+    text-align: right;
+}
+
+.hrcms-app-user-identity strong {
+    max-width: 240px;
+    overflow: hidden;
+    color: var(--hrcms-text-primary);
+    font-size: 14px;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.hrcms-app-user-identity span {
+    color: var(--hrcms-primary);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.hrcms-app-notifications {
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    padding: 7px;
+    border: 1px solid var(--hrcms-border);
+    border-radius: 50%;
+    background: #fff;
+}
+
+.hrcms-app-notifications:disabled {
+    opacity: 1;
+    cursor: not-allowed;
+}
+
+.hrcms-app-notifications img {
+    display: block;
+}
+
+.hrcms-app-shell .hrcms-app-user-controls > button.btn.btn-secondary {
+    width: 20px;
+    height: 20px;
+    flex: none;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent url("/figma/app-shell/log-out.svg") center / 20px 20px no-repeat;
+    color: var(--hrcms-text-secondary);
+    font-size: 0;
+}
+
+.hrcms-app-shell .hrcms-app-user-controls > button.btn.btn-secondary:disabled {
+    width: auto;
+    min-width: 20px;
+    height: auto;
+    min-height: 20px;
+    padding-left: 24px;
+    background-position: left center;
+    font-size: 12px;
+}
+
+.hrcms-app-body {
+    min-height: calc(100vh - 66px);
+    display: flex;
+    flex: 1;
+    min-width: 0;
+}
+
+.hrcms-app-sidebar {
+    width: 239px;
+    flex: 0 0 239px;
+    padding: 20px;
+    border-right: 1px solid var(--hrcms-border);
+    background: var(--hrcms-surface);
+}
+
+.hrcms-app-sidebar ul {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.hrcms-app-nav-link {
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 8px;
+    color: var(--hrcms-text-secondary);
+    font-size: 13px;
+    line-height: 18px;
+    text-decoration: none;
+}
+
+.hrcms-app-nav-link:hover {
+    background: #eee7da;
+    color: var(--hrcms-text-primary);
+}
+
+.hrcms-app-nav-link.active,
+.hrcms-app-nav-link.active:hover {
+    background: var(--hrcms-primary);
+    color: #fff;
+    font-weight: 700;
+}
+
+.hrcms-app-nav-link img,
+.hrcms-app-nav-link svg {
+    width: 18px;
+    height: 18px;
+    flex: none;
+}
+
+.hrcms-app-nav-link:not(.active) img[src$="grid.svg"] {
+    filter: grayscale(1) brightness(.55);
+}
+
+.hrcms-app-nav-link.active img[src$="folder.svg"] {
+    filter: brightness(0) invert(1);
+}
+
+.hrcms-app-nav-empty {
+    margin: 8px 0 0;
+    color: var(--hrcms-text-secondary);
+    font-size: 13px;
+}
+
+.hrcms-app-main {
+    flex: 1;
+    min-width: 0;
+    padding: 32px 40px;
+    background: var(--hrcms-background);
+}
+
+@media (max-width: 760px) {
+    .hrcms-app-body {
+        flex-direction: column;
+    }
+
+    .hrcms-app-sidebar {
+        width: 100%;
+        flex: none;
+        padding: 12px 16px;
+        border-right: 0;
+        border-bottom: 1px solid var(--hrcms-border);
+    }
+
+    .hrcms-app-sidebar ul {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .hrcms-app-main {
+        padding: 24px 16px;
+    }
+}
+
+@media (max-width: 600px) {
+    .hrcms-app-topbar {
+        flex-wrap: wrap;
+        padding: 14px 16px;
+    }
+
+    .hrcms-app-user-controls {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .hrcms-app-user-identity {
+        margin-right: auto;
+        align-items: flex-start;
+        text-align: left;
+    }
+}

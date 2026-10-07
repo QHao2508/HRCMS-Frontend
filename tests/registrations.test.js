@@ -108,11 +108,13 @@ test("registration list uses backend pagination and exact status filtering", asy
     };
     assert.deepEqual(await services.listRegistrations({ page: 2, status: "RevisionRequired" }), data);
     const html = render(h(ListContent, { data }));
-    assert.match(html, /Comet/); assert.match(html, /REG-7/); assert.match(html, /2026-01-02/); assert.match(html, /View \/ edit/);
+    assert.match(html, /Comet/); assert.match(html, /REG-7/); assert.match(html, /2026-01-02/);
+    assert.match(html, /Mã yêu cầu/); assert.match(html, /Tiếp tục bản nháp/);
+    assert.match(html, /href="\/registrations\/record-1"/);
 });
 test("empty list has an explicit empty state and all-status requests omit status", async () => {
     api.defaults.adapter = async (config) => { assert.equal(Object.hasOwn(config.params, "status"), false); return reply(config, { items: [], page: 1, pageSize: 20, total: 0 }); };
-    assert.match(render(h(ListContent, { data: await services.listRegistrations() })), /No registrations match this filter/);
+    assert.match(render(h(ListContent, { data: await services.listRegistrations() })), /Chưa có yêu cầu đăng ký phù hợp/);
 });
 test("partial draft is valid and create whitelists all 17 nullable keys without ownerId or Trainer", async () => {
     assert.equal(EDITABLE_FIELDS.length, 17);

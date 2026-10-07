@@ -1,0 +1,333 @@
+.hrcms-owner-page {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-width: 1120px;
+    margin: 0 auto;
+    color: var(--hrcms-text-primary);
+    font-family: var(--hrcms-font-body);
+}
+
+.hrcms-owner-page h1,
+.hrcms-owner-page h2,
+.hrcms-owner-page p {
+    margin: 0;
+}
+
+.hrcms-owner-page h1 {
+    font: 700 30px/45px var(--hrcms-font-body);
+    letter-spacing: -.03em;
+}
+
+.hrcms-owner-description {
+    margin-top: 0 !important;
+    color: var(--hrcms-text-secondary);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 22px;
+}
+
+.hrcms-owner-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: -2px;
+}
+
+.hrcms-owner-primary-button,
+.hrcms-owner-outline-button {
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 18px;
+    border: 1px solid var(--hrcms-primary);
+    border-radius: 8px;
+    font: 700 13px/20px var(--hrcms-font-body);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.hrcms-owner-primary-button {
+    background: var(--hrcms-primary);
+    color: #fff;
+}
+
+.hrcms-owner-primary-button:hover {
+    background: #60331c;
+    color: #fff;
+}
+
+.hrcms-owner-outline-button {
+    background: #fff;
+    color: var(--hrcms-primary);
+}
+
+.hrcms-owner-outline-button:hover:not(:disabled) {
+    background: var(--hrcms-surface);
+}
+
+.hrcms-owner-outline-button:disabled {
+    opacity: .48;
+    cursor: default;
+}
+
+.hrcms-owner-card {
+    min-width: 0;
+    padding: 24px;
+    border: 1px solid var(--hrcms-border);
+    border-radius: 12px;
+    background: #fff;
+}
+
+.hrcms-owner-card h2 {
+    margin-bottom: 16px;
+    font: 700 18px/27px var(--hrcms-font-body);
+    letter-spacing: -.02em;
+}
+
+.hrcms-owner-card-description,
+.hrcms-owner-empty-detail {
+    color: var(--hrcms-text-secondary);
+    font-size: 13px;
+    line-height: 20px;
+}
+
+.hrcms-owner-card-description {
+    margin-top: 0 !important;
+    margin-bottom: 16px !important;
+}
+
+.hrcms-owner-empty-title {
+    display: block;
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 22px;
+}
+
+.hrcms-owner-horse-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.hrcms-owner-horse-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 16px;
+    border: 1px solid var(--hrcms-border);
+    border-radius: 8px;
+}
+
+.hrcms-owner-horse-row div {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.hrcms-owner-horse-row small,
+.hrcms-owner-table small {
+    display: block;
+    margin-top: 4px;
+    color: var(--hrcms-text-secondary);
+    font-size: 11px;
+    line-height: 16px;
+}
+
+.hrcms-owner-horse-row a,
+.hrcms-owner-horse-list > a,
+.hrcms-owner-row-action {
+    color: var(--hrcms-primary);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.hrcms-owner-horse-row a:hover,
+.hrcms-owner-horse-list > a:hover,
+.hrcms-owner-row-action:hover {
+    text-decoration: underline;
+}
+
+.hrcms-owner-filter {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.hrcms-owner-filter label {
+    color: var(--hrcms-text-secondary);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.hrcms-owner-filter select {
+    min-height: 30px;
+    max-width: 100%;
+    padding: 3px 32px 3px 12px;
+    border: 1px solid var(--hrcms-border);
+    border-radius: 7px;
+    background: #fff;
+    color: var(--hrcms-text-primary);
+    font: 13px/20px var(--hrcms-font-body);
+}
+
+.hrcms-owner-empty {
+    padding: 18px 16px;
+    border: 1px dashed var(--hrcms-border);
+    border-radius: 8px;
+    color: var(--hrcms-text-secondary);
+    font-size: 13px;
+    line-height: 20px;
+}
+
+.hrcms-owner-table-scroll {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.hrcms-owner-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    line-height: 20px;
+}
+
+.hrcms-owner-table th,
+.hrcms-owner-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--hrcms-border);
+    text-align: left;
+    vertical-align: middle;
+    overflow-wrap: anywhere;
+}
+
+.hrcms-owner-table th {
+    background: var(--hrcms-surface);
+    color: var(--hrcms-text-secondary);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.hrcms-owner-table th:first-child {
+    border-top-left-radius: 8px;
+}
+
+.hrcms-owner-table th:last-child {
+    border-top-right-radius: 8px;
+}
+
+.hrcms-owner-request-id {
+    font-weight: 700;
+}
+
+.hrcms-owner-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 4px;
+    color: var(--hrcms-text-secondary);
+    font-size: 12px;
+}
+
+.hrcms-owner-pagination .hrcms-owner-outline-button {
+    min-height: 32px;
+    padding: 5px 12px;
+    font-size: 12px;
+}
+
+.hrcms-owner-guide {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+}
+
+.hrcms-owner-guide strong {
+    font-size: 13px;
+    line-height: 20px;
+}
+
+.hrcms-owner-guide p {
+    margin-top: 6px;
+    color: var(--hrcms-text-secondary);
+    font-size: 12px;
+    line-height: 18px;
+}
+
+.hrcms-owner-resource-error .alert {
+    margin: 0 0 12px;
+    border-color: #e8cbb7;
+    background: #fff3e9;
+    color: var(--hrcms-text-primary);
+    overflow-wrap: anywhere;
+}
+
+.hrcms-registration-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border: 1px solid var(--hrcms-border);
+    border-radius: 6px;
+    background: #fff;
+    color: var(--hrcms-text-secondary);
+    font: 700 11px/16px var(--hrcms-font-body);
+    white-space: nowrap;
+}
+
+.hrcms-registration-status-primary {
+    border-color: #d9b291;
+    background: #f8ede2;
+    color: var(--hrcms-primary);
+}
+
+.hrcms-registration-status-warning {
+    border-color: #e7c986;
+    background: #fff7dd;
+    color: #77500d;
+}
+
+.hrcms-registration-status-success {
+    border-color: #b7d2bb;
+    background: #e9f3e9;
+    color: var(--hrcms-secondary);
+}
+
+@media (max-width: 700px) {
+    .hrcms-owner-page h1 {
+        font-size: 26px;
+        line-height: 38px;
+    }
+
+    .hrcms-owner-card {
+        padding: 20px;
+    }
+
+    .hrcms-owner-guide {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .hrcms-owner-table {
+        min-width: 600px;
+    }
+}
+
+@media (max-width: 420px) {
+    .hrcms-owner-actions {
+        justify-content: stretch;
+    }
+
+    .hrcms-owner-primary-button {
+        width: 100%;
+    }
+
+    .hrcms-owner-filter,
+    .hrcms-owner-horse-row {
+        align-items: stretch;
+        flex-direction: column;
+    }
+}
