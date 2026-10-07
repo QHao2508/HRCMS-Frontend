@@ -20,6 +20,8 @@ import RegistrationReview from "../pages/management/RegistrationReview.jsx";
 import HorseList from "../pages/horses/HorseList.jsx";
 import HorseProfile from "../pages/horses/HorseProfile.jsx";
 import { HORSE_BROWSING_ROLES } from "../constants/horses.js";
+import { TRAINING_TEMPLATE_ROLES } from "../constants/training.js";
+import TrainingTemplates from "../pages/training/TrainingTemplates.jsx";
 
 function AppRoutes() {
     return (
@@ -46,6 +48,9 @@ function AppRoutes() {
                     <Route element={<RoleRoute allowedRoles={HORSE_BROWSING_ROLES} />}>
                         <Route path="/horses" element={<HorseList />} />
                         <Route path="/horses/:id" element={<HorseProfile />} />
+                    </Route>
+                    <Route element={<RoleRoute allowedRoles={TRAINING_TEMPLATE_ROLES} />}>
+                        <Route path="/training/templates" element={<TrainingTemplates />} />
                     </Route>
                     <Route element={<RoleRoute allowedRoles={ROLES.HorseOwner} />}>
                         <Route path="/registrations" element={<RegistrationList />} />
