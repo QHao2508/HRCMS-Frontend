@@ -1,7 +1,8 @@
-import { SESSION_LIMITS, SESSION_RESULT_LIMITS, TRAINING_INTENSITIES, TRAINING_SESSION_STATUSES, TRAINING_TYPES } from "../constants/training.js";
+import { SESSION_LIMITS, SESSION_RESULT_LIMITS, TRAINER_EVALUATION_LIMITS, TRAINING_INTENSITIES, TRAINING_SESSION_STATUSES, TRAINING_TYPES } from "../constants/training.js";
 
 export const emptySessionForm = Object.freeze({ scheduledAt: "", trainingType: "", distanceMetres: "", intensity: "", surface: "", target: "", notes: "", riderId: "" });
 export const emptySessionResultForm = Object.freeze({ distanceMetres: "", timeSeconds: "", heartRate: "", intensity: "", feedback: "", abnormalObservation: false });
+export const emptyTrainerEvaluationForm = Object.freeze({ comment: "", adjustFutureSessions: false });
 
 const pad = (value) => String(value).padStart(2, "0");
 export function sessionDateTimeInput(value) {
@@ -130,6 +131,29 @@ export function validSessionResult(value, expected = {}) {
         && (value.heartRate === null || Number.isInteger(value.heartRate) && value.heartRate >= SESSION_RESULT_LIMITS.minHeartRate && value.heartRate <= SESSION_RESULT_LIMITS.maxHeartRate)
         && TRAINING_INTENSITIES.includes(value.intensity) && typeof value.feedback === "string" && typeof value.abnormalObservation === "boolean"
         && (!expected.sessionId || value.sessionId === expected.sessionId));
+}
+
+export function validateTrainerEvaluation(values) {
+    const errors = {};
+    const comment = typeof values.comment === "string" ? values.comment.trim() : "";
+    if (!comment || comment.length > TRAINER_EVALUATION_LIMITS.comment)
+        errors.comment = `Enter an evaluation comment of 1–${TRAINER_EVALUATION_LIMITS.comment} characters.`;
+    if (typeof values.adjustFutureSessions !== "boolean") errors.adjustFutureSessions = "Choose whether future sessions may need adjustment.";
+    return errors;
+}
+
+export function trainerEvaluationPayload(values) {
+    return { comment: values.comment.trim(), adjustFutureSessions: values.adjustFutureSessions };
+}
+
+export function validTrainerEvaluation(value, expected = {}) {
+    return !!(value && typeof value.id === "string" && value.id.trim()
+        && typeof value.sessionId === "string" && value.sessionId.trim()
+        && typeof value.trainerId === "string" && value.trainerId.trim()
+        && typeof value.comment === "string" && value.comment.trim() && value.comment.length <= TRAINER_EVALUATION_LIMITS.comment
+        && typeof value.adjustFutureSessions === "boolean"
+        && (!expected.sessionId || value.sessionId === expected.sessionId)
+        && (!expected.trainerId || value.trainerId.toLowerCase() === expected.trainerId.toLowerCase()));
 }
 
 export function validateSkipReason(reason) {

@@ -85,6 +85,22 @@ export async function getTrainingPlan(id, { sessionPage = 1, sessionPageSize = 2
     return { ...data, horseDetail };
 }
 
+function validTrainingRevision(value, planId) {
+    return !!(value && typeof value.id === "string" && value.id.trim() && value.planId === planId
+        && (value.sessionId === null || typeof value.sessionId === "string" && value.sessionId.trim())
+        && typeof value.actorId === "string" && value.actorId.trim() && typeof value.snapshot === "string" && value.snapshot
+        && typeof value.createdAt === "string" && Number.isFinite(Date.parse(value.createdAt))
+        && Number.isInteger(value.version));
+}
+
+export async function listTrainingHistory(planId, { page = 1, pageSize = 20 } = {}) {
+    const { data } = await api.get(`${root}/${encodeURIComponent(planId)}/history`, { params: { page, pageSize } });
+    if (!data || !Array.isArray(data.items) || !data.items.every((revision) => validTrainingRevision(revision, planId))
+        || !Number.isInteger(data.page) || !Number.isInteger(data.pageSize) || !Number.isInteger(data.total))
+        throw new Error("The Training History response is invalid.");
+    return data;
+}
+
 export async function listAllTrainerHorses() {
     const horses = [];
     let page = 1;

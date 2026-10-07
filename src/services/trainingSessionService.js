@@ -2,7 +2,8 @@ import api from "./api.js";
 import { canManagePlan, getTrainingPlan } from "./trainingPlanService.js";
 import { TRAINING_SESSION_EDITABLE_STATUSES, TRAINING_SESSION_STATUSES } from "../constants/training.js";
 import { isAssignedWorkRider, sessionForm, sessionInstant, sessionMedicalBlocks, sessionPayload, sessionResultPayload, validSessionDateTime,
-    validSessionResult, validTrainingSession, validateSession, validateSessionResult, validateSkipReason } from "./trainingSessionModel.js";
+    trainerEvaluationPayload, validSessionResult, validTrainerEvaluation, validTrainingSession, validateSession, validateSessionResult,
+    validateSkipReason, validateTrainerEvaluation } from "./trainingSessionModel.js";
 
 const root = "/api/training/sessions";
 function uncertain(message) { return Object.assign(new Error(message), { requiresReload: true }); }
@@ -27,7 +28,8 @@ export async function listTrainingSessions({ horseId = "", status = "", from = "
 export async function getTrainingSession(id) {
     const { data } = await api.get(`${root}/${encodeURIComponent(id)}`);
     if (!data || !validTrainingSession(data.session, { id }) || !("result" in data) || !("evaluation" in data)
-        || data.result !== null && !validSessionResult(data.result, { sessionId: id }))
+        || data.result !== null && !validSessionResult(data.result, { sessionId: id })
+        || data.evaluation !== null && !validTrainerEvaluation(data.evaluation, { sessionId: id }))
         throw new Error("The Training Session detail response is invalid.");
     return data;
 }
@@ -131,6 +133,28 @@ export async function skipTrainingSession(detail, session, user, reason) {
     if (error) throw new Error(error);
     await api.post(`${root}/${encodeURIComponent(session.id)}/skip`, { reason: reason.trim() }, { retryOnUnauthorized: false });
     return refetchExecution(detail, session, "Skipped");
+}
+
+export async function evaluateTrainingSession(planDetail, sessionDetail, user, values) {
+    const session = sessionDetail?.session;
+    if (!canManagePlan(user, planDetail?.horseDetail)) throw new Error("Only the current Trainer assigned to this Horse may evaluate the session.");
+    if (!validTrainingSession(session, { horseId: planDetail?.plan?.horseId, planId: planDetail?.plan?.id })
+        || !["Completed", "IssueReported"].includes(session.status) || !validSessionResult(sessionDetail?.result, { sessionId: session?.id }))
+        throw new Error("Only a completed session with a recorded result can be evaluated.");
+    if (sessionDetail.evaluation !== null) throw new Error("This Training Session already has an evaluation.");
+    if (Object.keys(validateTrainerEvaluation(values)).length) throw new Error("Check the Trainer Evaluation fields.");
+    const payload = trainerEvaluationPayload(values);
+    const { data } = await api.post(`${root}/${encodeURIComponent(session.id)}/evaluation`, payload, { retryOnUnauthorized: false });
+    if (!validTrainerEvaluation(data, { sessionId: session.id, trainerId: user.id }) || data.comment !== payload.comment
+        || data.adjustFutureSessions !== payload.adjustFutureSessions)
+        throw uncertain("The evaluation may have been submitted, but the response could not be confirmed. Reload before trying again.");
+    try {
+        const refreshed = await getTrainingSession(session.id);
+        if (!refreshed.evaluation || refreshed.evaluation.id !== data.id) throw uncertain("The evaluation was submitted, but its authoritative state could not be confirmed. Reload before continuing.");
+        return refreshed;
+    } catch (error) {
+        throw error?.requiresReload ? error : uncertain("The evaluation was submitted, but its authoritative state could not be loaded. Reload before continuing.");
+    }
 }
 
 export function createSessionMutation(run) {
