@@ -15,6 +15,11 @@ import { ROLES } from "../constants/roles.js";
 import RegistrationList from "../pages/registrations/RegistrationList.jsx";
 import RegistrationCreate from "../pages/registrations/RegistrationCreate.jsx";
 import RegistrationDetail from "../pages/registrations/RegistrationDetail.jsx";
+import RegistrationQueue from "../pages/management/RegistrationQueue.jsx";
+import RegistrationReview from "../pages/management/RegistrationReview.jsx";
+import HorseList from "../pages/horses/HorseList.jsx";
+import HorseProfile from "../pages/horses/HorseProfile.jsx";
+import { HORSE_BROWSING_ROLES } from "../constants/horses.js";
 
 function AppRoutes() {
     return (
@@ -38,10 +43,18 @@ function AppRoutes() {
                 <Route element={<AppLayout />}>
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/permission-denied" element={<PermissionDenied />} />
+                    <Route element={<RoleRoute allowedRoles={HORSE_BROWSING_ROLES} />}>
+                        <Route path="/horses" element={<HorseList />} />
+                        <Route path="/horses/:id" element={<HorseProfile />} />
+                    </Route>
                     <Route element={<RoleRoute allowedRoles={ROLES.HorseOwner} />}>
                         <Route path="/registrations" element={<RegistrationList />} />
                         <Route path="/registrations/new" element={<RegistrationCreate />} />
                         <Route path="/registrations/:id" element={<RegistrationDetail />} />
+                    </Route>
+                    <Route element={<RoleRoute allowedRoles={ROLES.ClubManager} />}>
+                        <Route path="/management/registrations" element={<RegistrationQueue />} />
+                        <Route path="/management/registrations/:id" element={<RegistrationReview />} />
                     </Route>
                 </Route>
             </Route>

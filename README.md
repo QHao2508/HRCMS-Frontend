@@ -11,7 +11,7 @@ Repository frontend riêng cho hệ thống quản lý câu lạc bộ và huấ
 
 Giao diện cho 7 vai trò: Horse Owner, Club Manager, Head Trainer, Trainer, Work Rider, Veterinarian và Groom. Các module gồm tài khoản, hồ sơ/phân công ngựa, huấn luyện, thú y, chăm sóc/chuồng, kho, thông báo và báo cáo.
 
-Phase 1 có Login, khôi phục phiên, refresh token và logout. Phase 2 bổ sung đăng ký Horse Owner, xác thực/resend email, forgot/reset password và nhận invitation staff. Phase 3 bổ sung authenticated shell, role guards và dashboard giới thiệu tài khoản. Phase 4 bổ sung F01 phía HorseOwner; chưa triển khai Manager review, assignment, dashboard nghiệp vụ hoặc quản lý staff.
+Phase 1 có Login, khôi phục phiên, refresh token và logout. Phase 2 bổ sung đăng ký Horse Owner, xác thực/resend email, forgot/reset password và nhận invitation staff. Phase 3 bổ sung authenticated shell, role guards và dashboard giới thiệu tài khoản. Phase 4 bổ sung F01 phía HorseOwner. Phase 5 bổ sung ClubManager registration review. Phase 6A bổ sung danh sách và Horse Profile chỉ đọc; chưa triển khai thay đổi assignment, dashboard nghiệp vụ hoặc quản lý staff.
 
 ## Chạy frontend và kiểm tra
 
@@ -55,7 +55,9 @@ are presentation only and never grant access.
 
 The Bootstrap `AppLayout` provides the current name/username, readable role,
 existing logout button, role-filtered navigation and an `Outlet`. All seven known
-roles see Dashboard; Phase 4 adds Horse registrations for HorseOwner only. There
+roles see Dashboard; Phase 4 adds Horse registrations for HorseOwner only, and
+Phase 5 adds Registration review for ClubManager only. Phase 6A adds scoped Horses
+browsing for all seven known roles. There
 are no links to unimplemented modules.
 
 | Route | Behavior |
@@ -66,6 +68,8 @@ are no links to unimplemented modules.
 | `/dashboard` | Authenticated shell and current-user summary, no business data. |
 | `/permission-denied` | Authenticated shell, permission explanation and link back to Dashboard. |
 | `/registrations`, `/registrations/new`, `/registrations/:id` | HorseOwner only; Phase 4 registration list, create draft and detail/edit. |
+| `/management/registrations`, `/management/registrations/:id` | ClubManager only; Phase 5 queue and registration review. |
+| `/horses`, `/horses/:id` | All seven known roles; backend-scoped, read-only Horse list and profile. |
 | Other paths | Generic not-found page with a login or dashboard link, according to session state. |
 
 `ProtectedRoute` waits for session restoration and preserves pathname/query/hash
@@ -102,7 +106,7 @@ need integration checks when the existing environment is available.
 
 Only HorseOwner has the Horse registrations navigation entry and access to
 `/registrations`, `/registrations/new`, `/registrations/:id`. The entry stays active
-on new/detail pages. There is no Manager review or assignment UI, and no Horse
+on new/detail pages. Phase 4 added no Manager review or assignment UI, and no Horse
 Profile link to an unimplemented route.
 
 Backend source contracts used:
@@ -182,6 +186,273 @@ Live integration remains environment-blocked. Real backend ownership enforcement
 persisted drafts, storage/downloads, multipart bytes, revision/cancellation races,
 runtime policy overrides and actual browser interaction still require verification.
 No SQL administration, migrations, backend changes or Manager workflows were performed.
+
+## Phase 5 — ClubManager registration review
+
+The Manager queue defaults to PendingReview, with all exact status filters and
+1-based pagination through the shared `GET /api/registrations` service.
+`HorseClub.BLL/Workflows/HorseWorkflow.cs` scopes Owner lists to their own records
+but permits Manager lists across Owners. `ClubAccess.Registration` in
+`Infrastructure/ApiSupport.cs` controls detail and attachment access. Client guards
+remain UX, not the security boundary.
+
+`/management/registrations` and `/management/registrations/:id` are ClubManager-only.
+The detail renders intake sections, Owner ID, preference IDs, current revision
+reason when returned, and attachment metadata/downloads. The registration response
+has no Owner name/contact details, expanded staff names, review-history array or
+Horse ID (`HorseClub.DAL/Domain/Entities.cs`); these are not fabricated or fetched
+from unrelated endpoints. Shared components provide status, normalized errors,
+attachment downloads and resource loading; the Owner editable form is not reused.
+
+Manager PUT is deliberately separate from Owner PUT. `HorseService.Edit` permits
+only **name, registrationNumber, boardingStart, boardingEnd** changes while
+PendingReview. Omitted or null values preserve the stored values, unlike Owner
+replacement semantics. The Manager service allowlists only these four fields;
+empty registrationNumber is sent as an empty string when clearing it. A saved
+boardingEnd cannot be cleared by null, so the form explains this and rejects that
+edit. Name and boardingStart remain required for submission-ready data. The server
+revalidates the full saved intake and records an audit; successful save is followed
+by GET detail. Review decisions are hidden during explicit edit mode until save or
+discard, avoiding decisions based on unsaved edits.
+
+`ReviewRequest` in `HorseClub.BLL/Contracts/Requests.cs` is `{ approve: bool,
+reason: string? }` with a 2000-character maximum reason. Request revision requires
+a nonblank reason and a confirmation; it sends approve=false and the trimmed
+reason. Approval confirmation describes Horse creation and no automatic staff
+assignment; it sends approve=true, reason=null. An approval comment is not required.
+`HorseService.Review` ignores approval reason and only reviews PendingReview.
+
+The response is `{ registration, horseId }` (`Contracts/Responses.cs`). Revision
+returns RevisionRequired and null horseId. Approval returns Approved and the new
+Horse ID. The server creates a Horse and initial measurement, notifies the Owner,
+and records an audit. Horse health defaults to Monitoring (`Entities.cs`); Owner
+health remains a declaration. No assignments are created by this operation.
+The returned registration is authoritative; malformed results require reload.
+Phase 6A now links the returned Horse ID to the implemented Horse profile route.
+It remains in component memory for the current result; reopening an approved
+registration cannot recover it from the registration GET contract alone.
+
+| Status | Manager edit | Request revision | Approve |
+| --- | --- | --- | --- |
+| PendingReview | Four administrative fields only | Required reason and confirmation | Confirmation creates Horse |
+| Draft / RevisionRequired / Approved / Cancelled / unknown | No | No | No |
+
+RevisionRequired is read-only for Manager until Owner resubmits. No Submitted or
+Rejected state exists. Approval/revision immediately removes mutation controls
+using the returned status. Unknown status uses the shared neutral presentation.
+
+Manager attachment inspection reuses the protected blob download service and
+cleans up temporary object URLs. There are no delete/replace controls. Although
+`AttachmentWorkflow.PostList` allows Manager upload in PendingReview, specification
+section 6.2 requires document review without clearly requiring upload; Manager
+upload is deferred. Horse Profile and assignment displays were outside Phase 5;
+Phase 6A adds those read-only views below. Assignment mutations and staff CRUD
+remain deferred.
+
+Review decisions and Manager PUT set `retryOnUnauthorized: false` on the existing
+Axios client. A 401 still uses session refresh, but does not replay the mutation;
+other requests retain the existing retry behavior. On 401/403/404/409, network or
+5xx uncertainty, or an invalid review response, the screen disables mutations and
+offers an explicit reload, warning about unsaved edits/reason text. There is no
+silent approval/revision replay. Failed post-save refetch also requires reload.
+400 validation errors remain correctable; 403 does not log out. Server diagnostics
+are suppressed. The backend review request has no version/precondition field, so
+the client cannot eliminate concurrent decisions; backend state/conflict handling
+remains authoritative.
+
+44 new mocked/rendered tests cover Manager-only routes/navigation, queue states,
+administrative field allowlist and semantics, attachment inspection, review-state
+guards, confirmations, revision/approval payloads, Horse ID result, response
+validation, conflicts and no mutation replay (including 401). Total: **142 tests**.
+The original 98 tests remain passing; the exact navigation expectation adds the
+new Manager entry without relaxing checks for other roles.
+
+Source contracts and frontend mocks/rendering are verified separately from live
+integration. Real backend authorization, persisted edits, Horse/measurement
+creation, notifications, stale concurrent reviews and browser interaction remain
+environment-blocked. No backend configuration, SQL services or migrations changed.
+
+## Phase 6A — read-only Horse browsing and profile
+
+`/horses` and `/horses/:id` use the existing authenticated shell and role guards.
+All seven exact known roles receive the Horses navigation entry; unknown roles
+fail closed. Backend record scoping remains authoritative, without client-side
+ownership filtering as a security boundary.
+
+Source contracts re-verified under `BE/HRCMS`:
+
+| Source | Read-only contract |
+| --- | --- |
+| `Horse_BackEnd/Endpoints/HorseEndpoints.cs`, `HorseClub.BLL/Workflows/HorseWorkflow.cs` | GET `/api/horses` accepts search, healthStatus, page, pageSize; returns items/page/pageSize/total. Search matches name or registration number; results order by name. GET `/api/horses/{id}` returns the composite profile. |
+| `HorseClub.BLL/Infrastructure/ApiSupport.cs` | Lists exclude archived Horses. Manager sees all, Owner sees owned Horses, WorkRider sees Horses with their sessions, other roles see active assignments. Detail also permits an active assignee before checking WorkRider sessions; archived detail returns 409. Pagination is 1-based, default 20, maximum 100. |
+| `HorseClub.BLL/Contracts/Responses.cs`, `HorseClub.DAL/Domain/Entities.cs` | Profile contains horse, latestMeasurement, assignments, currentStall and preferences. Assignment history includes active and inactive records; current assignments use active=true. Stall occupancy returns IDs and timestamps, not expanded stall/stable names. |
+| `HorseClub.DAL/Domain/Entities.cs`, `HorseClub.DAL/Domain/BusinessEnums.cs` | Health values Fit/Monitoring/Injured/Isolated; gender Male/Female/Gelding. Unknown values render neutral labels. |
+| `Horse_BackEnd/Endpoints/AttachmentEndpoints.cs`, `HorseClub.BLL/Workflows/AttachmentWorkflow.cs` | Protected GET `/api/horses/{horseId}/photo` checks Horse access and returns the latest registration HorsePhoto file; missing photo/file returns 404. |
+
+The list supports search, exact health filters, 20-item pagination and
+loading/empty/error/retry states. Profile sections show identity/pedigree, Owner
+ID, health, boarding, current stall occupancy, latest measurement, Owner staff
+preferences, current official assignments and assignment history. Missing optional
+data has explicit empty states. Expanded Owner/staff/stall names are not invented.
+Measurements come only from the returned latestMeasurement; no measurement writes
+or additional measurement endpoint is used.
+
+HeadTrainer/Groom/Veterinarian preference IDs appear in a separate section with an
+explicit explanation that they are not official assignments. Only the returned
+assignment array supplies official staff. Assignment roles retain exact known
+backend names, with a safe fallback for unknown values. History includes all
+returned records. There are no assignment mutation controls or mutation calls.
+
+Photos use the shared authenticated Axios client with responseType blob. PNG/JPEG
+blobs become temporary object URLs; cleanup revokes URLs on replacement/unmount,
+and late responses after cleanup never create a URL. No image is persisted in
+browser storage. Missing, forbidden, failed and undecodable photos render safely.
+The profile/list reuse normalized errors and existing session handling: 401 uses
+the shared refresh flow, 403 does not log out, 404 is not-found, and 409 indicates
+an unavailable/archived Horse. Server diagnostics are suppressed.
+
+Manager approval now offers a real profile link only for horseId returned by the
+review response. Reopening an approved registration still cannot invent/recover
+that ID from registration GET.
+
+34 new mocked/rendered tests bring the suite to **176 passing tests**. The previous
+142 remain passing; exact navigation and approval-link expectations were updated
+only for the newly implemented routes. Tests cover access, query allowlisting,
+pagination, optional data, safe enums, read-only assignments, preference separation,
+authenticated photos, object URL cleanup and error handling. No dependencies or
+backend files changed.
+
+Lint, tests and production build pass. Live browser/backend integration remains
+environment-blocked: real scoped access, persisted profile data, protected photo
+delivery, browser image lifecycle and approval navigation still require checking
+when the existing environment is available. No SQL administration or migrations
+were performed. Assignment mutations (including HeadTrainer-to-Trainer),
+measurement writes, archive, medical/training workflows and stable/care mutations
+remain deferred.
+
+## Phase 6B — ClubManager administrative assignment
+
+The existing Horse profile now includes an administrative assignment form only for
+ClubManager. Every other role retains the read-only view. There are no new routes
+or dependencies. Phase 6A's assignment-mutation deferral is lifted only for this
+Manager workflow; Trainer assignment remains deferred to Phase 6C.
+
+Contracts re-verified under `BE/HRCMS`:
+
+- `Horse_BackEnd/Endpoints/HorseEndpoints.cs` and
+  `HorseClub.BLL/Workflows/HorseWorkflow.cs`: POST `/api/horses/{id}/assignments`
+  returns a StaffAssignment (200); GET Horse detail returns complete assignment
+  history ordered by creation time, including inactive records.
+- `HorseClub.BLL/Contracts/Requests.cs`: AssignmentRequest has Guid staffId,
+  required enum role, DateOnly startDate and non-nullable string notes annotated
+  MaxLength(2000). Notes have no Required annotation; the client sends an empty
+  string when unused, never null. API validation is wired through
+  `Horse_BackEnd/Infrastructure/HttpPipeline.cs`.
+- `HorseClub.BLL/Services/HorseService.cs`: administrative roles are exactly
+  HeadTrainer/Groom/Veterinarian and require ClubManager. Trainer instead requires
+  the actively assigned HeadTrainer. Start date must not be default/future, or
+  precede any current active assignment for that role. Replacement marks previous
+  records inactive and sets their endDate to the new startDate; it preserves
+  history and creates an active assignment. Staff and Owner notifications and an
+  audit are recorded by the backend.
+- `HorseClub.BLL/Infrastructure/ApiSupport.cs`: Horse access rejects archived
+  records; the target staff member must exist, be active and match the role.
+  `HorseClub.BLL/Workflows/AuthWorkflow.cs`: authenticated staff directory supports
+  exact role filtering and pagination, excluding inactive accounts.
+- `HorseClub.BLL/Infrastructure/ClubCalendar.cs` and `ClubOptions.cs`: the checked-in
+  business timezone is Asia/Ho_Chi_Minh. The client reuses that baseline for today;
+  deployment overrides must be aligned. Selected yyyy-MM-dd strings are sent
+  unchanged, without UTC conversion or silent correction.
+
+The role selector contains only the three administrative roles. Candidates are
+fetched for that exact role across directory pages; unexpected roles or explicit
+inactive results are excluded. Role changes clear selection and confirmation.
+Notes are optional, preserved as typed and capped at 2000 characters. Invalid,
+future and replacement-before-current dates are rejected without additional
+backdating restrictions. Current assignee IDs/start dates and the replacement
+effect are shown before confirmation. Owner preferences never prefill official
+assignments, and returned Trainer records remain read-only.
+
+Successful POST is followed by GET Horse detail before reporting success or
+updating current assignments/history. A synchronous submission lock prevents
+double submission; retryOnUnauthorized=false prevents POST replay after refresh.
+400 errors permit correction. Access/not-found/conflict errors, network/timeouts,
+server uncertainty, or failed/malformed post-save detail require an explicit
+profile reload before another submission. 403 does not log out. Errors suppress
+server diagnostics. The UI never reconstructs assignment history or assumes an
+uncertain POST failed. Backend assignment requests have no version/precondition
+field: another Manager can change the same role after confirmation, so backend
+state validation remains authoritative; this UI cannot guarantee concurrency
+isolation.
+
+36 new mocked/rendered tests bring the suite to 212 tests, retaining all previous
+176 without changes. Coverage includes access, exact roles and payloads, candidate
+scoping, confirmation, dates/notes, replacement/history, preference and Trainer
+separation, duplicate prevention, refresh opt-out and uncertain outcomes.
+Live assignment success, persisted replacement/history, notifications, concurrent
+Managers and actual browser interaction remain environment-blocked and unverified.
+No SQL administration, migrations, backend changes, measurement/archive writes or
+other workflows were performed.
+
+## Phase 6C — assigned HeadTrainer selects Trainer
+
+Horse Profile now provides a separate Trainer-only assignment panel. It requires
+the authenticated user's exact role HeadTrainer and a returned active HeadTrainer
+assignment whose staffId matches that user and horseId matches the displayed
+Horse. Missing assignment/user/Horse identifiers, inactive records, another Horse,
+another staff member, unknown roles and archived Horses fail closed. GUID casing
+does not change identifier equality. Owner preferences never grant authority.
+
+Backend source re-verified under `BE/HRCMS`:
+
+- `HorseClub.BLL/Services/HorseService.cs`, Assign: role=Trainer requires HeadTrainer
+  and an active assignment matching HorseId, StaffId, and Role.HeadTrainer. The
+  separate administrative branch remains ClubManager-only for HeadTrainer, Groom
+  and Veterinarian. `Infrastructure/ApiSupport.cs` additionally enforces Horse
+  access and active staff with the requested role.
+- `Horse_BackEnd/Endpoints/HorseEndpoints.cs` and `Contracts/Requests.cs`: the same
+  POST assignment route returns StaffAssignment (200); payload is staffId (Guid),
+  role (required enum), startDate (DateOnly), notes (string, MaxLength 2000, no
+  Required annotation). Trainer requests send exactly these fields with Trainer;
+  no Horse/HeadTrainer/Owner/preference fields are included in the body.
+- `HorseClub.BLL/Workflows/AuthWorkflow.cs`: directory supports role=Trainer and
+  pagination and excludes inactive users. The client follows pages and additionally
+  excludes unexpected roles/explicitly inactive entries. There is no role selector
+  in the Trainer panel.
+- `HorseService.Assign`: dates cannot be default/future or before the current
+  active Trainer's start date. Replacements close previous Trainer records using
+  the new start date as endDate, preserve history and create an active record.
+  `Workflows/HorseWorkflow.cs` returns all assignment records in Horse detail;
+  `HorseClub.DAL/Domain/Entities.cs` defines horseId/staffId/role/active and dates.
+
+The focused panel shares form mechanics, date/notes checks, POST/refetch and locks
+with Phase 6B, but keeps separate authorization, service entry points and allowed
+roles. Manager options remain exactly HeadTrainer/Groom/Veterinarian. Dates remain
+yyyy-MM-dd strings, using the existing Asia/Ho_Chi_Minh today baseline; optional
+notes are sent unchanged, including empty strings, up to 2000 characters.
+
+Current Trainer IDs/start dates and replacement effects are displayed before
+confirmation. POST never automatically replays after refresh or uncertainty.
+Success requires an authoritative Horse detail refetch; the profile then displays
+new current assignments and returned history and re-evaluates HeadTrainer access.
+400 permits correction; access/not-found/conflict errors, network/timeouts, server
+uncertainty and failed refetch block submission until explicit profile reload.
+403 preserves the session. No local history overwrites or fabricated success are
+used. As in Phase 6B, no backend version/precondition prevents concurrent changes
+between confirmation and submission.
+
+31 new mocked/rendered tests bring the suite to **243 passing tests**, retaining
+the previous 212 unchanged. Source-verified contracts and automated frontend tests
+do not establish live integration: actual Trainer assignment, revoked authority,
+persisted history, concurrency, notifications and browser behavior remain
+environment-blocked. No backend/configuration/dependency changes or SQL operations
+were performed.
+
+The approved Flow 1 frontend scope now covers Owner intake/attachments/submission,
+Manager review/revision/approval, Horse browsing/profile, Manager administrative
+assignment and assigned-HeadTrainer Trainer assignment. It is implemented against
+the verified contracts, pending live end-to-end acceptance. Broader deferred
+capabilities are not implied by this status. Flow 2 / Training has not started.
 
 ## Đưa mã frontend lên repo
 

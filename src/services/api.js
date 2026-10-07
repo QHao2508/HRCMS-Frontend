@@ -76,7 +76,8 @@ api.interceptors.response.use(
                     config._authRetried = true;
                     // A late 401 may belong to the token that another request already refreshed.
                     if (config._accessToken === session.accessToken) await refreshSession();
-                    return api.request(config);
+                    // Review decisions must never be silently replayed, even after refresh.
+                    if (config.retryOnUnauthorized !== false) return api.request(config);
                 }
             }
         }

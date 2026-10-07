@@ -182,6 +182,8 @@ test("navigation uses exact roles and exposes only implemented links for each ro
     for (const role of ALL_ROLES) {
         const expected = [{ to: "/dashboard", label: "Dashboard" }];
         if (role === ROLES.HorseOwner) expected.push({ to: "/registrations", label: "Horse registrations" });
+        if (role === ROLES.ClubManager) expected.push({ to: "/management/registrations", label: "Registration review" });
+        expected.push({ to: "/horses", label: "Horses" });
         assert.deepEqual(getNavigationForRole(role).map(({ to, label }) => ({ to, label })), expected);
     }
     for (const role of ["Horse Owner", "horseowner", "Admin", "__proto__", 0, null]) assert.deepEqual(getNavigationForRole(role), []);
