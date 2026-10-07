@@ -152,7 +152,7 @@ test("unrestricted authenticated routes and the real dashboard work for every ba
         const value = authValue({ user: { ...owner, role } });
         assert.match(renderRestricted(undefined, value), /Restricted content/);
         const html = render(h(AppRoutes), value);
-        assert.match(html, /Welcome, Test Owner/);
+        assert.match(html, /Xin chào, Test Owner/);
         assert.ok(html.includes(getRoleLabel(role)));
     }
     assert.deepEqual(globalThis.__hrcmsRoutingTest.redirects, []);
@@ -180,8 +180,11 @@ test("unknown authenticated role retains a safe home, a readable warning and no 
 
 test("navigation uses exact roles and exposes only implemented links for each role", () => {
     for (const role of ALL_ROLES) {
-        const expected = [{ to: "/dashboard", label: "Dashboard" }];
+        const expected = [{ to: "/dashboard", label: "Dashboard" }, { to: "/horses", label: "Horses" }];
         if (role === ROLES.HorseOwner) expected.push({ to: "/registrations", label: "Horse registrations" });
+        if (role === ROLES.ClubManager) expected.push({ to: "/reviews", label: "Registration review" });
+        if ([ROLES.ClubManager,ROLES.HeadTrainer,ROLES.Trainer].includes(role)) expected.push({ to:"/training/templates",label:"Training templates" });
+        if (role !== ROLES.Groom) expected.push({to:"/training/plans",label:"Training plans"},{to:"/training/sessions",label:"Training sessions"});
         assert.deepEqual(getNavigationForRole(role).map(({ to, label }) => ({ to, label })), expected);
     }
     for (const role of ["Horse Owner", "horseowner", "Admin", "__proto__", 0, null]) assert.deepEqual(getNavigationForRole(role), []);
@@ -196,7 +199,7 @@ test("shell displays the current user, readable role, navigation and nested Outl
     assert.match(html, /aria-label="Main navigation"/);
     assert.match(html, /aria-current="page"/);
     assert.match(html, /Nested page content/);
-    assert.match(html, /Sign out/);
+    assert.match(html, /Đăng xuất/);
     assert.equal(globalThis.__hrcmsRoutingTest.buttons.length, 1);
 });
 

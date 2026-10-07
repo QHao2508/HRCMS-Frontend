@@ -6,11 +6,11 @@ export const REGISTRATION_STATUS = Object.freeze({
     Approved: "Approved", Cancelled: "Cancelled",
 });
 export const STATUS_DISPLAY = Object.freeze({
-    Draft: { label: "Draft", color: "secondary" },
-    PendingReview: { label: "Pending review", color: "primary" },
-    RevisionRequired: { label: "Revision required", color: "warning" },
-    Approved: { label: "Approved", color: "success" },
-    Cancelled: { label: "Cancelled", color: "secondary" },
+    Draft: { label: "Bản nháp", color: "secondary" },
+    PendingReview: { label: "Chờ duyệt", color: "primary" },
+    RevisionRequired: { label: "Cần chỉnh sửa", color: "warning" },
+    Approved: { label: "Đã phê duyệt", color: "success" },
+    Cancelled: { label: "Đã hủy", color: "secondary" },
 });
 export function statusDisplay(status) {
     return Object.hasOwn(STATUS_DISPLAY, status) ? STATUS_DISPLAY[status] : { label: "Unknown status", color: "secondary" };
@@ -20,7 +20,7 @@ export function canEditRegistration(status) {
 }
 export const HORSE_GENDERS = Object.freeze(["Male", "Female", "Gelding"]);
 export const ATTACHMENT_TYPES = Object.freeze(["HorsePhoto", "Certificate", "MedicalDocument"]);
-export const ATTACHMENT_LABELS = Object.freeze({ HorsePhoto: "Horse photo", Certificate: "Certificate", MedicalDocument: "Medical document" });
+export const ATTACHMENT_LABELS = Object.freeze({ HorsePhoto: "Ảnh ngựa", Certificate: "Chứng nhận", MedicalDocument: "Tài liệu y tế" });
 export const PREFERENCES = Object.freeze([
     { field: "preferredHeadTrainerId", role: ROLES.HeadTrainer, label: "Preferred Head Trainer" },
     { field: "preferredGroomId", role: ROLES.Groom, label: "Preferred Groom" },

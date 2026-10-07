@@ -1,5 +1,7 @@
 # HRCMS-Frontend
 
+**Cập nhật 07/10/2026:** đã bổ sung giao diện theo Figma cho Login/Owner intake và nối Manager review, horse profile/assignment, Template/Plan/Session/Result/Evaluation, dashboard KPI. Xem [phạm vi, cách test và giới hạn](FIGMA_BE02_UI.md). Các phase bên dưới mô tả quá trình triển khai trước cập nhật này.
+
 Repository frontend riêng cho hệ thống quản lý câu lạc bộ và huấn luyện ngựa đua HorseClub. Thiết kế đã hoàn thành trên Figma theo thông tin nhóm; frontend hiện có baseline React/Vite và hạ tầng phiên đăng nhập.
 
 - Backend: [QHao2508/HRCMS](https://github.com/QHao2508/HRCMS), nhánh main.

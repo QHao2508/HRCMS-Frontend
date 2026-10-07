@@ -1,0 +1,2 @@
+import { scheduledPayload } from "./workflowHelpers.js";
+export function sessionPayload(form) {return {scheduledAt:scheduledPayload(form.scheduledAt),trainingType:form.trainingType,distanceMetres:Number(form.distanceMetres),intensity:form.intensity,surface:form.surface,target:form.target,notes:form.notes || "",riderId:form.riderId || null};}
