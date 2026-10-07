@@ -4,7 +4,7 @@ import App from './App.jsx'
 
 import "../css/global.css";
 import "../css/index.css";
-import "../css/training.css";
+import "../css/Training.css";
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

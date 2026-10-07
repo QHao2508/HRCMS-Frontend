@@ -6,6 +6,11 @@ import ProtectedRoute from "./ProtectedRoute";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 import OtpVerification from "../pages/auth/OtpVerification";
 import TrainingDashboard from "../pages/training/TrainingDashboard";
+import StandardTrainingTemplates from "../pages/training/StandardTrainingTemplates";
+import TrainingPlans from "../pages/training/TrainingPlans";
+import TrainingSessions from "../pages/training/TrainingSessions";
+import WorkRiderExecution from "../pages/training/WorkRiderExecution";
+import TrainerEvaluation from "../pages/training/TrainerEvaluation";
 import MedicalDashboard from "../pages/medical/MedicalDashboard";
 
 function AppRoutes() {
@@ -36,6 +41,51 @@ function AppRoutes() {
                 element={
                     <ProtectedRoute>
                         <TrainingDashboard />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/training/templates"
+                element={
+                    <ProtectedRoute>
+                        <StandardTrainingTemplates />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/training/plans"
+                element={
+                    <ProtectedRoute>
+                        <TrainingPlans />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/training/sessions"
+                element={
+                    <ProtectedRoute>
+                        <TrainingSessions />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/training/work-rider"
+                element={
+                    <ProtectedRoute>
+                        <WorkRiderExecution />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/training/evaluation"
+                element={
+                    <ProtectedRoute>
+                        <TrainerEvaluation />
                     </ProtectedRoute>
                 }
             />
