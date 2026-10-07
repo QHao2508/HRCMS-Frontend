@@ -1,0 +1,492 @@
+/* =========================================
+   MEDICAL MODULE
+   ========================================= */
+
+.medical-app {
+    min-height: 100vh;
+    background: #f4efe6;
+    color: #4b3426;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+
+/* =========================================
+   HEADER
+   ========================================= */
+
+.medical-header {
+    height: 64px;
+    background: #7b3f20;
+    color: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 20px;
+}
+
+.medical-header-small {
+    font-size: 8px;
+    margin-bottom: 3px;
+}
+
+.medical-header-title {
+    font-family: Georgia, serif;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.medical-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.medical-user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    font-size: 8px;
+}
+
+.medical-user-info strong {
+    font-size: 9px;
+}
+
+.medical-user-info span {
+    opacity: 0.85;
+}
+
+
+/* =========================================
+   BODY
+   ========================================= */
+
+.medical-body {
+    display: flex;
+    min-height: calc(100vh - 64px);
+}
+
+
+/* =========================================
+   SIDEBAR
+   ========================================= */
+
+.medical-sidebar {
+    width: 120px;
+    background: #fffdf9;
+    padding: 18px 12px;
+    flex-shrink: 0;
+}
+
+.medical-sidebar-title {
+    font-size: 7px;
+    color: #6c6259;
+    margin-bottom: 10px;
+}
+
+.medical-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.medical-nav-link {
+    text-decoration: none;
+    color: #40362f;
+    font-size: 8px;
+
+    padding: 7px 7px;
+    border-radius: 5px;
+}
+
+.medical-nav-link:hover {
+    background: #f5eee5;
+}
+
+.medical-nav-link.active {
+    background: #f7f0e7;
+    color: #7b3f20;
+    font-weight: bold;
+}
+
+.medical-sidebar-divider {
+    height: 1px;
+    background: #eee7dc;
+    margin: 15px 0;
+}
+
+.medical-actor {
+    display: flex;
+    flex-direction: column;
+}
+
+.medical-actor strong {
+    color: #7b3f20;
+    font-size: 9px;
+    margin-bottom: 5px;
+}
+
+.medical-actor span {
+    font-size: 7px;
+    line-height: 1.4;
+    color: #756c63;
+}
+
+
+/* =========================================
+   CONTENT
+   ========================================= */
+
+.medical-content {
+    flex: 1;
+    max-width: 100%;
+    padding: 18px 18px 60px;
+}
+
+.medical-page-intro {
+    font-size: 8px;
+    color: #887e74;
+    margin-bottom: 14px;
+}
+
+
+/* =========================================
+   KPI
+   ========================================= */
+
+.medical-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.medical-kpi-card {
+    background: #fff;
+    border: 1px solid #e7dfd3;
+    border-radius: 7px;
+    padding: 11px 12px;
+}
+
+.medical-kpi-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 4px;
+
+    font-size: 8px;
+    color: #5e554d;
+}
+
+.medical-kpi-number {
+    font-size: 20px;
+    color: #7b3f20;
+    margin: 8px 0 3px;
+}
+
+.monitoring-number {
+    color: #f08a16;
+}
+
+.injured-number {
+    color: #d83a3a;
+}
+
+.isolated-number {
+    color: #713cc6;
+}
+
+.medical-kpi-description {
+    font-size: 7px;
+    color: #8b837b;
+}
+
+
+/* =========================================
+   STATUS BADGES
+   ========================================= */
+
+.status-badge {
+    font-size: 6px;
+    font-weight: bold;
+    padding: 3px 5px;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+
+.status-badge.fit {
+    background: #e4f4e6;
+    color: #328449;
+}
+
+.status-badge.monitoring {
+    background: #fff1dc;
+    color: #ef8213;
+}
+
+.status-badge.injured {
+    background: #ffe4e4;
+    color: #d63838;
+}
+
+.status-badge.isolated {
+    background: #eee5ff;
+    color: #7541c5;
+}
+
+
+/* =========================================
+   ATTENTION
+   ========================================= */
+
+.medical-attention {
+    margin-top: 10px;
+
+    background: #fff2c9;
+    border: 1px solid #f1dda2;
+    border-radius: 7px;
+
+    padding: 11px 13px;
+}
+
+.medical-attention h3 {
+    font-size: 8px;
+    margin: 0 0 6px;
+    color: #75500c;
+}
+
+.medical-attention ul {
+    margin: 0;
+    padding-left: 15px;
+}
+
+.medical-attention li {
+    font-size: 7px;
+    margin-bottom: 3px;
+    color: #66542d;
+}
+
+
+/* =========================================
+   TABLE CARD
+   ========================================= */
+
+.medical-table-card {
+    margin-top: 12px;
+    background: #fff;
+    border: 1px solid #e7dfd3;
+    border-radius: 7px;
+    padding: 11px;
+}
+
+
+/* =========================================
+   TOOLBAR
+   ========================================= */
+
+.medical-table-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 9px;
+}
+
+.medical-search {
+    height: 27px;
+    width: 210px;
+
+    border: 1px solid #ddd3c6;
+    border-radius: 5px;
+
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    padding: 0 8px;
+
+    color: #8a8178;
+}
+
+.medical-search input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 7px;
+    background: transparent;
+}
+
+.medical-filter-button {
+    height: 27px;
+    background: white;
+    border: 1px solid #8a4b2b;
+    color: #7b3f20;
+    border-radius: 5px;
+    padding: 0 9px;
+    font-size: 7px;
+}
+
+.medical-status-filters {
+    display: flex;
+    gap: 4px;
+    margin-left: auto;
+}
+
+.medical-status-filters button {
+    height: 25px;
+    border: 1px solid #e3dcd2;
+    background: white;
+    border-radius: 4px;
+    padding: 0 8px;
+    font-size: 7px;
+}
+
+.medical-status-filters button.active {
+    background: #7b3f20;
+    color: white;
+    border-color: #7b3f20;
+}
+
+
+/* =========================================
+   TABLE
+   ========================================= */
+
+.medical-table-wrapper {
+    overflow-x: auto;
+}
+
+.medical-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.medical-table th {
+    background: #faf5ed;
+    font-size: 7px;
+    color: #514941;
+    text-align: left;
+    padding: 8px 7px;
+}
+
+.medical-table td {
+    border-top: 1px solid #eee7df;
+    padding: 8px 7px;
+    font-size: 7px;
+    color: #5c534b;
+}
+
+.horse-id {
+    color: #7b3f20;
+}
+
+.table-status,
+.registration-status {
+    display: inline-block;
+    font-size: 6px;
+    font-weight: bold;
+    padding: 3px 6px;
+    border-radius: 4px;
+}
+
+.table-status.fit {
+    background: #e4f4e6;
+    color: #328449;
+}
+
+.table-status.monitoring {
+    background: #fff0d9;
+    color: #ed8210;
+}
+
+.table-status.injured {
+    background: #ffe1e1;
+    color: #d63838;
+}
+
+.registration-status.approved {
+    background: #e5f4e7;
+    color: #328449;
+}
+
+.registration-status.pending {
+    background: #eee9df;
+    color: #777064;
+}
+
+.view-button {
+    border: none;
+    background: none;
+    color: #d16b16;
+    font-size: 7px;
+    cursor: pointer;
+}
+
+
+/* =========================================
+   PAGINATION
+   ========================================= */
+
+.medical-pagination {
+    display: flex;
+    gap: 4px;
+    margin-top: 9px;
+}
+
+.medical-pagination button {
+    width: 24px;
+    height: 23px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #e3dcd2;
+    border-radius: 4px;
+
+    background: white;
+    font-size: 7px;
+}
+
+.medical-pagination button.active {
+    background: #7b3f20;
+    color: white;
+    border-color: #7b3f20;
+}
+
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+
+@media (max-width: 900px) {
+
+    .medical-kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+@media (max-width: 650px) {
+
+    .medical-body {
+        flex-direction: column;
+    }
+
+    .medical-sidebar {
+        width: auto;
+    }
+
+    .medical-kpi-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .medical-table-toolbar {
+        flex-wrap: wrap;
+    }
+
+    .medical-status-filters {
+        margin-left: 0;
+    }
+
+}

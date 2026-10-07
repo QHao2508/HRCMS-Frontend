@@ -6,6 +6,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 import OtpVerification from "../pages/auth/OtpVerification";
 import TrainingDashboard from "../pages/training/TrainingDashboard";
+import MedicalDashboard from "../pages/medical/MedicalDashboard";
 
 function AppRoutes() {
     return (
@@ -35,6 +36,15 @@ function AppRoutes() {
                 element={
                     <ProtectedRoute>
                         <TrainingDashboard />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/medical"
+                element={
+                    <ProtectedRoute>
+                        <MedicalDashboard />
                     </ProtectedRoute>
                 }
             />
