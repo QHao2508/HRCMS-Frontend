@@ -1,0 +1,838 @@
+@import url("https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap");
+
+.hrcms-auth-shell {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--hrcms-background);
+    color: var(--hrcms-text-primary);
+    font-family: var(--hrcms-font-body);
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.hrcms-auth-shell h1,
+.hrcms-auth-shell p {
+    margin: 0;
+}
+
+.hrcms-auth-shell a {
+    text-decoration: none;
+}
+
+.hrcms-auth-shell a:hover {
+    text-decoration: underline;
+}
+
+.hrcms-auth-shell :is(a, button, input, textarea, summary):focus-visible {
+    outline: 3px solid var(--hrcms-accent);
+    outline-offset: 3px;
+}
+
+.hrcms-auth-header {
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--hrcms-space-24);
+    padding: var(--hrcms-space-24) max(24px, calc((100vw - 1280px) / 2));
+    background: var(--hrcms-surface);
+    border-bottom: 1px solid var(--hrcms-border);
+}
+
+.hrcms-auth-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--hrcms-space-12);
+    flex: none;
+    color: var(--hrcms-text-primary);
+    font: 900 20px/1.25 var(--hrcms-font-heading);
+}
+
+.hrcms-auth-brand-mark {
+    width: 32px;
+    height: 32px;
+    flex: none;
+    border-radius: 8px;
+    background: var(--hrcms-primary);
+}
+
+.hrcms-auth-portal-title {
+    color: var(--hrcms-primary);
+    font-size: 14px;
+    font-weight: 700;
+    text-align: right;
+}
+
+.hrcms-auth-main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: var(--hrcms-space-64) var(--hrcms-space-24);
+}
+
+.hrcms-auth-shell-content .hrcms-auth-main {
+    flex: none;
+    padding-top: 63px;
+    padding-bottom: 60px;
+}
+
+.hrcms-login-card {
+    width: min(100%, 520px);
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    padding: var(--hrcms-space-48);
+    background: var(--hrcms-surface-white);
+    border: 1px solid var(--hrcms-border);
+    border-radius: 16px;
+}
+
+.hrcms-login-heading {
+    display: flex;
+    flex-direction: column;
+    gap: var(--hrcms-space-8);
+    text-align: center;
+}
+
+.hrcms-login-heading h1 {
+    color: var(--hrcms-text-primary);
+    font: 900 32px/1.25 var(--hrcms-font-heading);
+}
+
+.hrcms-login-heading p {
+    color: var(--hrcms-text-secondary);
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.hrcms-auth-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--hrcms-space-12);
+    min-width: 0;
+    padding: var(--hrcms-space-16);
+    border: 1px solid;
+    border-radius: var(--hrcms-radius-medium);
+    font-size: 14px;
+    line-height: 18px;
+    overflow-wrap: anywhere;
+}
+
+.hrcms-auth-alert img {
+    display: block;
+    flex: none;
+}
+
+.hrcms-auth-alert-info {
+    color: #00796b;
+    background: #e0f2f1;
+    border-color: #b2dfdb;
+}
+
+.hrcms-auth-alert-success {
+    color: #2e7d32;
+    background: #e8f5e9;
+    border-color: #c8e6c9;
+}
+
+.hrcms-auth-alert-warning {
+    color: #a14c00;
+    background: #fff3e0;
+    border-color: #ffe0b2;
+}
+
+.hrcms-auth-alert-error {
+    color: var(--hrcms-destructive);
+    background: #f9edf2;
+    border-color: #ffcdd2;
+}
+
+.hrcms-login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.hrcms-login-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.hrcms-auth-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--hrcms-space-8);
+}
+
+.hrcms-auth-field label {
+    color: var(--hrcms-text-primary);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 18px;
+}
+
+.hrcms-auth-field input {
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+    padding: 10px var(--hrcms-space-16);
+    background: var(--hrcms-surface);
+    border: 1px solid var(--hrcms-border);
+    border-radius: 8px;
+    color: var(--hrcms-text-primary);
+    font: 400 14px/20px var(--hrcms-font-body);
+}
+
+.hrcms-auth-field input::placeholder {
+    color: var(--hrcms-text-secondary);
+    opacity: 1;
+}
+
+.hrcms-auth-field input:focus {
+    border-color: var(--hrcms-primary);
+}
+
+.hrcms-login-actions {
+    line-height: 18px;
+}
+
+.hrcms-login-actions a {
+    color: #c66700;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.hrcms-login-submit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--hrcms-space-16);
+}
+
+.hrcms-login-submit button {
+    width: 100%;
+    min-height: 42px;
+    padding: 10px 20px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--hrcms-primary);
+    color: #fff;
+    font: 700 14px/22px var(--hrcms-font-body);
+    cursor: pointer;
+}
+
+.hrcms-login-submit button:hover:not(:disabled) {
+    background: #65361e;
+}
+
+.hrcms-login-submit button:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.hrcms-login-divider,
+.hrcms-auth-footer-divider {
+    width: 100%;
+    overflow: hidden;
+}
+
+.hrcms-login-divider img,
+.hrcms-auth-footer-divider img {
+    display: block;
+}
+
+.hrcms-login-register {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--hrcms-space-4);
+    color: var(--hrcms-text-secondary);
+    font-size: 14px;
+    line-height: 20px;
+    text-align: center;
+}
+
+.hrcms-login-register a {
+    color: var(--hrcms-primary);
+    font-weight: 700;
+}
+
+.hrcms-auth-footer {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--hrcms-space-32);
+    padding: 60px max(24px, calc((100vw - 1280px) / 2)) 40px;
+    background: var(--hrcms-text-primary);
+    color: var(--hrcms-border);
+}
+
+.hrcms-auth-footer-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--hrcms-space-48);
+}
+
+.hrcms-auth-footer-brand {
+    width: min(400px, 100%);
+    display: flex;
+    flex-direction: column;
+    gap: var(--hrcms-space-12);
+}
+
+.hrcms-auth-footer-brand strong {
+    color: #fff;
+    font: 900 24px/30px var(--hrcms-font-heading);
+}
+
+.hrcms-auth-footer-brand p,
+.hrcms-auth-footer-support p {
+    font-size: 14px;
+    line-height: 18px;
+}
+
+.hrcms-auth-footer-support {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--hrcms-space-12);
+}
+
+.hrcms-auth-footer-support strong {
+    color: #fff;
+    font-size: 14px;
+    line-height: 18px;
+}
+
+.hrcms-auth-more-actions {
+    position: absolute;
+    right: max(24px, calc((100vw - 1280px) / 2));
+    bottom: 38px;
+    font-size: 12px;
+}
+
+.hrcms-auth-more-actions summary {
+    cursor: pointer;
+}
+
+.hrcms-auth-more-actions nav {
+    display: flex;
+    flex-direction: column;
+    gap: var(--hrcms-space-8);
+    margin-top: var(--hrcms-space-8);
+}
+
+.hrcms-auth-more-actions a {
+    color: var(--hrcms-border);
+}
+
+.hrcms-auth-copyright {
+    color: #a8978e;
+    font-size: 13px;
+    line-height: 16px;
+    text-align: center;
+}
+
+@media (max-width: 640px) {
+    .hrcms-auth-header {
+        flex-wrap: wrap;
+        padding: 20px 24px;
+    }
+
+    .hrcms-auth-portal-title {
+        font-size: 11px;
+        text-align: left;
+    }
+
+    .hrcms-auth-main {
+        padding: 32px 16px 48px;
+    }
+
+    .hrcms-login-card {
+        gap: 24px;
+        padding: 28px 20px;
+    }
+
+    .hrcms-login-heading h1 {
+        font-size: 28px;
+    }
+
+    .hrcms-login-form {
+        gap: 24px;
+    }
+
+    .hrcms-auth-footer {
+        padding: 40px 24px 32px;
+    }
+
+    .hrcms-auth-footer-top {
+        flex-wrap: wrap;
+        gap: 32px;
+    }
+
+    .hrcms-auth-footer-support {
+        width: 100%;
+    }
+
+    .hrcms-auth-more-actions {
+        position: static;
+        margin-top: var(--hrcms-space-8);
+    }
+}
+
+.hrcms-auth-field textarea {
+    width: 100%;
+    min-width: 0;
+    height: 42px;
+    min-height: 42px;
+    padding: 10px var(--hrcms-space-16);
+    resize: none;
+    background: var(--hrcms-surface);
+    border: 1px solid var(--hrcms-border);
+    border-radius: 8px;
+    color: var(--hrcms-text-primary);
+    font: 400 14px/20px var(--hrcms-font-body);
+}
+
+.hrcms-auth-field textarea::placeholder {
+    color: var(--hrcms-text-secondary);
+    opacity: 1;
+}
+
+.hrcms-auth-field textarea:focus {
+    border-color: var(--hrcms-primary);
+}
+
+.hrcms-auth-field :is(input, textarea).hrcms-auth-control-invalid {
+    border-color: var(--hrcms-destructive);
+}
+
+.hrcms-auth-help,
+.hrcms-auth-error {
+    font-size: 11px;
+    line-height: 16px;
+    overflow-wrap: anywhere;
+}
+
+.hrcms-auth-help {
+    color: var(--hrcms-text-secondary);
+}
+
+.hrcms-auth-error {
+    color: var(--hrcms-destructive);
+}
+
+.hrcms-register-card {
+    width: min(100%, 960px);
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    padding: var(--hrcms-space-48) 47px;
+    background: var(--hrcms-surface-white);
+    border: 1px solid var(--hrcms-border);
+    border-radius: 16px;
+}
+
+.hrcms-register-heading {
+    display: flex;
+    flex-direction: column;
+    gap: var(--hrcms-space-8);
+}
+
+.hrcms-register-heading h1 {
+    color: var(--hrcms-text-primary);
+    font: 900 32px/1.25 var(--hrcms-font-heading);
+}
+
+.hrcms-register-heading p {
+    color: var(--hrcms-text-secondary);
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.hrcms-register-fieldset {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.hrcms-register-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--hrcms-space-24);
+}
+
+.hrcms-register-row {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--hrcms-space-24);
+    min-width: 0;
+}
+
+.hrcms-register-row .hrcms-auth-field {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.hrcms-register-card .hrcms-auth-help {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+.hrcms-register-card .hrcms-auth-field:focus-within .hrcms-auth-help {
+    position: static;
+    width: auto;
+    height: auto;
+    clip-path: none;
+    white-space: normal;
+}
+
+.hrcms-register-divider {
+    width: 100%;
+    overflow: hidden;
+}
+
+.hrcms-register-divider img {
+    display: block;
+}
+
+.hrcms-register-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--hrcms-space-16);
+}
+
+.hrcms-auth-secondary-button,
+.hrcms-auth-primary-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 10px 20px;
+    border: 0;
+    border-radius: 8px;
+    color: #fff;
+    font: 700 14px/22px var(--hrcms-font-body);
+    text-align: center;
+    cursor: pointer;
+}
+
+.hrcms-auth-shell .hrcms-auth-secondary-button,
+.hrcms-auth-shell .hrcms-auth-secondary-button:hover {
+    background: var(--hrcms-secondary);
+    color: #fff;
+}
+
+.hrcms-auth-secondary-button:hover {
+    filter: brightness(0.9);
+    text-decoration: none;
+}
+
+.hrcms-auth-primary-button {
+    background: var(--hrcms-primary);
+}
+
+.hrcms-auth-primary-button:hover:not(:disabled) {
+    background: #65361e;
+}
+
+.hrcms-auth-primary-button:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+@media (max-width: 640px) {
+    .hrcms-register-card {
+        gap: 24px;
+        padding: 28px 20px;
+    }
+
+    .hrcms-register-heading h1 {
+        font-size: 28px;
+    }
+
+    .hrcms-register-fieldset {
+        gap: 24px;
+    }
+
+    .hrcms-register-row {
+        flex-direction: column;
+        gap: var(--hrcms-space-24);
+    }
+
+    .hrcms-register-row .hrcms-auth-field {
+        width: 100%;
+        flex: none;
+    }
+
+    .hrcms-register-actions {
+        align-items: stretch;
+        flex-direction: column-reverse;
+    }
+}
+
+.hrcms-flow-card {
+    width: min(100%, 520px);
+    display: flex;
+    flex-direction: column;
+    gap: var(--hrcms-space-32);
+    padding: var(--hrcms-space-48) 47px;
+    background: var(--hrcms-surface-white);
+    border: 1px solid var(--hrcms-border);
+    border-radius: 16px;
+}
+
+.hrcms-flow-heading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--hrcms-space-8);
+    text-align: center;
+}
+
+.hrcms-flow-heading h1 {
+    color: var(--hrcms-text-primary);
+    font: 900 32px/1.25 var(--hrcms-font-heading);
+}
+
+.hrcms-flow-heading p {
+    color: var(--hrcms-text-secondary);
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.hrcms-flow-fieldset {
+    display: flex;
+    flex-direction: column;
+    gap: var(--hrcms-space-32);
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.hrcms-flow-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 0;
+}
+
+.hrcms-flow-password-card .hrcms-flow-fields {
+    gap: var(--hrcms-space-16);
+}
+
+.hrcms-flow-card .hrcms-auth-help {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+.hrcms-flow-card .hrcms-auth-field:focus-within .hrcms-auth-help {
+    position: static;
+    width: auto;
+    height: auto;
+    clip-path: none;
+    white-space: normal;
+}
+
+.hrcms-flow-divider {
+    width: 100%;
+    overflow: hidden;
+}
+
+.hrcms-flow-divider img {
+    display: block;
+}
+
+.hrcms-flow-actions {
+    display: flex;
+    gap: var(--hrcms-space-12);
+    min-width: 0;
+}
+
+.hrcms-flow-actions > * {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.hrcms-flow-password-hint {
+    min-height: 17px;
+    color: var(--hrcms-text-secondary);
+    font-size: 12px;
+    line-height: 17px;
+    overflow-wrap: anywhere;
+}
+
+.hrcms-flow-password-match {
+    display: flex;
+    align-items: center;
+    gap: var(--hrcms-space-8);
+    color: #2e7d32;
+}
+
+.hrcms-flow-password-match img {
+    width: 14px;
+    height: 14px;
+    flex: none;
+}
+
+.hrcms-flow-footer-note {
+    max-width: 220px;
+    font-size: 12px !important;
+    line-height: 16px !important;
+}
+
+.hrcms-flow-email {
+    width: 100%;
+}
+
+.hrcms-flow-email .hrcms-auth-field {
+    gap: 0;
+}
+
+.hrcms-visually-hidden,
+.hrcms-flow-email label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+.hrcms-flow-email .hrcms-auth-field input {
+    min-height: 20px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--hrcms-primary);
+    font-size: 15px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.hrcms-flow-email .hrcms-auth-field input::placeholder {
+    color: var(--hrcms-primary);
+}
+
+.hrcms-otp-entry {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    gap: var(--hrcms-space-12);
+}
+
+.hrcms-otp-entry input {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    width: 100%;
+    opacity: 0;
+    cursor: text;
+}
+
+.hrcms-otp-entry span {
+    display: flex;
+    flex: 0 1 56px;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    background: var(--hrcms-surface);
+    border: 1px solid var(--hrcms-border);
+    border-radius: 8px;
+    color: var(--hrcms-text-primary);
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.hrcms-otp-entry:focus-within span.hrcms-otp-active {
+    border: 2px solid var(--hrcms-primary);
+}
+
+.hrcms-otp-field .hrcms-auth-error {
+    margin-top: var(--hrcms-space-8);
+}
+
+.hrcms-flow-resend {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--hrcms-space-12);
+    text-align: center;
+}
+
+.hrcms-flow-resend p {
+    color: var(--hrcms-text-secondary);
+    font-size: 13px;
+    line-height: 18px;
+}
+
+.hrcms-flow-outlined-button {
+    min-height: 42px;
+    padding: 10px 20px;
+    border: 1.5px solid var(--hrcms-primary);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--hrcms-primary);
+    font: 700 14px/20px var(--hrcms-font-body);
+    cursor: pointer;
+}
+
+.hrcms-flow-outlined-button:hover:not(:disabled) {
+    background: var(--hrcms-surface);
+}
+
+.hrcms-flow-outlined-button:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+@media (max-width: 640px) {
+    .hrcms-auth-shell-content .hrcms-auth-main {
+        padding: 32px 16px 48px;
+    }
+
+    .hrcms-flow-card {
+        gap: var(--hrcms-space-24);
+        padding: 28px 20px;
+    }
+
+    .hrcms-flow-heading h1 {
+        font-size: 28px;
+    }
+
+    .hrcms-flow-fieldset {
+        gap: var(--hrcms-space-24);
+    }
+
+    .hrcms-flow-actions {
+        flex-direction: column-reverse;
+    }
+
+    .hrcms-otp-entry {
+        gap: var(--hrcms-space-8);
+    }
+
+    .hrcms-otp-entry span {
+        width: auto;
+        height: 48px;
+    }
+}

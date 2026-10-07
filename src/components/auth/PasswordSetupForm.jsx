@@ -20,22 +20,38 @@ export default function PasswordSetupForm({ invitation = false }) {
     }
 
     return (
-        <AuthForm title={invitation ? "Accept staff invitation" : "Reset password"}
+        <AuthForm title={invitation ? "Thiết Lập Tài Khoản Nhân Viên" : "Thiết Lập Mật Khẩu Mới"}
             description={invitation
-                ? "Use the invitation sent by club management to set your password."
-                : "Enter the reset code from your email and choose a new password."}
-            form={form} onSubmit={() => form.submit(submit)} submitLabel={invitation ? "Set password" : "Reset password"}
-            pendingLabel="Saving password..."
-            footer={<>{invitation ? <p>Need an invitation or a replacement code? Contact club management.</p>
-                : <p><Link to="/forgot-password" state={{ email: form.values.email.trim() }}>Request a new reset code</Link></p>}
-                <Link to="/login">Back to sign in</Link></>}>
-            <AuthInput label="Email" {...form.field("email")} type="email" required autoComplete="email" />
-            <AuthInput label={invitation ? "Invitation code" : "Reset code"} {...form.field("code")}
-                required maxLength={4000} autoComplete="off" spellCheck={false} autoCapitalize="none" />
-            <AuthInput label="New password" {...form.field("password")} type="password" required
-                maxLength={AUTH_POLICY.passwordMaxLength} autoComplete="new-password" help={passwordHelp} />
-            <AuthInput label="Confirm password" {...form.field("confirmPassword")} type="password" required
-                maxLength={AUTH_POLICY.passwordMaxLength} autoComplete="new-password" />
+                ? "Nhập email và mã mời để tự thiết lập mật khẩu."
+                : "Thiết lập mật khẩu mới cho tài khoản của bạn."}
+            form={form} onSubmit={() => form.submit(submit)} submitLabel="Lưu & Về Đăng Nhập"
+            pendingLabel="Đang lưu mật khẩu..." className="hrcms-flow-password-card"
+            secondaryAction={<Link to="/login" className="hrcms-auth-secondary-button">Hủy</Link>}
+            extra={form.values.password && form.values.password === form.values.confirmPassword
+                ? <p className="hrcms-flow-password-hint hrcms-flow-password-match" role="status">
+                    <img src="/figma/auth/flow-check.svg" alt="" />
+                    Hai mật khẩu nhập vào trùng khớp hoàn toàn
+                </p>
+                : <p className="hrcms-flow-password-hint">12–128 ký tự, gồm chữ hoa, chữ thường và số.</p>}
+            footerActions={invitation
+                ? <p className="hrcms-flow-footer-note">Cần mã mời hoặc mã thay thế? Liên hệ Club Manager.</p>
+                : <details className="hrcms-auth-more-actions">
+                    <summary>Cần mã khôi phục mới?</summary>
+                    <nav aria-label="Password recovery actions">
+                        <Link to="/forgot-password" state={{ email: form.values.email.trim() }}>Yêu cầu mã mới</Link>
+                    </nav>
+                </details>}>
+            <AuthInput variant="hrcms" label="Email" {...form.field("email")}
+                type="email" required autoComplete="email" placeholder="Nhập email" />
+            <AuthInput variant="hrcms" label={invitation ? "Mã mời" : "Mã khôi phục"} {...form.field("code")}
+                required maxLength={4000} autoComplete="off" spellCheck={false} autoCapitalize="none"
+                placeholder="Nhập mã từ email" />
+            <AuthInput variant="hrcms" label="Mật khẩu mới" {...form.field("password")}
+                type="password" required maxLength={AUTH_POLICY.passwordMaxLength}
+                autoComplete="new-password" placeholder="•••••••••••••" help={passwordHelp} />
+            <AuthInput variant="hrcms" label="Xác nhận mật khẩu mới" {...form.field("confirmPassword")}
+                type="password" required maxLength={AUTH_POLICY.passwordMaxLength}
+                autoComplete="new-password" placeholder="•••••••••••••" />
         </AuthForm>
     );
 }

@@ -8,3 +8,29 @@ body {
     font-family: Arial, sans-serif;
     background-color: #f5f6fa;
 }
+
+:root {
+    --hrcms-primary: #7a4325;
+    --hrcms-secondary: #2d6a3f;
+    --hrcms-accent: #d9822b;
+    --hrcms-background: #f4efe6;
+    --hrcms-surface: #faf6ed;
+    --hrcms-surface-white: #ffffff;
+    --hrcms-text-primary: #2d1d16;
+    --hrcms-text-secondary: #6b5d55;
+    --hrcms-border: #e2dac9;
+    --hrcms-destructive: #ba3f00;
+    --hrcms-font-heading: "Merriweather", Georgia, serif;
+    --hrcms-font-body: "Plus Jakarta Sans", Arial, sans-serif;
+    --hrcms-space-4: 4px;
+    --hrcms-space-8: 8px;
+    --hrcms-space-12: 12px;
+    --hrcms-space-16: 16px;
+    --hrcms-space-24: 24px;
+    --hrcms-space-32: 32px;
+    --hrcms-space-48: 48px;
+    --hrcms-space-64: 64px;
+    --hrcms-radius-small: 6px;
+    --hrcms-radius-medium: 12px;
+    --hrcms-radius-large: 24px;
+}

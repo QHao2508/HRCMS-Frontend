@@ -13,7 +13,7 @@ export default function VerifyEmail() {
     const form = useAuthForm({ email: getNavigationEmail(location.state), code: "" }, validateVerification);
     const cooldown = useAuthCooldown("verification");
     const [message, setMessage] = useState(location.state?.registered
-        ? "Your account was created. Check your email for a verification code." : "");
+        ? "Tài khoản đã được tạo. Hãy kiểm tra email để lấy mã xác thực." : "");
 
     async function verify(values) {
         setMessage("");
@@ -27,7 +27,7 @@ export default function VerifyEmail() {
             setMessage("");
             try {
                 await resendVerification(values);
-                setMessage("If eligible, a code will be emailed.");
+                setMessage("Nếu tài khoản đủ điều kiện, mã xác thực sẽ được gửi qua email.");
             } finally {
                 cooldown.start();
             }
@@ -35,17 +35,36 @@ export default function VerifyEmail() {
     }
 
     return (
-        <AuthForm title="Verify your email" description="Enter your email and the six-digit code from your verification email."
-            form={form} onSubmit={() => form.submit(verify)} submitLabel="Verify email"
-            pendingLabel={form.pending === "resend" ? "Requesting code..." : "Verifying..."} success={message}
-            footer={<Link to="/login">Back to sign in</Link>}>
-            <AuthInput label="Email" {...form.field("email")} type="email" required autoComplete="email" />
-            <AuthInput label="Verification code" {...form.field("code")} required inputMode="numeric"
-                autoComplete="one-time-code" maxLength={6} />
-            <button type="button" className="btn btn-outline-secondary mb-3" onClick={resend}
-                disabled={!!form.pending || cooldown.seconds > 0}>
-                {cooldown.seconds > 0 ? `Resend available in ${cooldown.seconds}s` : "Resend verification code"}
-            </button>
+        <AuthForm title="Xác Thực Email" description="Mã OTP đã gửi đến email đăng ký:"
+            headingDetail={<div className="hrcms-flow-email">
+                <AuthInput variant="hrcms" label="Email" {...form.field("email")}
+                    form="auth-flow-form" type="email" required autoComplete="email" disabled={!!form.pending}
+                    placeholder="Email của bạn" />
+            </div>}
+            form={form} onSubmit={() => form.submit(verify)} submitLabel="Xác Nhận & Kích Hoạt"
+            pendingLabel={form.pending === "resend" ? "Đang gửi mã..." : "Đang xác thực..."} success={message}
+            secondaryAction={<Link to="/login" className="hrcms-auth-secondary-button">Hủy Bỏ</Link>}
+            extra={<div className="hrcms-flow-resend">
+                <p>Bạn chưa nhận được mã xác thực?</p>
+                <button type="button" className="hrcms-flow-outlined-button" onClick={resend}
+                    disabled={!!form.pending || cooldown.seconds > 0}>
+                    {cooldown.seconds > 0 ? `Gửi lại sau ${cooldown.seconds}s` : "Gửi Lại Mã OTP"}
+                </button>
+            </div>}>
+            <div className="hrcms-otp-field">
+                <label htmlFor="auth-code" className="hrcms-visually-hidden">Mã xác thực gồm sáu chữ số</label>
+                <div className="hrcms-otp-entry">
+                    <input {...form.field("code")} id="auth-code" type="text" required
+                        inputMode="numeric" autoComplete="one-time-code" maxLength={6}
+                        aria-invalid={!!form.errors.code}
+                        aria-describedby={form.errors.code ? "auth-code-error" : undefined} />
+                    {Array.from({ length: 6 }, (_, index) => (
+                        <span key={index} className={index === Math.min(form.values.code.length, 5) ? "hrcms-otp-active" : ""}
+                            aria-hidden="true">{form.values.code[index] || ""}</span>
+                    ))}
+                </div>
+                {form.errors.code && <div className="hrcms-auth-error" id="auth-code-error">{form.errors.code}</div>}
+            </div>
         </AuthForm>
     );
 }
