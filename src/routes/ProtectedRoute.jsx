@@ -1,18 +1,20 @@
-import { Navigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { useAuth } from "../context/useAuth.js";
+import { getLoginRedirect } from "./redirects.js";
 
 function ProtectedRoute({ children }) {
     const { isAuthenticated, loading } = useAuth();
+    const location = useLocation();
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <div role="status">Loading...</div>;
     }
 
     if (!isAuthenticated) {
-        return <Navigate to="/login" replace />;
+        return <Navigate {...getLoginRedirect(location)} />;
     }
 
-    return children;
+    return children ?? <Outlet />;
 }
 
 export default ProtectedRoute;

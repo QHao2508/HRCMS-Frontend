@@ -1,14 +1,23 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import { login as loginApi } from "../../services/authService";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/useAuth.js";
+import { getNavigationEmail } from "../../services/authValidation.js";
+import { getLoginDestination } from "../../routes/redirects.js";
+
+const authNotices = {
+    "email-verified": "Your email is verified. You can now sign in.",
+    "password-reset": "Your password has been reset. Sign in with your new password.",
+    "invitation-accepted": "Your password is set. You can now sign in.",
+};
 
 function Login() {
     const navigate = useNavigate();
-    const { login } = useAuth();
+    const { login, loading: restoring, isAuthenticated } = useAuth();
+    const location = useLocation();
+    const destination = getLoginDestination(location.state);
 
     const [form, setForm] = useState({
-        email: "",
+        email: getNavigationEmail(location.state),
         password: "",
     });
 
@@ -26,6 +35,7 @@ function Login() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (loading || restoring) return;
 
         setError("");
 
@@ -37,20 +47,19 @@ function Login() {
         try {
             setLoading(true);
 
-            const data = await loginApi(form);
-
-            login(data);
-
-            navigate("/dashboard");
+            await login(form);
+            navigate(destination, { replace: true });
         } catch (err) {
             setError(
-                err.response?.data?.message ||
-                "Invalid email or password."
+                err.message || "Unable to sign in. Please try again."
             );
         } finally {
             setLoading(false);
         }
     };
+
+    if (restoring) return <div>Loading...</div>;
+    if (isAuthenticated) return <Navigate to={destination} replace />;
 
     return (
         <div className="auth-page">
@@ -61,6 +70,16 @@ function Login() {
                 <p>
                     Sign in to your HorseClub account
                 </p>
+
+                {authNotices[location.state?.authNotice] && (
+                    <div className="alert alert-success" role="status">{authNotices[location.state.authNotice]}</div>
+                )}
+
+                {location.state?.logoutError && (
+                    <div className="alert alert-warning" role="alert">
+                        Signed out on this device. Server logout could not be confirmed: {location.state.logoutError}
+                    </div>
+                )}
 
                 {error && (
                     <div className="alert alert-danger">
@@ -109,6 +128,13 @@ function Login() {
                     </button>
 
                 </form>
+
+                <div className="mt-3">
+                    <p><Link to="/register">Create a Horse Owner account</Link></p>
+                    <p><Link to="/verify-email" state={{ email: form.email }}>Verify your email</Link></p>
+                    <p><Link to="/forgot-password" state={{ email: form.email }}>Forgot password?</Link></p>
+                    <p><Link to="/accept-invitation">Accept a staff invitation</Link></p>
+                </div>
 
             </div>
         </div>
