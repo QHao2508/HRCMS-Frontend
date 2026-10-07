@@ -71,6 +71,19 @@ export async function listTrainingTemplates({ page = 1, pageSize = 20 } = {}) {
     return data;
 }
 
+export async function listAllTrainingTemplates() {
+    const templates = [];
+    let page = 1;
+    for (;;) {
+        const result = await listTrainingTemplates({ page, pageSize: 100 });
+        templates.push(...result.items.filter((template) => template.archived === false));
+        if (!result.items.length || result.page * result.pageSize >= result.total) break;
+        if (result.page + 1 <= page) throw new Error("Unable to load Training Templates.");
+        page = result.page + 1;
+    }
+    return templates;
+}
+
 export async function createTrainingTemplate(values) {
     if (Object.keys(validateTemplate(values)).length) throw new Error("Check the template fields.");
     const { data } = await api.post(root, templatePayload(values), { retryOnUnauthorized: false });

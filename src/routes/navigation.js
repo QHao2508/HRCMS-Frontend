@@ -1,6 +1,6 @@
 import { ALL_ROLES, ROLES, isKnownRole, isRoleAllowed } from "../constants/roles.js";
 import { HORSE_BROWSING_ROLES } from "../constants/horses.js";
-import { TRAINING_TEMPLATE_ROLES } from "../constants/training.js";
+import { TRAINING_PLAN_ROLES, TRAINING_TEMPLATE_ROLES } from "../constants/training.js";
 
 // Add links only when their routes exist; future feature modules are intentionally absent.
 const navigationItems = Object.freeze([
@@ -9,6 +9,7 @@ const navigationItems = Object.freeze([
     Object.freeze({ to: "/management/registrations", label: "Registration review", allowedRoles: ROLES.ClubManager }),
     Object.freeze({ to: "/horses", label: "Horses", allowedRoles: HORSE_BROWSING_ROLES }),
     Object.freeze({ to: "/training/templates", label: "Training Templates", allowedRoles: TRAINING_TEMPLATE_ROLES }),
+    Object.freeze({ to: "/training/plans", label: "Training Plans", allowedRoles: TRAINING_PLAN_ROLES }),
 ]);
 
 export function getNavigationForRole(role) {

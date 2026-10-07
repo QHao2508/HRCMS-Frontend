@@ -20,8 +20,11 @@ import RegistrationReview from "../pages/management/RegistrationReview.jsx";
 import HorseList from "../pages/horses/HorseList.jsx";
 import HorseProfile from "../pages/horses/HorseProfile.jsx";
 import { HORSE_BROWSING_ROLES } from "../constants/horses.js";
-import { TRAINING_TEMPLATE_ROLES } from "../constants/training.js";
+import { TRAINING_PLAN_ROLES, TRAINING_TEMPLATE_ROLES } from "../constants/training.js";
 import TrainingTemplates from "../pages/training/TrainingTemplates.jsx";
+import TrainingPlanList from "../pages/training/TrainingPlanList.jsx";
+import TrainingPlanCreate from "../pages/training/TrainingPlanCreate.jsx";
+import TrainingPlanDetail from "../pages/training/TrainingPlanDetail.jsx";
 
 function AppRoutes() {
     return (
@@ -51,6 +54,13 @@ function AppRoutes() {
                     </Route>
                     <Route element={<RoleRoute allowedRoles={TRAINING_TEMPLATE_ROLES} />}>
                         <Route path="/training/templates" element={<TrainingTemplates />} />
+                    </Route>
+                    <Route element={<RoleRoute allowedRoles={TRAINING_PLAN_ROLES} />}>
+                        <Route path="/training/plans" element={<TrainingPlanList />} />
+                        <Route path="/training/plans/:id" element={<TrainingPlanDetail />} />
+                    </Route>
+                    <Route element={<RoleRoute allowedRoles={ROLES.Trainer} />}>
+                        <Route path="/training/plans/new" element={<TrainingPlanCreate />} />
                     </Route>
                     <Route element={<RoleRoute allowedRoles={ROLES.HorseOwner} />}>
                         <Route path="/registrations" element={<RegistrationList />} />
