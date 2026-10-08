@@ -18,6 +18,7 @@ test('all referenced message keys exist; catalog and key enum are frozen and com
     for (const [key, text] of Object.entries(VI)) {
         const parameters=Object.fromEntries([...text.matchAll(/\{(\w+)\}/g)].map(match=>[match[1],'kiểm tra']));
         assert.ok(msg(key,parameters));
+        // Display messages remain Vietnamese, including the public homepage.
         assert.doesNotMatch(text, /\b(Trainer|Rider|Manager|HeadTrainer|Groom|Planned|Active|Loading|optional|Please|Unknown)\b/);
     }
 });
