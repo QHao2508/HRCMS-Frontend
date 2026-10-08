@@ -11,7 +11,7 @@ export default function ReviewConfirmation({ approve, busy, requestError, return
         const previous = returnFocus || document.activeElement;
         const priorOverflow = document.body.style.overflow;
         document.body.style.overflow = "hidden";
-        dialog.current?.querySelector("textarea, button")?.focus();
+        (element?.querySelector("textarea:not(:disabled), button:not(:disabled)") || element)?.focus();
         return () => {
             document.body.style.overflow = priorOverflow;
             requestAnimationFrame(() => {
@@ -21,15 +21,18 @@ export default function ReviewConfirmation({ approve, busy, requestError, return
     }, [returnFocus]);
     useEffect(() => {
         if (busy) dialog.current?.focus();
-        else if (document.activeElement === dialog.current) dialog.current?.querySelector("textarea, button")?.focus();
+        else if (document.activeElement === dialog.current) dialog.current?.querySelector("textarea:not(:disabled), button:not(:disabled)")?.focus();
     }, [busy]);
     function keyDown(event) {
         if (event.key === "Escape" && !busy) { event.preventDefault(); onBack(); return; }
         if (event.key !== "Tab") return;
-        const controls = [...dialog.current.querySelectorAll("button:not([disabled]), textarea:not([disabled])")];
+        if (busy) { event.preventDefault(); dialog.current.focus(); return; }
+        const controls = [...dialog.current.querySelectorAll("button:not(:disabled), textarea:not(:disabled)")];
         if (!controls.length) { event.preventDefault(); dialog.current.focus(); return; }
-        if (!dialog.current.contains(document.activeElement)) { event.preventDefault(); controls[0].focus(); return; }
         const first = controls[0], last = controls[controls.length - 1];
+        if (document.activeElement === dialog.current || !dialog.current.contains(document.activeElement)) {
+            event.preventDefault(); (event.shiftKey ? last : first).focus(); return;
+        }
         if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
         else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
     }

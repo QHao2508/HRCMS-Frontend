@@ -172,8 +172,12 @@ record details. Server diagnostics are suppressed. Conflicts, access loss or
 uncertain mutation results require a reload before another mutation; reload warns
 that unsaved edits will be discarded. There is no automatic business POST retry
 beyond the shared client's existing single authentication retry. A network failure
-during initial creation can leave an uncertain result: check the list before
-creating another draft. The backend provides no create/upload idempotency key.
+during initial creation can leave an uncertain result. The create form now locks
+further saves after network/timeouts or ambiguous server failures and directs the
+Owner to check `/registrations` before creating another draft. Definitive validation
+rejections remain correctable. This frontend protection cannot replace backend
+idempotency across reloads, tabs or new forms; the backend provides no create/upload
+idempotency key.
 
 40 new mocked/rendered tests cover Owner-only routes, list/partial create, complete
 PUT/clearing, state restrictions, directory pagination, attachments, multipart,
