@@ -4,6 +4,7 @@ import { Menu, X, FileText, Activity, HeartPulse } from 'lucide-react';
 import { useAuth } from '../context/useAuth.js';
 import { MSG, msg } from '../messages/index.js';
 import BrandLogo from '../components/BrandLogo.jsx';
+import BrandMark from '../components/BrandMark.jsx';
 import '../style/home.css';
 
 const sections = [
@@ -38,7 +39,7 @@ export default function Home() {
         <a className="visually-hidden-focusable hp-skip" href="#hp-main">{msg(MSG.HOME_REFERENCE_SKIP)}</a>
         <header className="hp-header">
             <div className="hp-container hp-header-inner">
-                <Link className="hp-brand" to="/" aria-label={msg(MSG.HRCMS_TRANG_CHU)}><BrandLogo className="hp-brand-logo" priority /></Link>
+                <Link className="hp-brand" to="/" aria-label={msg(MSG.HRCMS_TRANG_CHU)}><BrandMark /><span>{msg(MSG.HRCMS)}</span></Link>
                 <button className="hp-menu-toggle" type="button" aria-expanded={menuOpen} aria-controls="hp-navigation" aria-label={msg(menuOpen ? MSG.HOME_REFERENCE_CLOSE_MENU : MSG.HOME_REFERENCE_OPEN_MENU)} onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X size={24} /> : <Menu size={24} />}</button>
                 <nav className={`hp-navigation${menuOpen ? ' is-open' : ''}`} id="hp-navigation" aria-label={msg(MSG.HOME_REFERENCE_NAV)}>
                     <a className="is-active" href="#hp-top" aria-current="page" onClick={closeMenu}>{msg(MSG.HOME_REFERENCE_HOME)}</a>
