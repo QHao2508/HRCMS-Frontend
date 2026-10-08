@@ -6,7 +6,7 @@ import RegistrationError from "./RegistrationError.jsx";
 const empty = { type: "HorsePhoto", file: null, certificateNumber: "", issueDate: "", expiryDate: "" };
 const ownerTypeLabels = { HorsePhoto: "Ảnh ngựa", Certificate: "Giấy chứng nhận", MedicalDocument: "Tài liệu sức khỏe" };
 
-export default function RegistrationAttachments({ registrationId, attachments, editable, busy, onUpload, owner = false }) {
+export default function RegistrationAttachments({ registrationId, attachments, editable, busy, onUpload, owner = false, manager = false }) {
     const [values, setValues] = useState(empty);
     const [error, setError] = useState(null);
     const [downloading, setDownloading] = useState(null);
@@ -46,9 +46,26 @@ export default function RegistrationAttachments({ registrationId, attachments, e
         } catch (failure) { setError(failure); }
         finally { downloadLock.current = false; setDownloading(null); }
     }
-    const typeLabel = (type) => owner
+    const typeLabel = (type) => owner || manager
         ? ownerTypeLabels[type] || "Tài liệu"
         : Object.hasOwn(ATTACHMENT_LABELS, type) ? ATTACHMENT_LABELS[type] : "Attachment";
+    if (manager) return <div className="hrcms-manager-attachments">
+        <div className="hrcms-registration-table-scroll hrcms-manager-attachment-scroll">
+            <table className="hrcms-registration-table hrcms-manager-attachment-table">
+                <thead><tr><th scope="col">Tài liệu</th><th scope="col">Loại / kích thước</th><th scope="col">Thao tác</th></tr></thead>
+                <tbody>{attachments.length ? attachments.map((item) => <tr key={item.id}>
+                    <td><strong>{item.fileName}</strong>
+                        {item.certificateNumber && <small>Số chứng nhận: {item.certificateNumber}</small>}
+                        {(item.issueDate || item.expiryDate) && <small>Ngày cấp / hết hạn: {item.issueDate || "—"} / {item.expiryDate || "—"}</small>}
+                    </td>
+                    <td>{typeLabel(item.type)} · {Math.ceil(item.length / 1024)} KiB</td>
+                    <td><button type="button" className="hrcms-registration-table-action" disabled={!!downloading}
+                        onClick={() => download(item)}>{downloading === item.id ? "Đang tải..." : "Tải xuống"}</button></td>
+                </tr>) : <tr><td colSpan={3}>Chưa có tài liệu đính kèm.</td></tr>}</tbody>
+            </table>
+        </div>
+        <RegistrationError error={error} />
+    </div>;
     return <section aria-labelledby="attachments-title"
         className={owner ? "hrcms-registration-card hrcms-registration-attachments" : "border rounded p-3 my-3"}>
         <h2 id="attachments-title" className={owner ? undefined : "h5"}>{owner ? "Tài liệu đính kèm" : "Attachments"}</h2>

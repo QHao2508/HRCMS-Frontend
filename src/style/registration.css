@@ -650,3 +650,325 @@
         grid-column: auto;
     }
 }
+
+/* Club Manager queue and review use the shared Flow 1 cards, fields and buttons. */
+.hrcms-manager-queue,
+.hrcms-manager-review-content,
+.hrcms-manager-review-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    min-width: 0;
+}
+
+.hrcms-manager-queue .hrcms-registration-heading,
+.hrcms-manager-review-content .hrcms-registration-heading {
+    margin-bottom: 0;
+}
+
+.hrcms-manager-filter .hrcms-registration-field {
+    width: min(100%, 341px);
+}
+
+.hrcms-manager-queue-card .hrcms-registration-table-scroll {
+    margin-bottom: 0;
+}
+
+.hrcms-manager-queue-table {
+    min-width: 660px;
+    table-layout: fixed;
+}
+
+.hrcms-manager-queue-table th:nth-child(1),
+.hrcms-manager-queue-table td:nth-child(1),
+.hrcms-manager-queue-table th:nth-child(2),
+.hrcms-manager-queue-table td:nth-child(2) {
+    width: 25%;
+}
+
+.hrcms-manager-queue-table td {
+    height: 45px;
+}
+
+.hrcms-manager-queue-table .hrcms-registration-status-primary {
+    border-color: var(--hrcms-border);
+    background: #fff;
+    color: var(--hrcms-text-primary);
+}
+
+.hrcms-manager-queue-table th,
+.hrcms-manager-attachment-table th {
+    color: var(--hrcms-text-primary);
+}
+
+.hrcms-manager-queue-table strong,
+.hrcms-manager-attachment-table strong {
+    font-weight: 400;
+}
+
+.hrcms-manager-queue-table small {
+    overflow-wrap: anywhere;
+}
+
+.hrcms-manager-queue-link {
+    display: inline-block;
+    margin-left: 8px;
+    color: var(--hrcms-primary);
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.hrcms-manager-queue-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.hrcms-manager-pagination {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    color: var(--hrcms-text-secondary);
+    font-size: 12px;
+}
+
+.hrcms-manager-pagination .hrcms-registration-button {
+    min-height: 34px;
+    padding: 6px 10px;
+    font-size: 12px;
+}
+
+.hrcms-manager-empty {
+    padding: 24px 0;
+    color: var(--hrcms-text-secondary);
+}
+
+.hrcms-manager-queue-info {
+    margin-top: 0;
+}
+
+.hrcms-manager-resource-error {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.hrcms-manager-resource-error .alert {
+    flex-basis: 100%;
+}
+
+.hrcms-manager-review-status {
+    display: flex;
+    align-items: center;
+    min-height: 22px;
+}
+
+.hrcms-manager-review-status .hrcms-registration-status-primary {
+    border-color: var(--hrcms-border);
+    background: #fff;
+    color: var(--hrcms-text-primary);
+}
+
+.hrcms-manager-card-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.hrcms-manager-card-heading h2 {
+    width: auto;
+}
+
+.hrcms-manager-edit-trigger {
+    padding: 2px 0;
+    border: 0;
+    background: transparent;
+    color: var(--hrcms-primary);
+    font: 700 12px/18px var(--hrcms-font-body);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
+}
+
+.hrcms-manager-facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 24px;
+    clear: both;
+    margin: 0;
+}
+
+.hrcms-manager-facts > div {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.hrcms-manager-facts dt {
+    margin-bottom: 8px;
+    color: var(--hrcms-text-secondary);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 18px;
+}
+
+.hrcms-manager-facts dd {
+    margin: 0;
+    color: var(--hrcms-text-primary);
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 21px;
+    white-space: pre-wrap;
+}
+
+.hrcms-manager-attachments {
+    min-width: 0;
+}
+
+.hrcms-manager-attachment-table {
+    min-width: 620px;
+    table-layout: fixed;
+}
+
+.hrcms-manager-attachment-table td {
+    height: 45px;
+}
+
+.hrcms-manager-attachment-table .hrcms-registration-table-action {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.hrcms-manager-section-note,
+.hrcms-manager-health-text,
+.hrcms-manager-health-notes,
+.hrcms-manager-readonly {
+    color: var(--hrcms-text-primary);
+    font-size: 14px;
+    line-height: 22px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.hrcms-manager-section-note {
+    margin-top: 16px !important;
+    font-weight: 700;
+}
+
+.hrcms-manager-health-text,
+.hrcms-manager-health-notes {
+    margin-bottom: 16px !important;
+    font-weight: 700;
+}
+
+.hrcms-manager-review-actions {
+    margin-top: 0;
+}
+
+.hrcms-manager-edit-form fieldset {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.hrcms-manager-edit-form legend {
+    float: none;
+}
+
+.hrcms-manager-outcome {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.hrcms-manager-outcome p {
+    color: var(--hrcms-text-secondary);
+}
+
+.hrcms-manager-dialog-backdrop {
+    position: fixed;
+    z-index: 1000;
+    inset: 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    overflow-y: auto;
+    padding: min(200px, 22vh) 16px 32px;
+    background: rgba(0, 0, 0, .28);
+}
+
+.hrcms-manager-dialog {
+    width: min(100%, 1168px);
+    min-width: 0;
+    padding: 24px;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 18px 60px rgba(45, 29, 22, .22);
+}
+
+.hrcms-manager-dialog fieldset {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.hrcms-manager-dialog h2 {
+    margin-bottom: 16px;
+}
+
+.hrcms-manager-dialog .hrcms-manager-facts,
+.hrcms-manager-dialog .hrcms-registration-field {
+    margin-top: 16px;
+}
+
+.hrcms-manager-dialog textarea {
+    min-height: 96px;
+    resize: vertical;
+}
+
+.hrcms-manager-dialog-emphasis {
+    margin-top: 16px !important;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 24px;
+}
+
+@media (max-width: 760px) {
+    .hrcms-manager-facts {
+        grid-template-columns: 1fr;
+    }
+
+    .hrcms-manager-queue-footer {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .hrcms-manager-dialog {
+        padding: 12px;
+    }
+}
+
+@media (max-width: 420px) {
+    .hrcms-manager-pagination {
+        justify-content: center;
+    }
+
+    .hrcms-manager-dialog-backdrop {
+        padding: 16px;
+    }
+}
+
+.hrcms-manager-review-sections .hrcms-registration-card > .hrcms-registration-card-description {
+    margin-top: 16px !important;
+    margin-bottom: 0 !important;
+}

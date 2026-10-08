@@ -79,8 +79,8 @@ for (const role of [...ALL_ROLES, "UnknownRole"]) {
         for (const path of ["/management/registrations", "/management/registrations/record-id"]) {
             globalThis.__review.redirects = [];
             const html = render(h(AppRoutes), role, path);
-            if (role === ROLES.ClubManager) { assert.deepEqual(globalThis.__review.redirects, []); assert.match(html, /Loading review queue|Loading registration review/); }
-            else { assert.equal(globalThis.__review.redirects[0].to, "/permission-denied"); assert.doesNotMatch(html, /Loading review queue|Loading registration review/); }
+            if (role === ROLES.ClubManager) { assert.deepEqual(globalThis.__review.redirects, []); assert.match(html, /Đang tải danh sách chờ duyệt|Đang tải hồ sơ kiểm tra/); }
+            else { assert.equal(globalThis.__review.redirects[0].to, "/permission-denied"); assert.doesNotMatch(html, /Đang tải danh sách chờ duyệt|Đang tải hồ sơ kiểm tra/); }
         }
     });
 }
@@ -107,16 +107,18 @@ test("Manager queue reuses paginated GET without an Owner filter", async () => {
     const data = await shared.listRegistrations({ status: "PendingReview", page: 2 });
     const pages = [];
     const html = render(h(Results, { resource: { data }, onPage: (page) => pages.push(page) }));
-    assert.match(html, /Page 2 of 3/); assert.match(html, /owner-id/); assert.match(html, /Comet/);
-    globalThis.__review.buttons.find((button) => button.children === "Next").onClick();
+    assert.match(html, /Trang 2 \/ 3/); assert.match(html, /owner-id/); assert.match(html, /Comet/);
+    assert.match(html, /<th scope="col">Yêu cầu \/ ngựa<\/th>/);
+    assert.match(html, /href="\/management\/registrations\/record-id"/);
+    globalThis.__review.buttons.find((button) => button.children === "Sau").onClick();
     assert.deepEqual(pages, [3]);
 });
 test("queue loading hides rows and mutations", () => {
-    assert.match(render(h(Results, { resource: { loading: true } })), /Loading review queue/);
+    assert.match(render(h(Results, { resource: { loading: true } })), /Đang tải danh sách chờ duyệt/);
     assert.deepEqual(labels(), []);
 });
 test("queue empty state is explicit", () => {
-    assert.match(render(h(Results, { resource: { data: { items: [], page: 1, pageSize: 20, total: 0 } } })), /No registrations match/);
+    assert.match(render(h(Results, { resource: { data: { items: [], page: 1, pageSize: 20, total: 0 } } })), /Không có yêu cầu đăng ký phù hợp/);
     assert.ok(globalThis.__review.buttons.every((button) => button.disabled));
 });
 test("queue error is safe and offers retry", () => {
@@ -128,15 +130,15 @@ test("queue error is safe and offers retry", () => {
 test("Manager detail renders intake, Owner id and preferences without inventing personal or audit data", () => {
     const html = detail({ ...record, reviewReason: "Clarify certificate" });
     for (const text of ["Comet", "Sire", "Dam", "Gelding", "Thoroughbred", "160", "470", "Owner declaration", "Owner notes", "owner-id", "preferred-head-id", "Clarify certificate"]) assert.ok(html.includes(text), text);
-    assert.match(html, /not official assignments/);
+    assert.match(html, /chưa phải phân công chính thức/);
     assert.doesNotMatch(html, /Audit history|Owner email|preferredTrainerId|name="healthStatus"/);
     assert.deepEqual(globalThis.__review.inputs, []);
 });
 test("Manager attachment inspection shows all intake types and metadata with no upload/delete/replace", () => {
     const html = detail();
-    for (const text of ["Horse photo", "Certificate", "Medical document", "CERT-7", "2020-01-01", "2030-01-01"]) assert.ok(html.includes(text));
-    assert.equal(labels().filter((label) => label === "Download").length, 3);
-    assert.ok(labels().every((label) => !/Upload|Delete|Replace/.test(label)));
+    for (const text of ["Ảnh ngựa", "Giấy chứng nhận", "Tài liệu sức khỏe", "CERT-7", "2020-01-01", "2030-01-01"]) assert.ok(html.includes(text));
+    assert.equal(labels().filter((label) => label === "Tải xuống").length, 3);
+    assert.ok(labels().every((label) => !/Tải tệp lên|Xóa|Thay thế/.test(label)));
     assert.doesNotMatch(html, /type="file"/);
 });
 test("Manager download uses shared Bearer blob request and scoped path", async () => {
@@ -153,8 +155,8 @@ for (const status of ["PendingReview", "Draft", "RevisionRequired", "Approved", 
         const html = detail({ ...record, status });
         const enabled = status === "PendingReview";
         assert.equal(service.canReview(status), enabled);
-        for (const label of ["Edit review details", "Request revision", "Approve registration"]) assert.equal(labels().includes(label), enabled);
-        if (!enabled) assert.match(html, /read-only for Manager review/);
+        for (const label of ["Chỉnh sửa thông tin", "Yêu cầu bổ sung", "Phê duyệt"]) assert.equal(labels().includes(label), enabled);
+        if (!enabled) assert.match(html, /chỉ đọc trong luồng kiểm tra/);
         if (status === "Unknown") assert.match(html, /Unknown status/);
     });
 }
@@ -213,7 +215,7 @@ test("revision sends exact false/reason and renders returned RevisionRequired wi
     const result = await service.reviewRegistration(record.id, { approve: false, reason: " Clearer certificate needed " });
     assert.equal(result.horseId, null);
     const html = detail(result.registration);
-    assert.match(html, /Revision required/); assert.match(html, /Clearer certificate needed/); assert.equal(labels().includes("Approve registration"), false);
+    assert.match(html, /Revision required/); assert.match(html, /Clearer certificate needed/); assert.equal(labels().includes("Phê duyệt"), false);
 });
 test("approval sends exact true/null and keeps authoritative registration and horseId", async () => {
     api.defaults.adapter = async (config) => {
@@ -222,22 +224,47 @@ test("approval sends exact true/null and keeps authoritative registration and ho
     };
     const result = await service.reviewRegistration(record.id, { approve: true, reason: "ignored", preferredTrainerId: "not sent" });
     assert.equal(result.registration.status, "Approved"); assert.equal(result.horseId, "official-horse-id");
-    detail(result.registration); assert.equal(labels().includes("Approve registration"), false);
+    detail(result.registration); assert.equal(labels().includes("Phê duyệt"), false);
 });
 test("approval confirmation describes Horse creation and no assignments, with no mandatory comment", async () => {
     const decisions = [];
     const html = render(h(Confirmation, { approve: true, onConfirm: async (decision) => decisions.push(decision), onBack: () => {} }));
-    assert.match(html, /create an official Horse/); assert.match(html, /not automatically assigned/); assert.doesNotMatch(html, /textarea/);
+    assert.match(html, /tạo hoặc kích hoạt Horse Profile chính thức/); assert.match(html, /không được tự động phân công/); assert.doesNotMatch(html, /textarea/);
+    assert.match(html, /role="dialog" aria-modal="true"/);
     await globalThis.__review.forms[0].onSubmit({ preventDefault() {} }); assert.deepEqual(decisions, [{ approve: true, reason: null }]);
+});
+test("revision dialog labels its reason and requires confirmation before sending", () => {
+    let closes = 0;
+    const html = render(h(Confirmation, { approve: false, onConfirm: async () => assert.fail("blank revision submitted"), onBack: () => closes++ }));
+    assert.match(html, /aria-labelledby="review-confirmation-title" aria-describedby="review-confirmation-description"/);
+    assert.match(html, /id="review-confirmation-description"/);
+    assert.match(html, /<label for="review-reason">Lý do yêu cầu bổ sung/);
+    assert.match(html, /<textarea id="review-reason"/);
+    let prevented = false;
+    globalThis.__review.forms[0].onKeyDown({ key: "Escape", preventDefault() { prevented = true; } });
+    assert.equal(prevented, true); assert.equal(closes, 1);
+    globalThis.__review.buttons.find((button) => button.children === "Hủy").onClick();
+    assert.equal(closes, 2);
+});
+test("approval dialog exposes a failed review request without losing confirmation", () => {
+    const html = render(h(Confirmation, { approve: true, requestError: { status: 400, message: "Review could not be completed." },
+        onConfirm: async () => {}, onBack: () => {} }));
+    assert.match(html, /Phê duyệt hồ sơ đăng ký/);
+    assert.match(html, /role="alert">Review could not be completed/);
+    assert.match(html, /Xác nhận phê duyệt/);
 });
 test("busy confirmation cannot invoke a second review decision", async () => {
     let calls = 0;
     render(h(Confirmation, { approve: true, busy: true, onConfirm: async () => calls++ }));
     await globalThis.__review.forms[0].onSubmit({ preventDefault() {} }); assert.equal(calls, 0);
+    let closes = 0;
+    render(h(Confirmation, { approve: true, busy: true, onConfirm: async () => calls++, onBack: () => closes++ }));
+    globalThis.__review.forms.at(-1).onKeyDown({ key: "Escape", preventDefault() { assert.fail("busy dialog dismissed"); } });
+    assert.equal(closes, 0);
 });
 test("approval outcome links the returned horseId to the implemented profile without inventing an assignment", () => {
     const html = render(h(Outcome, { horseId: "official-horse-id" }));
-    assert.match(html, /official-horse-id/); assert.match(html, /no official assignments were made/);
+    assert.match(html, /official-horse-id/); assert.match(html, /chưa được phân công chính thức/);
     assert.match(html, /href="\/horses\/official-horse-id"/);
     assert.equal(render(h(Outcome, { horseId: null })), "");
 });
