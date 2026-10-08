@@ -28,7 +28,7 @@ export function PlanList() {
      * Đọc dữ liệu cần cho component qua service/API; hook resource quản lý loading, response muộn và lỗi.
      */
     const load = useCallback(() => listPlans({page,pageSize:20,...(horseId && {horseId})}),[page,horseId]);
-    const resource = useRegistrationResource(load);
+    const resource = useRegistrationResource(load, { realtime: true });
     return <section className="training-page"><PageHeading title={msg(MSG.KE_HOACH_HUAN_LUYEN)} description={msg(MSG.KE_HOACH_CA_NHAN_HOA_VA_TIEN_DO_CAC_BUOI_TAP)} action={user.role === ROLES.Trainer && <Link className="btn btn-primary" to={`/training/plans/new${horseId ? `?horseId=${horseId}` : ""}`}>{msg(MSG.TAO_KE_HOACH)}</Link>} /><section className="surface-card"><ResourceState resource={resource} />{resource.data && <><div className="table-responsive"><table className="table"><thead><tr><th>{msg(MSG.MUC_TIEU)}</th><th>{msg(MSG.GIAI_DOAN)}</th><th>{msg(MSG.TU_NGAY)}</th><th>{msg(MSG.DEN_NGAY)}</th><th>{msg(MSG.TRANG_THAI)}</th><th /></tr></thead><tbody>{resource.data.items.map(plan => <tr key={plan.id}><td>{plan.goal}</td><td>{plan.phase}</td><td>{plan.startDate}</td><td>{plan.endDate}</td><td><StateBadge value={plan.status} /></td><td><Link className="btn btn-outline-primary" to={`/training/plans/${plan.id}`}>{msg(MSG.XEM_KE_HOACH)}</Link></td></tr>)}</tbody></table>{!resource.data.items.length && <p className="empty-state">{msg(MSG.CHUA_CO_KE_HOACH_TRONG_PHAM_VI_CUA_BAN)}</p>}</div><Pagination data={resource.data} onChange={setPage} /></>}</section></section>;
 }
 /**

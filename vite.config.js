@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 5173,
       strictPort: true,
-      proxy: Object.fromEntries(['/api', '/health', '/openapi'].map(path => [path, { target, changeOrigin: true }])),
+      proxy: { ...Object.fromEntries(['/api', '/health', '/openapi'].map(path => [path, { target, changeOrigin: true }])), '/hubs': { target, changeOrigin: true, ws: true } },
     },
   };
 });

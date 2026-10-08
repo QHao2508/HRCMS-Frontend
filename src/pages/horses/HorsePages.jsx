@@ -19,7 +19,7 @@ export function HorseList() {
      * Đọc dữ liệu cần cho component qua service/API; hook resource quản lý loading, response muộn và lỗi.
      */
     const load = useCallback(() => listHorses(filter),[filter]);
-    const resource = useRegistrationResource(load);
+    const resource = useRegistrationResource(load, { realtime: true });
     return <section><PageHeading title={msg(MSG.NGUA_CUA_TOI)} description={msg(MSG.HO_SO_NGUA_TRONG_PHAM_VI_SO_HUU_HOAC_PHAN_CONG_CUA_BAN)} /><div className="surface-card"><label className="form-label" htmlFor="horse-search">{msg(MSG.TIM_THEO_TEN_HOAC_MA_DANG_KY)}</label><input id="horse-search" className="form-control mb-3" value={filter.search} onChange={e => setFilter({...filter,search:e.target.value,page:1})} /><ResourceState resource={resource} />{resource.data && <><div className="table-responsive"><table className="table"><thead><tr><th>{msg(MSG.TEN_NGUA)}</th><th>{msg(MSG.MA_DANG_KY)}</th><th>{msg(MSG.GIONG)}</th><th>{msg(MSG.SUC_KHOE)}</th><th /></tr></thead><tbody>{resource.data.items.map(horse => <tr key={horse.id}><td>{horse.name}</td><td>{horse.registrationNumber || "—"}</td><td>{horse.breed}</td><td><StateBadge value={horse.healthStatus} /></td><td><Link className="btn btn-outline-primary" to={`/horses/${horse.id}`}>{msg(MSG.XEM_HO_SO)}</Link></td></tr>)}</tbody></table>{!resource.data.items.length && <p className="empty-state">{msg(MSG.CHUA_CO_NGUA_TRONG_PHAM_VI_CUA_BAN)}</p>}</div><Pagination data={resource.data} onChange={page => setFilter({...filter,page})} /></>}</div></section>;
 }
 /**

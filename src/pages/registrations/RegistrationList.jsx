@@ -33,7 +33,7 @@ export default function RegistrationList() {
      * Đọc dữ liệu cần cho component qua service/API; hook resource quản lý loading, response muộn và lỗi.
      */
     const load = useCallback(() => listRegistrations(filter), [filter]);
-    const resource = useRegistrationResource(load);
+    const resource = useRegistrationResource(load, { realtime: true });
     return <section className="surface-card">
         <div className="d-flex flex-wrap justify-content-between gap-2 mb-3"><h1>{msg(MSG.YEU_CAU_DANG_KY_NGUA)}</h1><Link to="/registrations/new" className="btn btn-primary align-self-start">{msg(MSG.DANG_KY_NGUA)}</Link></div>
         <label htmlFor="registration-status-filter" className="form-label">{msg(MSG.TRANG_THAI)}</label>

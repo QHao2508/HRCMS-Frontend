@@ -1,5 +1,6 @@
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
+import { RealtimeProvider } from "./context/RealtimeProvider.jsx";
 import AppRoutes from "./routes/AppRoutes";
 
 /**
@@ -9,7 +10,7 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <AppRoutes />
+        <RealtimeProvider><AppRoutes /></RealtimeProvider>
       </AuthProvider>
     </BrowserRouter>
   );
