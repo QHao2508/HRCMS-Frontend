@@ -77,7 +77,7 @@ function render(element, role = ROLES.HorseOwner, path = "/horses", extra = {}) 
 for (const role of ALL_ROLES) {
     test(`Horse routes and navigation support backend-scoped ${role} access`, () => {
         for (const path of ["/horses", "/horses/horse-id"]) {
-            assert.match(render(h(AppRoutes), role, path), /Loading Horses|Loading Horse profile/);
+            assert.match(render(h(AppRoutes), role, path), /Đang tải hồ sơ ngựa/);
             assert.deepEqual(globalThis.__horse.redirects, []);
         }
         assert.ok(getNavigationForRole(role).some((item) => item.to === "/horses"));
@@ -114,8 +114,14 @@ test("Horse list sends only supported search/health/pagination parameters and co
     assert.deepEqual(result, page);
     const pages = [];
     const html = render(h(ListResults, { resource: { data: result }, onPage: (value) => pages.push(value) }));
-    assert.match(html, /Page 2 of 3/); assert.match(html, /REG-17/); assert.match(html, /href="\/horses\/horse-id"/);
-    globalThis.__horse.buttons.find((button) => button.children === "Next").onClick(); assert.deepEqual(pages, [3]);
+    assert.match(html, /Trang 2 \/ 3/); assert.match(html, /REG-17/); assert.match(html, /href="\/horses\/horse-id"/);
+    globalThis.__horse.buttons.find((button) => button.children === "Sau").onClick(); assert.deepEqual(pages, [3]);
+});
+test("Horse list uses a neutral placeholder without inventing photo URLs", () => {
+    const html = render(h(ListResults, { resource: { data: { items: [horse], page: 1, pageSize: 20, total: 1 } }, onPage: () => {} }));
+    assert.match(html, /class="hrcms-horse-list-placeholder" aria-hidden="true"/);
+    assert.deepEqual(globalThis.__horse.images, []);
+    assert.doesNotMatch(html, /<img[^>]+src=|\/api\/horses\/horse-id\/photo/);
 });
 test("empty Horse filters omit query keys and UI health choices exactly match backend enum", async () => {
     api.defaults.adapter = async (config) => { assert.deepEqual(config.params, { page: 1, pageSize: 20 }); return reply(config, { items: [], page: 1, pageSize: 20, total: 0 }); };
@@ -127,11 +133,11 @@ test("empty Horse filters omit query keys and UI health choices exactly match ba
 });
 test("Horse list empty state stays within returned server scope", () => {
     const html = render(h(ListResults, { resource: { data: { items: [], page: 1, pageSize: 20, total: 0 } } }));
-    assert.match(html, /No Horses match these filters within your access scope/);
+    assert.match(html, /Không có hồ sơ ngựa phù hợp với bộ lọc trong phạm vi truy cập/);
     assert.ok(globalThis.__horse.buttons.every((button) => button.disabled));
 });
 test("Horse list loading and safe error with retry", () => {
-    assert.match(render(h(ListResults, { resource: { loading: true } })), /Loading Horses/);
+    assert.match(render(h(ListResults, { resource: { loading: true } })), /Đang tải hồ sơ ngựa/);
     let retries = 0;
     const html = render(h(ListResults, { resource: { error: { status: 500, message: "internal diagnostics" }, reload: () => retries++ } }));
     assert.doesNotMatch(html, /internal diagnostics/);
@@ -147,32 +153,32 @@ test("Horse detail consumes the composite contract and renders only verified dat
 });
 test("missing optional Horse detail data is safe without fabricated measurement, staff or stall names", () => {
     const html = render(h(Profile, { data: { horse: { ...horse, boardingEnd: null }, latestMeasurement: null, currentStall: null, preferences: null, assignments: null } }));
-    for (const text of ["Not provided", "No current stall occupancy returned", "No physical measurement returned", "No preference returned", "No current official assignments returned", "No assignment history returned"]) assert.ok(html.includes(text));
-    assert.doesNotMatch(html, /Current stall ID/);
-    assert.match(render(h(Profile, { data: null })), /No Horse details were returned/);
+    for (const text of ["Chưa cung cấp", "Chưa có vị trí chuồng", "Chưa có số đo", "Chưa có đề xuất", "Chưa có nhân sự chính thức được trả về", "Chưa có lịch sử phân công được trả về"]) assert.ok(html.includes(text));
+    assert.doesNotMatch(html, /stall-id|occupancy-id/);
+    assert.match(render(h(Profile, { data: null })), /Không có chi tiết hồ sơ ngựa được trả về/);
 });
 test("latest physical measurement uses date/heightCm/weightKg from detail without a second endpoint", () => {
     const html = render(h(Profile, { data: detail }));
-    assert.match(html, /Measurement date/); assert.match(html, /2026-02-01/);
-    assert.match(html, /Height \(cm\)/); assert.match(html, /167\.5/); assert.match(html, /Weight \(kg\)/); assert.match(html, /480\.25/);
+    assert.match(html, /Ngày đo gần nhất/); assert.match(html, /2026-02-01/);
+    assert.match(html, /Chiều cao/); assert.match(html, /167\.5/); assert.match(html, /Cân nặng/); assert.match(html, /480\.25/);
     assert.deepEqual(globalThis.__horse.buttons, []);
 });
-test("preferences never appear as official staff assignments", () => {
+test("preferences stay in their own column and never become official staff", () => {
     const html = render(h(Profile, { data: detail }));
-    const preferenceSection = html.split('id="horse-preferences"')[1].split("</section>")[0];
-    const officialSections = html.split('id="horse-current-assignments"')[1];
-    assert.match(preferenceSection, /preferred-head/); assert.match(preferenceSection, /not official assignments/);
-    assert.doesNotMatch(officialSections, /preferred-head|preferred-groom|preferred-vet/);
-    assert.match(officialSections, /official-head/);
+    const staffSection = html.split('id="horse-current-assignments"')[1].split("</section>")[0];
+    assert.match(staffSection, /không phải phân công chính thức/);
+    assert.match(staffSection, /<td>Head Trainer<\/td><td>preferred-head<\/td><td>official-head<\/td>/);
+    assert.match(staffSection, /<td>Groom \/ Stable Hand<\/td><td>preferred-groom<\/td><td>Chưa xác nhận<\/td>/);
+    assert.match(staffSection, /<td>Veterinarian<\/td><td>preferred-vet<\/td><td>Chưa xác nhận<\/td>/);
 });
 test("preferences alone produce no current official assignments", () => {
     const html = render(h(Profile, { data: { ...detail, assignments: [] } }));
-    assert.match(html, /preferred-head/); assert.match(html, /No current official assignments returned/);
+    assert.match(html, /preferred-head/); assert.match(html, /Chưa có nhân sự chính thức được trả về/);
 });
 test("current assignments depend on exact active=true; history preserves inactive records and exact role names", () => {
     const html = render(h(Assignments, { assignments: [...detail.assignments, { id: "unknown-id", staffId: "uncertain-staff", role: "UnknownRole", active: "true" }] }));
     const current = html.split('id="horse-current-assignments"')[1].split("</section>")[0];
-    assert.match(current, /official-head/); assert.match(current, /HeadTrainer/);
+    assert.match(current, /official-head/); assert.match(current, /Head Trainer/);
     assert.doesNotMatch(current, /previous-groom|uncertain-staff/);
     const history = html.split('id="horse-assignment-history"')[1];
     assert.match(history, /previous-groom/); assert.match(history, /2025-12-31/); assert.match(history, /Inactive/); assert.match(history, /Unrecognized role/);
@@ -185,13 +191,13 @@ test("assignment sections expose no mutation, measurement or archive controls", 
 });
 test("boarding and stall occupancy use returned dates and ids without inventing stable/stall names", () => {
     const html = render(h(Profile, { data: detail }));
-    for (const value of ["2026-12-31", "Current stall ID", "stall-id", "occupancy-id", "2026-01-02T10:00:00Z"]) assert.ok(html.includes(value));
+    for (const value of ["2026-12-31", "Vị trí chuồng", "stall-id", "occupancy-id", "2026-01-02T10:00:00Z"]) assert.ok(html.includes(value));
     assert.doesNotMatch(html, /Stable name|Stall name/);
 });
 test("unknown health and gender enums use neutral fallbacks", () => {
     for (const value of ["Healthy", "__proto__", "constructor", 0, null]) assert.equal(healthDisplay(value).label, "Unknown health status");
     const html = render(h(Profile, { data: { ...detail, horse: { ...horse, healthStatus: "SecretUnknownStatus", gender: "InventedGender" } } }));
-    assert.match(html, /Unknown health status/); assert.match(html, /Unknown gender/); assert.doesNotMatch(html, /SecretUnknownStatus|InventedGender/);
+    assert.match(html, /Unknown health status/); assert.match(html, /Không rõ giới tính/); assert.doesNotMatch(html, /SecretUnknownStatus|InventedGender/);
 });
 test("protected Horse photo uses Bearer and blob through the shared client", async () => {
     const blob = new Blob([new Uint8Array([255, 216, 255])], { type: "image/jpeg" });
@@ -224,16 +230,16 @@ test("photo response after unmount or route change creates no URL and publishes 
 test("photo view uses object URL, descriptive alt text and a decode-error handler", () => {
     let errors = 0;
     const html = render(h(PhotoView, { resource: { url: "blob:test-photo" }, name: horse.name, onImageError: () => errors++ }));
-    assert.match(html, /src="blob:test-photo"/); assert.match(html, /Photo of Comet/);
+    assert.match(html, /src="blob:test-photo"/); assert.match(html, /Ảnh của Comet/);
     assert.doesNotMatch(html, /src="\/api|horse-access/);
     globalThis.__horse.images[0].onError(); assert.equal(errors, 1);
 });
 test("photo loading, absent photo and authorization failure have safe distinct states", () => {
-    assert.match(render(h(PhotoView, { resource: null })), /Loading Horse photo/);
-    assert.match(render(h(PhotoView, { resource: { error: { status: 404 } } })), /No Horse photo is available/);
-    assert.match(render(h(PhotoView, { resource: { error: { status: 403, message: "Private diagnostics" } } })), /do not have access/);
+    assert.match(render(h(PhotoView, { resource: null })), /Đang tải ảnh ngựa/);
+    assert.match(render(h(PhotoView, { resource: { error: { status: 404 } } })), /Chưa có ảnh ngựa/);
+    assert.match(render(h(PhotoView, { resource: { error: { status: 403, message: "Private diagnostics" } } })), /không có quyền xem ảnh ngựa/);
     const html = render(h(PhotoView, { resource: { error: { status: 500, message: "Private diagnostics" } } }));
-    assert.doesNotMatch(html, /Private diagnostics/); assert.match(html, /Retry photo/);
+    assert.doesNotMatch(html, /Private diagnostics/); assert.match(html, /Thử tải ảnh/);
 });
 test("missing photo error publishes no URL and normalizes JSON error blobs", async () => {
     api.defaults.adapter = async (config) => reject(config, 404, new Blob([JSON.stringify({ detail: "Photo unavailable" })], { type: "application/json" }));
@@ -254,7 +260,7 @@ for (const status of [403, 404, 409]) {
         try { await service.getHorse(horse.id); } catch (error) { failure = error; }
         assert.equal(failure.status, status); assert.equal(calls, 1); assert.equal(store.getSession(), previous);
         const html = render(h(ProfileResult, { resource: { error: failure, reload: () => {} } }));
-        assert.doesNotMatch(html, /Private record details/); assert.match(html, /Retry Horse profile/);
+        assert.doesNotMatch(html, /Private record details/); assert.match(html, /Thử lại hồ sơ/);
     });
 }
 test("Horse service exports only verified read operations", () => {

@@ -174,8 +174,8 @@ test("loaded Horse profile integrates Manager controls while every other role re
       html.includes("Assign official administrative staff"),
       actorRole === "ClubManager",
     );
-    assert.match(html, /Owner staff preferences/);
-    assert.match(html, /Assignment history/);
+    assert.match(html, /Nhân sự đề xuất và chính thức/);
+    assert.match(html, /Lịch sử phân công/);
   }
 });
 test("exact administrative roles exclude Trainer and WorkRider", () => {
