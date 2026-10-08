@@ -1,0 +1,652 @@
+.hrcms-registration-page {
+    width: 100%;
+    max-width: 1120px;
+    margin: 0 auto;
+    color: var(--hrcms-text-primary);
+    font-family: var(--hrcms-font-body);
+    font-size: 14px;
+}
+
+.hrcms-registration-page :is(a, button, input, select, textarea, summary):focus-visible {
+    outline: 3px solid var(--hrcms-accent);
+    outline-offset: 3px;
+}
+
+.hrcms-registration-page p,
+.hrcms-registration-page h1,
+.hrcms-registration-page h2 {
+    margin: 0;
+}
+
+.hrcms-registration-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.hrcms-registration-heading h1 {
+    font: 700 30px/45px var(--hrcms-font-body);
+    letter-spacing: -.03em;
+}
+
+.hrcms-registration-heading p {
+    color: var(--hrcms-text-secondary);
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 22px;
+    overflow-wrap: anywhere;
+}
+
+.hrcms-registration-steps {
+    max-width: 100%;
+    overflow-x: auto;
+    margin-bottom: 24px;
+}
+
+.hrcms-registration-steps ol {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 8px;
+    min-width: 760px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.hrcms-registration-steps button {
+    width: 100%;
+    min-height: 42px;
+    padding: 12px;
+    border: 0;
+    background: #fff;
+    color: var(--hrcms-text-secondary);
+    font: 700 12px/18px var(--hrcms-font-body);
+    text-align: left;
+    cursor: pointer;
+}
+
+.hrcms-registration-steps button.active {
+    background: var(--hrcms-primary);
+    color: #fff;
+}
+
+.hrcms-registration-steps button:disabled {
+    cursor: default;
+}
+
+.hrcms-registration-page form {
+    min-width: 0;
+}
+
+.hrcms-registration-form-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    min-width: 0;
+}
+
+.hrcms-registration-card {
+    display: block;
+    min-width: 0;
+    margin: 0;
+    padding: 24px;
+    border: 1px solid var(--hrcms-border);
+    border-radius: 12px;
+    background: #fff;
+}
+
+.hrcms-registration-card legend,
+.hrcms-registration-card h2 {
+    display: block;
+    float: left;
+    width: 100%;
+    margin: 0 0 16px;
+    padding: 0;
+    color: var(--hrcms-text-primary);
+    font: 700 18px/27px var(--hrcms-font-body);
+    letter-spacing: -.02em;
+}
+
+.hrcms-registration-card h2 {
+    float: none;
+}
+
+.hrcms-registration-card-description {
+    margin: 0 0 16px !important;
+    color: var(--hrcms-text-secondary);
+    font-size: 13px;
+    line-height: 20px;
+}
+
+.hrcms-registration-card-footnote {
+    margin-top: 16px !important;
+    color: var(--hrcms-text-secondary);
+    font-size: 13px;
+    line-height: 22px;
+}
+
+.hrcms-registration-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 24px;
+    row-gap: 16px;
+    min-width: 0;
+}
+
+.hrcms-registration-fields-three {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.hrcms-registration-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.hrcms-registration-field-wide {
+    grid-column: 1 / -1;
+}
+
+.hrcms-registration-field label,
+.hrcms-registration-field-label {
+    color: var(--hrcms-text-primary);
+    font: 700 13px/16px var(--hrcms-font-body);
+}
+
+.hrcms-registration-input {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+    padding: 10px 16px;
+    border: 1px solid var(--hrcms-border);
+    border-radius: 8px;
+    background: var(--hrcms-surface);
+    color: var(--hrcms-text-primary);
+    font: 400 14px/20px var(--hrcms-font-body);
+}
+
+.hrcms-registration-input::placeholder {
+    color: var(--hrcms-text-secondary);
+    opacity: 1;
+}
+
+.hrcms-registration-input:read-only,
+.hrcms-registration-input:disabled {
+    opacity: 1;
+}
+
+.hrcms-registration-input[aria-invalid="true"] {
+    border-color: var(--hrcms-destructive);
+}
+
+.hrcms-registration-field select {
+    appearance: none;
+    padding-right: 40px;
+    background-image: url("/figma/registration/chevron-down.svg");
+    background-position: right 16px center;
+    background-repeat: no-repeat;
+    background-size: 16px 16px;
+}
+
+.hrcms-registration-field input[type="date"] {
+    padding-right: 42px;
+    background-image: url("/figma/registration/calendar.svg");
+    background-position: right 16px center;
+    background-repeat: no-repeat;
+    background-size: 16px 16px;
+}
+
+.hrcms-registration-field input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    cursor: pointer;
+}
+
+.hrcms-registration-field textarea {
+    min-height: 86px;
+    resize: vertical;
+}
+
+.hrcms-registration-field-error {
+    color: var(--hrcms-destructive);
+    font-size: 12px;
+    line-height: 18px;
+    overflow-wrap: anywhere;
+}
+
+.hrcms-registration-upload-hint,
+.hrcms-registration-upload-zone {
+    min-height: 110px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 18px 20px;
+    border: 1px dashed var(--hrcms-border);
+    border-radius: 8px;
+    background: var(--hrcms-surface);
+    text-align: center;
+}
+
+.hrcms-registration-upload-hint img,
+.hrcms-registration-upload-zone img,
+.hrcms-registration-info img {
+    flex: none;
+}
+
+.hrcms-registration-upload-hint strong,
+.hrcms-registration-upload-zone strong {
+    color: var(--hrcms-primary);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 18px;
+}
+
+.hrcms-registration-upload-hint small,
+.hrcms-registration-upload-zone small {
+    color: var(--hrcms-text-secondary);
+    font-size: 11px;
+    line-height: 16px;
+}
+
+.hrcms-registration-card > .hrcms-registration-field {
+    margin-top: 16px;
+}
+
+.hrcms-registration-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    border: 1px solid #b2dfdb;
+    border-radius: 12px;
+    background: #e0f2f1;
+    color: #00796b;
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.hrcms-registration-facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 24px;
+    margin-bottom: 16px;
+}
+
+.hrcms-registration-facts > div {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.hrcms-registration-facts span {
+    color: var(--hrcms-text-secondary);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 18px;
+}
+
+.hrcms-registration-facts strong {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 21px;
+    white-space: pre-wrap;
+}
+
+.hrcms-registration-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.hrcms-registration-button {
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    border: 1.5px solid var(--hrcms-primary);
+    border-radius: 8px;
+    font: 700 14px/20px var(--hrcms-font-body);
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.hrcms-registration-button-outline {
+    background: transparent;
+    color: var(--hrcms-primary);
+}
+
+.hrcms-registration-button-outline:hover {
+    background: #eee7da;
+    color: var(--hrcms-primary);
+}
+
+.hrcms-registration-button-primary {
+    background: var(--hrcms-primary);
+    color: #fff;
+}
+
+.hrcms-registration-button-primary:hover {
+    background: #60331c;
+    color: #fff;
+}
+
+.hrcms-registration-button-save {
+    border-color: var(--hrcms-secondary);
+    background: var(--hrcms-secondary);
+    color: #fff;
+}
+
+.hrcms-registration-button-save:hover {
+    background: #235430;
+    color: #fff;
+}
+
+.hrcms-registration-button:disabled {
+    opacity: .55;
+    cursor: default;
+}
+
+.hrcms-registration-page .alert {
+    border-radius: 10px;
+    overflow-wrap: anywhere;
+}
+
+.hrcms-registration-page .alert-danger {
+    border-color: #e8cbb7;
+    background: #fff3e9;
+    color: var(--hrcms-text-primary);
+}
+
+.hrcms-registration-pending {
+    margin-bottom: 16px !important;
+    color: var(--hrcms-text-secondary);
+}
+
+.hrcms-registration-validation-notice {
+    margin: 0 0 16px !important;
+    color: var(--hrcms-destructive);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+@media (max-width: 760px) {
+    .hrcms-registration-heading h1 {
+        font-size: 26px;
+        line-height: 38px;
+    }
+
+    .hrcms-registration-card {
+        padding: 20px;
+    }
+
+    .hrcms-registration-fields,
+    .hrcms-registration-fields-three,
+    .hrcms-registration-facts {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 420px) {
+    .hrcms-registration-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .hrcms-registration-button {
+        width: 100%;
+    }
+}
+
+
+.hrcms-registration-detail-content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    min-width: 0;
+}
+
+.hrcms-registration-detail-content .hrcms-registration-heading {
+    margin-bottom: 0;
+}
+
+.hrcms-registration-tracking .hrcms-registration-facts {
+    row-gap: 16px;
+    margin: 16px 0 0;
+}
+
+.hrcms-registration-tracking .hrcms-registration-status-primary {
+    border-color: var(--hrcms-border);
+    background: #fff;
+    color: var(--hrcms-text-primary);
+}
+
+.hrcms-registration-tracking .hrcms-registration-facts > div:last-child {
+    grid-column: 1 / -1;
+}
+
+.hrcms-registration-detail-note {
+    color: var(--hrcms-text-secondary);
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 22px;
+}
+
+.hrcms-registration-detail-note a {
+    color: var(--hrcms-primary);
+}
+
+.hrcms-registration-list-action {
+    margin-top: 0;
+}
+
+.hrcms-registration-review-reason {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 16px;
+    border: 1px solid #e7c986;
+    border-radius: 12px;
+    background: #fff7dd;
+    color: var(--hrcms-text-primary);
+    overflow-wrap: anywhere;
+}
+
+.hrcms-registration-review-reason p {
+    white-space: pre-wrap;
+}
+
+.hrcms-registration-detail-more {
+    min-width: 0;
+    border-top: 1px solid var(--hrcms-border);
+    padding-top: 16px;
+}
+
+.hrcms-registration-detail-more summary {
+    width: fit-content;
+    color: var(--hrcms-primary);
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.hrcms-registration-detail-more > p {
+    margin: 16px 0 !important;
+    color: var(--hrcms-text-secondary);
+}
+
+.hrcms-registration-detail-more > form,
+.hrcms-registration-detail-more > .hrcms-registration-attachments {
+    margin-top: 24px;
+}
+
+.hrcms-registration-attachments .hrcms-registration-card-description {
+    margin-bottom: 16px !important;
+}
+
+.hrcms-registration-empty {
+    padding: 16px;
+    border: 1px dashed var(--hrcms-border);
+    border-radius: 8px;
+    color: var(--hrcms-text-secondary);
+    font-size: 13px;
+}
+
+.hrcms-registration-table-scroll {
+    max-width: 100%;
+    overflow-x: auto;
+    margin-bottom: 20px;
+}
+
+.hrcms-registration-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    line-height: 20px;
+}
+
+.hrcms-registration-table th,
+.hrcms-registration-table td {
+    padding: 12px;
+    border: 1px solid var(--hrcms-border);
+    text-align: left;
+    vertical-align: middle;
+    overflow-wrap: anywhere;
+}
+
+.hrcms-registration-table th {
+    background: var(--hrcms-surface);
+    color: var(--hrcms-text-secondary);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.hrcms-registration-table small {
+    display: block;
+    margin-top: 4px;
+    color: var(--hrcms-text-secondary);
+    font-size: 11px;
+}
+
+.hrcms-registration-table-action {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--hrcms-primary);
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.hrcms-registration-upload-fieldset {
+    display: block;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.hrcms-registration-upload-fieldset legend {
+    float: left;
+    width: 100%;
+    margin: 0 0 12px;
+    padding: 0;
+    font: 700 14px/21px var(--hrcms-font-body);
+}
+
+.hrcms-registration-upload-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 24px;
+    width: 100%;
+}
+
+.hrcms-registration-file-control {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.hrcms-registration-file-control > label:first-child {
+    color: var(--hrcms-text-primary);
+    font: 700 13px/16px var(--hrcms-font-body);
+}
+
+.hrcms-registration-upload-zone {
+    cursor: pointer;
+}
+
+.hrcms-registration-file-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+.hrcms-registration-file-control:focus-within .hrcms-registration-upload-zone {
+    outline: 3px solid var(--hrcms-accent);
+    outline-offset: 3px;
+}
+
+.hrcms-registration-upload-action {
+    margin-top: 16px;
+}
+
+.hrcms-registration-completion > p,
+.hrcms-registration-missing {
+    color: var(--hrcms-text-secondary);
+    font-size: 13px;
+    line-height: 20px;
+}
+
+.hrcms-registration-missing ul {
+    margin: 8px 0 0;
+    padding-left: 20px;
+}
+
+.hrcms-registration-completion .hrcms-registration-actions {
+    margin-top: 16px;
+}
+
+.hrcms-registration-button-danger {
+    border-color: var(--hrcms-destructive);
+    background: transparent;
+    color: var(--hrcms-destructive);
+}
+
+.hrcms-registration-button-danger-filled {
+    border-color: var(--hrcms-destructive);
+    background: var(--hrcms-destructive);
+    color: #fff;
+}
+
+.hrcms-registration-completion .hrcms-registration-review-reason {
+    margin-top: 16px;
+}
+
+@media (max-width: 760px) {
+    .hrcms-registration-upload-fields {
+        grid-template-columns: 1fr;
+    }
+
+    .hrcms-registration-table {
+        min-width: 600px;
+    }
+
+    .hrcms-registration-tracking .hrcms-registration-facts > div:last-child {
+        grid-column: auto;
+    }
+}

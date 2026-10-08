@@ -137,6 +137,12 @@ test("create page saves an empty partial draft and navigates using the returned 
     assert.equal(calls, 1);
     assert.deepEqual(globalThis.__intake.navigation, [["/registrations/new-id", { replace: true }]]);
 });
+test("create flow keeps uploads behind a persisted draft", () => {
+    const html = render(h(Create));
+    assert.match(html, /Lưu bản nháp để thêm tệp/);
+    assert.doesNotMatch(html, /type="file"/);
+    assert.ok(button("Lưu bản nháp"));
+});
 test("existing draft loads unwrapped and maps all editable values without losing dates or numbers", async () => {
     api.defaults.adapter = async (config) => { assert.equal(config.url, "/api/registrations/record-1"); return reply(config, draft); };
     const record = await services.getRegistration("record-1");
@@ -167,16 +173,28 @@ for (const status of ["Draft", "RevisionRequired", "PendingReview", "Approved", 
         const html = detail({ ...draft, status, reviewReason: status === "RevisionRequired" ? "Add a clearer certificate" : null });
         const editable = ["Draft", "RevisionRequired"].includes(status);
         assert.equal(canEditRegistration(status), editable);
-        assert.equal(!!button("Save changes"), editable);
-        assert.equal(!!button("Upload attachment"), editable);
-        assert.equal(!!button("Cancel registration"), editable);
-        assert.equal(!!button(status === "RevisionRequired" ? "Resubmit registration" : "Submit registration"), editable);
-        if (!editable) { assert.match(html, /read-only/); assert.match(html, /fieldset disabled/); }
+        assert.equal(!!button("Lưu thay đổi"), editable);
+        assert.equal(!!button("Tải tệp lên"), editable);
+        assert.equal(!!button("Hủy đăng ký"), editable);
+        assert.equal(!!button(status === "RevisionRequired" ? "Gửi lại đăng ký" : "Gửi đăng ký"), editable);
+        if (!editable) { assert.match(html, /chỉ đọc/); assert.match(html, /fieldset disabled/); }
         if (status === "RevisionRequired") assert.match(html, /Add a clearer certificate/);
         if (status === "UnexpectedStatus") { assert.match(html, /Unknown status/); assert.doesNotMatch(html, /UnexpectedStatus/); }
-        assert.ok(button("Download"));
+        assert.ok(button("Tải xuống"));
     });
 }
+test("pending detail shows server status and tracking without inventing a reviewer or edit action", () => {
+    const html = detail({ ...draft, status: "PendingReview" });
+    assert.match(html, /Yêu cầu đã được gửi/);
+    assert.match(html, /Hồ sơ đang chờ Club Manager kiểm tra/);
+    assert.match(html, /Pending review/);
+    assert.doesNotMatch(html, /Người kiểm tra/);
+    assert.equal(button("Gửi đăng ký"), undefined);
+});
+test("approved detail links to a horse only when the backend returns its id", () => {
+    assert.doesNotMatch(detail({ ...draft, status: "Approved", horseId: null }), /href="\/horses\//);
+    assert.match(detail({ ...draft, status: "Approved", horseId: "horse-7" }), /href="\/horses\/horse-7"/);
+});
 test("unknown status labels fail safely even for inherited object-property names", () => {
     for (const status of ["Submitted", "__proto__", "constructor", undefined, 0]) {
         assert.equal(canEditRegistration(status), false); assert.equal(statusDisplay(status).label, "Unknown status");
@@ -197,7 +215,7 @@ test("staff directory filters each allowed role on the server, follows paginatio
     assert.deepEqual(PREFERENCES.map((value) => value.field), ["preferredHeadTrainerId", "preferredGroomId", "preferredVeterinarianId"]);
     const html = detail();
     assert.doesNotMatch(html, /preferredTrainerId|WorkRider|Official assignment/);
-    assert.match(html, /not official assignments/);
+    assert.match(html, /Trainer trực tiếp sẽ do Head Trainer phân công/);
 });
 test("attachment list is a plain array with metadata and authenticated downloads, not a paginated envelope", async () => {
     api.defaults.adapter = async (config) => { assert.equal(config.url, "/api/registrations/record-1/attachments"); return reply(config, attachments); };
@@ -264,8 +282,8 @@ test("submit completeness requires exactly the verified fields plus HorsePhoto a
 test("incomplete saved draft cannot invoke submit from the rendered detail", async () => {
     let calls = 0; api.defaults.adapter = async (config) => { calls++; return reply(config, {}); };
     const html = detail({ ...draft, sire: null }, []);
-    assert.equal(button("Submit registration").disabled, true);
-    await button("Submit registration").onClick();
+    assert.equal(button("Gửi đăng ký").disabled, true);
+    await button("Gửi đăng ký").onClick();
     assert.equal(calls, 0); assert.match(html, /Horse photo attachment/); assert.match(html, /Certificate attachment/);
 });
 for (const status of ["Draft", "RevisionRequired"]) {
@@ -276,7 +294,7 @@ for (const status of ["Draft", "RevisionRequired"]) {
             return config.method === "post" ? reply(config, "", 204) : reply(config, { ...draft, status: "PendingReview" });
         };
         detail({ ...draft, status });
-        const action = button(status === "Draft" ? "Submit registration" : "Resubmit registration");
+        const action = button(status === "Draft" ? "Gửi đăng ký" : "Gửi lại đăng ký");
         assert.equal(action.disabled, false); await action.onClick();
         assert.deepEqual(calls, [["post", "/api/registrations/record-1/submit"], ["get", "/api/registrations/record-1"]]);
         const record = await services.submitRegistration(draft.id);
@@ -333,7 +351,7 @@ test("double submit is locked while a mutation is pending", async () => {
         return reply(config, { ...draft, status: "PendingReview" });
     };
     detail();
-    const action = button("Submit registration").onClick;
+    const action = button("Gửi đăng ký").onClick;
     const first = action();
     await action();
     // Let the Axios request interceptors reach the adapter.

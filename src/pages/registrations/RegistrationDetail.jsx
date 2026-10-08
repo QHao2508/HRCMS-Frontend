@@ -1,5 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { useAuth } from "../../context/useAuth.js";
+import { getUserDisplayName } from "../../utils/userDisplay.js";
 import { useRegistrationResource } from "../../context/useRegistrationResource.js";
 import { getRegistration, updateRegistration, submitRegistration, cancelRegistration } from "../../services/registrationService.js";
 import { listAttachments, uploadAttachment } from "../../services/registrationAttachments.js";
@@ -9,8 +11,11 @@ import RegistrationForm from "../../components/registrations/RegistrationForm.js
 import RegistrationStatus from "../../components/registrations/RegistrationStatus.jsx";
 import RegistrationError from "../../components/registrations/RegistrationError.jsx";
 import RegistrationAttachments from "../../components/registrations/RegistrationAttachments.jsx";
+import "../../style/registration.css";
 
 export function RegistrationDetailContent({ initialRecord, initialAttachments, reload }) {
+    const { user } = useAuth();
+    const ownerName = getUserDisplayName(user);
     const [record, setRecord] = useState(initialRecord);
     const [attachments, setAttachments] = useState(initialAttachments);
     const [values, setValues] = useState(() => registrationForm(initialRecord));
@@ -42,7 +47,7 @@ export function RegistrationDetailContent({ initialRecord, initialAttachments, r
         const nextErrors = validateDraft(values);
         setErrors(nextErrors);
         if (Object.keys(nextErrors).length) return;
-        await run("Saving", async () => { acceptRecord(await updateRegistration(record.id, values)); setNotice("Registration saved."); });
+        await run("Saving", async () => { acceptRecord(await updateRegistration(record.id, values)); setNotice("Đã lưu thay đổi của hồ sơ."); });
     }
     async function submit() {
         if (dirty || missing.length) return;
@@ -51,13 +56,13 @@ export function RegistrationDetailContent({ initialRecord, initialAttachments, r
         if (Object.keys(nextErrors).length) return;
         await run("Submitting", async () => {
             acceptRecord(await submitRegistration(record.id));
-            setNotice("Submission completed. The current status is shown above.");
+            setNotice("Đã gửi đăng ký. Trạng thái hiện tại được hiển thị bên trên.");
         });
     }
     async function cancel() {
         if (!confirmCancel) return;
         await run("Cancelling", async () => {
-            acceptRecord(await cancelRegistration(record.id)); setConfirmCancel(false); setNotice("Registration cancelled.");
+            acceptRecord(await cancelRegistration(record.id)); setConfirmCancel(false); setNotice("Đã hủy yêu cầu đăng ký.");
         });
     }
     async function upload(values) {
@@ -66,41 +71,92 @@ export function RegistrationDetailContent({ initialRecord, initialAttachments, r
             // Refresh metadata before enabling submission; never invent an attachment.
             try { setAttachments(await listAttachments(record.id)); }
             catch (failure) { setStale(true); throw failure; }
-            setNotice("Attachment uploaded.");
+            setNotice("Đã tải tệp lên.");
         });
     }
-    return <>
-        <div className="d-flex flex-wrap align-items-center gap-3"><h1>{record.name || "Unnamed registration"}</h1><RegistrationStatus status={record.status} /></div>
-        <p className="text-body-secondary">Registration ID: {record.id}</p>
-        {record.reviewReason && <div className="alert alert-warning"><strong>Revision reason</strong><p className="mb-0" style={{ whiteSpace: "pre-wrap" }}>{record.reviewReason}</p></div>}
-        {!canEditRegistration(record.status) && <p>This registration is read-only.</p>}
-        <RegistrationError error={error} />
-        {notice && <p className="alert alert-success" role="status">{notice}</p>}
-        {pending && <p role="status">{pending}...</p>}
-        {stale && <div className="alert alert-warning">Refresh the registration before another action. Unsaved form changes will be discarded. <button className="btn btn-outline-primary" onClick={reload}>Reload registration</button></div>}
-        <form onSubmit={save} noValidate>
-            <RegistrationForm values={values} errors={errors} disabled={!editable || !!pending}
+    const submitted = record.status === REGISTRATION_STATUS.PendingReview;
+    const title = submitted ? "Yêu cầu đã được gửi" : record.status === REGISTRATION_STATUS.Approved
+        ? "Yêu cầu đã được duyệt" : record.status === REGISTRATION_STATUS.RevisionRequired
+            ? "Yêu cầu cần bổ sung" : "Chi tiết đăng ký ngựa";
+    const nextStep = submitted ? "Chờ phản hồi kiểm tra hồ sơ" : record.status === REGISTRATION_STATUS.Approved
+        ? "Xem hồ sơ ngựa sau khi được tạo" : record.status === REGISTRATION_STATUS.RevisionRequired
+            ? "Cập nhật hồ sơ rồi gửi lại" : record.status === REGISTRATION_STATUS.Draft
+                ? "Hoàn thiện hồ sơ và gửi đăng ký" : "—";
+    const pendingLabel = { Saving: "Đang lưu", Submitting: "Đang gửi", Cancelling: "Đang hủy", Uploading: "Đang tải tệp" }[pending];
+    const detailBody = <>
+        <form id="registration-detail-form" onSubmit={save} noValidate>
+            <RegistrationForm values={values} errors={errors} disabled={!editable || !!pending} ownerName={ownerName}
                 onChange={(event) => { setValues({ ...values, [event.target.name]: event.target.value }); setNotice(""); }} />
-            {editable && <button className="btn btn-primary" type="submit" disabled={!!pending}>Save changes</button>}
         </form>
-        <RegistrationAttachments registrationId={record.id} attachments={attachments} editable={editable} busy={!!pending} onUpload={upload} />
-        {editable && <section aria-labelledby="registration-actions">
-            <h2 id="registration-actions" className="h5">Registration actions</h2>
-            {dirty && <p role="status">Save your changes before submitting.</p>}
-            {!!missing.length && <div><p>Before submitting, complete the saved registration with:</p><ul>{missing.map((label) => <li key={label}>{label}</li>)}</ul></div>}
-            <div className="d-flex flex-wrap gap-2">
-                <button type="button" className="btn btn-success" disabled={!!pending || dirty || !!missing.length} onClick={submit}>
-                    {record.status === REGISTRATION_STATUS.RevisionRequired ? "Resubmit registration" : "Submit registration"}
-                </button>
-                <button type="button" className="btn btn-outline-danger" disabled={!!pending} onClick={() => setConfirmCancel(true)}>Cancel registration</button>
+        <RegistrationAttachments registrationId={record.id} attachments={attachments} editable={editable}
+            busy={!!pending} onUpload={upload} owner />
+    </>;
+    return <div className="hrcms-registration-detail-content">
+        <header className="hrcms-registration-heading">
+            <h1>{title}</h1>
+            <p>{record.registrationNumber || record.id} · {record.name || "Ngựa chưa đặt tên"}</p>
+        </header>
+        {submitted && <div className="hrcms-registration-info" role="status">
+            <img src="/figma/auth/info.svg" alt="" width="20" height="20" />
+            <span>Hồ sơ đang chờ Club Manager kiểm tra.</span>
+        </div>}
+        {record.reviewReason && <div className="hrcms-registration-review-reason" role="status">
+            <strong>Lý do cần bổ sung</strong><p>{record.reviewReason}</p>
+        </div>}
+        <section className="hrcms-registration-card hrcms-registration-tracking" aria-labelledby="registration-tracking-title">
+            <h2 id="registration-tracking-title">Theo dõi yêu cầu</h2>
+            <RegistrationStatus status={record.status} />
+            <div className="hrcms-registration-facts">
+                <div><span>Chủ sở hữu</span><strong>{ownerName}</strong></div>
+                <div><span>Mã yêu cầu</span><strong>{record.id}</strong></div>
+                <div><span>Bước tiếp theo</span><strong>{nextStep}</strong></div>
             </div>
-            {confirmCancel && <div className="alert alert-warning mt-3" role="alert">
-                <p>Cancel this registration? It will become read-only. Unsaved changes will be discarded.</p>
-                <button type="button" className="btn btn-danger me-2" disabled={!!pending} onClick={cancel}>Confirm cancellation</button>
-                <button type="button" className="btn btn-secondary" disabled={!!pending} onClick={() => setConfirmCancel(false)}>Keep registration</button>
+        </section>
+        {submitted && <p className="hrcms-registration-detail-note">Horse Profile chỉ được tạo sau duyệt. Club Manager kiểm tra hồ sơ.</p>}
+        {record.status === REGISTRATION_STATUS.Approved && record.horseId && <p className="hrcms-registration-detail-note">
+            <Link to={"/horses/" + encodeURIComponent(record.horseId)}>Xem hồ sơ ngựa đã được duyệt</Link>
+        </p>}
+        <RegistrationError error={error} />
+        {notice && <p className="hrcms-registration-info" role="status">{notice}</p>}
+        {pending && <p className="hrcms-registration-pending" role="status">{pendingLabel}...</p>}
+        {stale && <div className="hrcms-registration-review-reason" role="alert">
+            <p>Tải lại yêu cầu trước khi thực hiện thao tác khác. Thay đổi chưa lưu sẽ bị bỏ.</p>
+            <button type="button" className="hrcms-registration-button hrcms-registration-button-outline" onClick={reload}>Tải lại yêu cầu</button>
+        </div>}
+        <div className="hrcms-registration-actions hrcms-registration-list-action">
+            <Link to="/registrations" className="hrcms-registration-button hrcms-registration-button-outline">Về danh sách</Link>
+        </div>
+        {editable ? detailBody : <details className="hrcms-registration-detail-more">
+            <summary>Xem thông tin hồ sơ và tài liệu</summary>
+            <p>Hồ sơ này chỉ đọc.</p>
+            {detailBody}
+        </details>}
+        {editable && <section aria-labelledby="registration-actions" className="hrcms-registration-card hrcms-registration-completion">
+            <h2 id="registration-actions">Kiểm tra và gửi</h2>
+            {dirty && <p role="status">Lưu thay đổi trước khi gửi đăng ký.</p>}
+            {!!missing.length && <div className="hrcms-registration-missing"><p>Trước khi gửi, hãy hoàn thiện hồ sơ đã lưu:</p>
+                <ul>{missing.map((label) => <li key={label}>{label}</li>)}</ul></div>}
+            <div className="hrcms-registration-actions">
+                <button type="button" className="hrcms-registration-button hrcms-registration-button-danger" disabled={!!pending}
+                    onClick={() => setConfirmCancel(true)}>Hủy đăng ký</button>
+                <button type="submit" form="registration-detail-form" className="hrcms-registration-button hrcms-registration-button-save"
+                    disabled={!!pending}>Lưu thay đổi</button>
+                <button type="button" className="hrcms-registration-button hrcms-registration-button-primary"
+                    disabled={!!pending || dirty || !!missing.length} onClick={submit}>
+                    {record.status === REGISTRATION_STATUS.RevisionRequired ? "Gửi lại đăng ký" : "Gửi đăng ký"}
+                </button>
+            </div>
+            {confirmCancel && <div className="hrcms-registration-review-reason" role="alert">
+                <p>Hủy yêu cầu này? Hồ sơ sẽ chuyển sang chỉ đọc. Thay đổi chưa lưu sẽ bị bỏ.</p>
+                <div className="hrcms-registration-actions">
+                    <button type="button" className="hrcms-registration-button hrcms-registration-button-danger-filled"
+                        disabled={!!pending} onClick={cancel}>Xác nhận hủy</button>
+                    <button type="button" className="hrcms-registration-button hrcms-registration-button-outline"
+                        disabled={!!pending} onClick={() => setConfirmCancel(false)}>Giữ yêu cầu</button>
+                </div>
             </div>}
         </section>}
-    </>;
+    </div>;
 }
 export default function RegistrationDetail() {
     const { id } = useParams();
@@ -109,10 +165,10 @@ export default function RegistrationDetail() {
         return { record, attachments };
     }, [id]);
     const resource = useRegistrationResource(load);
-    return <section>
-        <Link to="/registrations">Back to registrations</Link>
-        {resource.loading && <p role="status">Loading registration...</p>}
-        {resource.error && <><RegistrationError error={resource.error} /><button className="btn btn-outline-primary" onClick={resource.reload}>Retry</button></>}
+    return <section className="hrcms-registration-page" aria-label="Chi tiết đăng ký ngựa">
+        {resource.loading && <p role="status">Đang tải yêu cầu đăng ký...</p>}
+        {resource.error && <><RegistrationError error={resource.error} /><button type="button"
+            className="hrcms-registration-button hrcms-registration-button-outline" onClick={resource.reload}>Thử lại</button></>}
         {resource.data && <RegistrationDetailContent key={id} initialRecord={resource.data.record} initialAttachments={resource.data.attachments} reload={resource.reload} />}
     </section>;
 }
