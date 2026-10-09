@@ -12,6 +12,7 @@ const publicAuthPaths = new Set([
     "/api/auth/login", "/api/auth/refresh", "/api/auth/register",
     "/api/auth/verify-email", "/api/auth/resend-verification",
     "/api/auth/forgot-password", "/api/auth/reset-password", "/api/auth/accept-invitation",
+    "/api/auth/invitation/verify", "/api/auth/invitation/password",
 ]);
 
 api.interceptors.request.use((config) => {

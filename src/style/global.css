@@ -191,3 +191,5 @@ p { line-height: 1.6; }
   .table th, .table td { padding: 12px; }
   .account-name { overflow-wrap: anywhere; }
 }
+
+.brand-crest.brand-crest-custom .brand-header-logo { position: static; width: 100%; height: 100%; object-fit: contain; transform: none; background: #faf7ef; }
