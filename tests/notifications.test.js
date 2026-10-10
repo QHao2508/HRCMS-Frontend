@@ -14,3 +14,8 @@ test('all current notification types and unknown future events have Vietnamese f
     assert.equal(notificationText({ type: 'FutureType', message: 'Future server message' }), 'Bạn có thông báo mới.');
     assert.equal(notificationText(null), 'Bạn có thông báo mới.');
 });
+
+test('archived horse notification is not mislabelled as a new assignment or care issue', () => {
+    assert.equal(notificationText({ type: 'HorseAssignment', message: 'Horse is archived.' }), 'Ngựa đã được lưu trữ. Các công việc chưa bắt đầu đã được đóng.');
+    assert.equal(notificationText({ type: 'CareIssue', message: 'Horse is archived.' }), 'Ngựa đã được lưu trữ. Các công việc chưa bắt đầu đã được đóng.');
+});

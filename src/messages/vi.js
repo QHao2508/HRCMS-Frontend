@@ -827,4 +827,10 @@ export const VI = Object.freeze({
     "AUDIT_STAFFINVITATIONRESENT": "Gửi lại lời mời",
     "AUDIT_WEBSITECONTENTUPDATED": "Cập nhật nội dung website",
     "AUDIT_WEBSITEASSETUPDATED": "Cập nhật ảnh website",
+    "NOTIFICATION_HORSE_ARCHIVED": "Ngựa đã được lưu trữ. Các công việc chưa bắt đầu đã được đóng.",
+    "TRAINING_HISTORY_READ_ONLY": "Bạn đang xem lịch sử. Các thao tác chỉnh sửa và thực hiện chỉ dành cho nhân sự đang được phân công trên ngựa còn hoạt động.",
+    "API_CORRECTION_DATE": "Bản đính chính phải giữ nguyên ngày khám. Hãy tạo lần khám mới nếu cần đánh giá ở ngày khác.",
+    "API_CLEARANCE_SELECTION_REQUIRED": "Hãy chọn cụ thể hạn chế, chấn thương hoặc phác đồ cần kết thúc. Tái khám không clearance thì không chọn mục để kết thúc.",
+    "API_CLEARANCE_SELECTION_INVALID": "Các mục phải thuộc ngựa này, chưa kết thúc, có hiệu lực trước ngày tái khám và không được chọn trùng.",
+    "API_FINISH_ACTIVE_CARE": "Hãy kết thúc công việc chăm sóc đang thực hiện trước khi lưu trữ ngựa.",
 });

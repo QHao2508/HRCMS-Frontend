@@ -1,5 +1,9 @@
 import { MSG, msg } from './index.js';
 const ERROR_MESSAGES = Object.freeze({
+    "A correction must keep the original examination date. Record a separate examination to assess another date.": "API_CORRECTION_DATE",
+    "Select the restrictions, injuries or treatments to close when issuing clearance. A follow-up without clearance must not select items to close.": "API_CLEARANCE_SELECTION_REQUIRED",
+    "Clearance items must be unique, open, effective by the follow-up date and belong to this horse.": "API_CLEARANCE_SELECTION_INVALID",
+    "Finish active care tasks before archiving.": "API_FINISH_ACTIVE_CARE",
     "Record changed. Reload and retry.": "API_RECORD_CHANGED_RELOAD_AND_RETRY",
     "Duplicate data or conflicting update.": "API_DUPLICATE_DATA_OR_CONFLICTING_UPDATE",
     "Invalid request body.": "API_INVALID_REQUEST_BODY",

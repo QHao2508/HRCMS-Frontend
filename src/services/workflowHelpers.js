@@ -4,7 +4,7 @@
  * @param user Tài khoản đã tra cứu/kiểm; response chỉ được lấy trường cho phép.
  * @param role Role enum chính xác của backend để kiểm quyền/lọc dữ liệu.
  */
-export function isAssigned(horse, user, role) { return user?.role === role && horse?.assignments?.some(a => a.active && a.staffId === user.id && a.role === role); }
+export function isAssigned(horse, user, role) { return !horse?.horse?.archived && !horse?.historyOnly && user?.role === role && horse?.assignments?.some(a => a.active && a.staffId === user.id && a.role === role); }
 /**
  * Tạo ngày ISO hiện tại theo timezone câu lạc bộ để mặc định/kiểm ngày form.
  */
