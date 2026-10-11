@@ -2,6 +2,7 @@ import { MSG, msg } from './index.js';
 
 // Match stored server messages first: one notification type can have several meanings.
 const storedMessages = new Map([
+    ["Horse is archived.", MSG.NOTIFICATION_HORSE_ARCHIVED],
     ["A horse registration requires review.", MSG.NOTIFICATION_AHORSE_REGISTRATION_REQUIRES_REVIEW],
     ["Your horse registration requires revision.", MSG.NOTIFICATION_YOUR_HORSE_REGISTRATION_REQUIRES_REVISION],
     ["Your horse registration was approved.", MSG.NOTIFICATION_YOUR_HORSE_REGISTRATION_WAS_APPROVED],

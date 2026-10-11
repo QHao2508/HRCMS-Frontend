@@ -180,9 +180,9 @@ test("unknown authenticated role retains a safe home, a readable warning and no 
 
 test("navigation uses exact roles and exposes only implemented links for each role", () => {
     for (const role of ALL_ROLES) {
-        const expected = [{ to: "/dashboard", label: "Tổng quan" }, { to: "/horses", label: "Ngựa của tôi" }];
+        const expected = [{ to: "/dashboard", label: "Tổng quan" }, { to: "/horses", label: role === ROLES.HorseOwner ? "Ngựa của tôi" : "Ngựa" }];
         if (role === ROLES.HorseOwner) expected.push({ to: "/registrations", label: "Yêu cầu đăng ký ngựa" });
-        if (role === ROLES.ClubManager) expected.push({ to: "/reviews", label: "Duyệt hồ sơ" });
+        if (role === ROLES.ClubManager) { expected.unshift({to:"/manager/staff",label:"Nhân sự"},{to:"/manager/audit",label:"Nhật ký hoạt động"},{to:"/manager/website",label:"Giao diện website"}); expected.push({ to: "/reviews", label: "Duyệt hồ sơ" }); }
         if ([ROLES.ClubManager,ROLES.HeadTrainer,ROLES.Trainer].includes(role)) expected.push({ to:"/training/templates",label:"Giáo án mẫu" });
         if (role !== ROLES.Groom) expected.push({to:"/training/plans",label:"Kế hoạch huấn luyện"},{to:"/training/sessions",label:"Buổi tập"});
         assert.deepEqual(getNavigationForRole(role).map(({ to, label }) => ({ to, label })), expected);

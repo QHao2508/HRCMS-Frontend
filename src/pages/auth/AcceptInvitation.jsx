@@ -1,8 +1,14 @@
-import PasswordSetupForm from "../../components/auth/PasswordSetupForm.jsx";
-
-/**
- * Dùng PasswordSetupForm cho nhân viên tự kích hoạt tài khoản theo lời mời do quản lý tạo.
- */
-export default function AcceptInvitation() {
-    return <PasswordSetupForm invitation />;
+import {useState} from 'react';
+import {Link,useNavigate} from 'react-router-dom';
+import PublicLayout from '../../layouts/PublicLayout.jsx';
+import AuthIntro from '../../components/auth/AuthIntro.jsx';
+import AuthInput from '../../components/auth/AuthInput.jsx';
+import {MSG,msg} from '../../messages/index.js';
+import {useMutation} from '../../context/useMutation.js';
+import {MutationState} from '../../components/WorkflowUI.jsx';
+import {verifyInvitation,finishInvitation} from '../../services/managerService.js';
+import {passwordHelp,AUTH_POLICY} from '../../services/authValidation.js';
+export default function AcceptInvitation(){const [form,setForm]=useState({email:'',code:'',password:'',confirmPassword:''}),[token,setToken]=useState('');const mutation=useMutation();const navigate=useNavigate();
+ const change=e=>setForm({...form,[e.target.name]:e.target.value});const reset=()=>{mutation.reset();setToken('');setForm({...form,code:'',password:'',confirmPassword:''});};
+ return <PublicLayout><main className="auth-page"><div className="auth-workspace"><AuthIntro/><div className="auth-card"><h1>{msg(token?MSG.INVITE_PASSWORD_TITLE:MSG.INVITE_VERIFY_TITLE)}</h1><p>{msg(token?MSG.INVITE_PASSWORD_BODY:MSG.INVITE_VERIFY_BODY)}</p><MutationState mutation={mutation} reload={reset}/><form onSubmit={e=>{e.preventDefault();mutation.run(async()=>{if(!token){const result=await verifyInvitation({email:form.email.trim(),code:form.code.trim()});if(!result.verified || !result.setupToken) throw Object.assign(new Error(msg(MSG.INVITE_INVALID)),{status:400});setToken(result.setupToken);}else{const result=await finishInvitation({email:form.email.trim(),setupToken:token,password:form.password,confirmPassword:form.confirmPassword});if(!result.changed)throw Object.assign(new Error(msg(MSG.INVITE_INVALID)),{status:400});navigate('/login',{replace:true,state:{email:form.email,authNotice:'invitation-accepted'}});}},undefined,'');}}><fieldset disabled={mutation.pending || mutation.uncertain}><AuthInput label={msg(MSG.EMAIL)} name="email" type="email" value={form.email} onChange={change} required readOnly={!!token} autoComplete="email"/>{token?<><AuthInput label={msg(MSG.NEW_PASSWORD)} name="password" value={form.password} onChange={change} type="password" required minLength={AUTH_POLICY.passwordMinLength} maxLength={AUTH_POLICY.passwordMaxLength} help={passwordHelp} autoComplete="new-password"/><AuthInput label={msg(MSG.CONFIRM_PASSWORD)} name="confirmPassword" value={form.confirmPassword} onChange={change} type="password" required autoComplete="new-password"/></>:<AuthInput label={msg(MSG.OTP_KICH_HOAT_6_CHU_SO)} name="code" value={form.code} onChange={change} inputMode="numeric" pattern="[0-9]{6}" minLength={6} maxLength={6} autoComplete="one-time-code" required/>}<button className="btn btn-primary w-100">{msg(token?MSG.INVITE_SET:MSG.INVITE_VERIFY)}</button></fieldset></form>{token && <button className="btn btn-outline-secondary mt-3" disabled={mutation.pending} onClick={reset}>{msg(MSG.INVITE_BACK)}</button>}<p className="mt-3"><Link to="/login">{msg(MSG.BACK_TO_SIGN_IN)}</Link></p></div></div></main></PublicLayout>;
 }

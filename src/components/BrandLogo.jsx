@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import {useWebsite,websiteAsset} from '../services/websiteStore.js';
 import { BRAND_ASSET } from '../constants/branding.js';
 import { MSG, msg } from '../messages/index.js';
 
@@ -8,8 +9,10 @@ import { MSG, msg } from '../messages/index.js';
  * @param options0 Đối tượng destructuring: { className = '', priority = false }. Các props/callback lấy từ caller.
  */
 export default function BrandLogo({ className = '', priority = false }) {
-    const [failed, setFailed] = useState(false);
-    return failed ? <span className={`brand-logo-fallback ${className}`}>{msg(MSG.HRCMS)}</span>
-        : <img className={className} src={BRAND_ASSET.Logo} alt={msg(MSG.BRAND_LOGO)} width={2752} height={1536}
-            decoding="async" fetchPriority={priority ? 'high' : 'auto'} onError={() => setFailed(true)} />;
+    const website=useWebsite();
+    const src=website?.logoVersion?websiteAsset("Logo",website.logoVersion):BRAND_ASSET.Logo;
+    const [failedSrc, setFailedSrc] = useState("");
+    return failedSrc===src ? <span className={`brand-logo-fallback ${className}`}>{msg(MSG.HRCMS)}</span>
+        : <img className={className} src={src} alt={msg(MSG.BRAND_LOGO)} width={2752} height={1536}
+            decoding="async" fetchPriority={priority ? 'high' : 'auto'} onError={() => setFailedSrc(src)} />;
 }

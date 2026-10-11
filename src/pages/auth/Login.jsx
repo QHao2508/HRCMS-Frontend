@@ -7,6 +7,8 @@ import { getNavigationEmail } from "../../services/authValidation.js";
 import { getLoginDestination } from "../../routes/redirects.js";
 import PublicLayout from "../../layouts/PublicLayout.jsx";
 
+import AuthIntro from "../../components/auth/AuthIntro.jsx";
+
 const notices = {
     "email-verified": msg(MSG.EMAIL_DA_DUOC_XAC_THUC_BAN_CO_THE_DANG_NHAP),
     "password-reset": msg(MSG.DA_DAT_LAI_MAT_KHAU_HAY_DANG_NHAP_BANG_MAT_KHAU_MOI),
@@ -51,8 +53,8 @@ export default function Login() {
         finally { setLoading(false); }
     }
     if (isAuthenticated && !restoring) return <Navigate to={destination} replace />;
-    return <PublicLayout><main className="auth-page"><div className="auth-card login-card">
-        <h1>{msg(MSG.DANG_NHAP)}</h1>
+    return <PublicLayout><main className="auth-page"><div className="auth-workspace"><AuthIntro /><div className="auth-card login-card">
+        <h1>{msg(MSG.DANG_NHAP)}</h1><p>{msg(MSG.AUTH_LOGIN_DESCRIPTION)}</p>
         {restoring && <p role="status">{msg(MSG.LOADING_DANG_KIEM_TRA_PHIEN_DANG_NHAP)}</p>}
         {notices[location.state?.authNotice] && <div className="alert alert-success" role="status">{notices[location.state.authNotice]}</div>}
         {location.state?.logoutError && <div className="alert alert-warning" role="alert">{msg(MSG.DA_DANG_XUAT_TREN_THIET_BI_CHUA_XAC_NHAN_DUOC_DANG_XUAT_PHIA_MAY_CHU)}{' '}{location.state.logoutError}</div>}
@@ -65,5 +67,5 @@ export default function Login() {
         </form>
         <div className="auth-register">{msg(MSG.CHUA_CO_TAI_KHOAN)}{' '}<Link to="/register">{msg(MSG.DANG_KY)}</Link></div>
         <div className="auth-support-links"><Link to="/accept-invitation">{msg(MSG.ACCEPT_STAFF_INVITATION)}</Link></div>
-    </div></main></PublicLayout>;
+    </div></div></main></PublicLayout>;
 }

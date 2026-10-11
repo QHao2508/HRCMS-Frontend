@@ -10,6 +10,9 @@ import Dashboard from "../pages/Dashboard";
 import Home from "../pages/Home.jsx";
 import PermissionDenied from "../pages/PermissionDenied";
 import NotFound from "../pages/NotFound";
+import StaffPage from '../pages/manager/StaffPage.jsx';
+import AuditPage from '../pages/manager/AuditPage.jsx';
+import WebsitePage from '../pages/manager/WebsitePage.jsx';
 import RoleRoute from "./RoleRoute";
 import { ROLES,ALL_ROLES } from "../constants/roles.js";
 import { TRAINING_ROLES } from "./navigation.js";
@@ -32,7 +35,7 @@ export default function AppRoutes() {return <Routes>
     <Route element={<RoleRoute/>}><Route element={<AppLayout/>}>
         <Route path="/dashboard" element={<Dashboard/>}/><Route path="/permission-denied" element={<PermissionDenied/>}/>
         <Route element={<RoleRoute allowedRoles={ROLES.HorseOwner}/>}><Route path="/registrations" element={<RegistrationList/>}/><Route path="/registrations/new" element={<RegistrationCreate/>}/><Route path="/registrations/:id" element={<RegistrationDetail/>}/></Route>
-        <Route element={<RoleRoute allowedRoles={ROLES.ClubManager}/>}><Route path="/reviews" element={<ReviewList/>}/><Route path="/reviews/:id" element={<ReviewDetail/>}/></Route>
+        <Route element={<RoleRoute allowedRoles={ROLES.ClubManager}/>}><Route path="/manager/staff" element={<StaffPage/>}/><Route path="/manager/audit" element={<AuditPage/>}/><Route path="/manager/website" element={<WebsitePage/>}/><Route path="/reviews" element={<ReviewList/>}/><Route path="/reviews/:id" element={<ReviewDetail/>}/></Route>
         <Route element={<RoleRoute allowedRoles={ALL_ROLES}/>}><Route path="/horses" element={<HorseList/>}/><Route path="/horses/:id" element={<HorseDetail/>}/></Route>
         <Route element={<RoleRoute allowedRoles={[ROLES.ClubManager,ROLES.HeadTrainer,ROLES.Trainer]}/>}><Route path="/training/templates" element={<TemplateList/>}/></Route>
         <Route element={<RoleRoute allowedRoles={TRAINING_ROLES}/>}><Route path="/training/plans" element={<PlanList/>}/><Route path="/training/plans/:id" element={<PlanDetail/>}/><Route path="/training/sessions" element={<SessionList/>}/><Route path="/training/sessions/:id" element={<SessionDetail/>}/></Route>

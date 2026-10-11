@@ -1,5 +1,6 @@
 import { MSG, msg } from "../../messages/index.js";
 import PublicLayout from "../../layouts/PublicLayout.jsx";
+import AuthIntro from "./AuthIntro.jsx";
 import AuthButton from "./AuthButton.jsx";
 
 /**
@@ -10,7 +11,7 @@ import AuthButton from "./AuthButton.jsx";
 export default function AuthForm({ title, description, form, onSubmit, submitLabel, pendingLabel,
     success, children, footer, submitDisabled = false }) {
     return (
-        <PublicLayout><main className="auth-page">
+        <PublicLayout><main className="auth-page"><div className="auth-workspace"><AuthIntro />
             <div className="auth-card">
                 <h1>{title}</h1>
                 <p>{description}</p>
@@ -29,6 +30,6 @@ export default function AuthForm({ title, description, form, onSubmit, submitLab
                 </form>
                 <div className="mt-3">{footer}</div>
             </div>
-        </main></PublicLayout>
+        </div></main></PublicLayout>
     );
 }
