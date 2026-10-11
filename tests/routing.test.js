@@ -1,3 +1,4 @@
+import { ssrDependencies } from "./ssrDependencies.js";
 import assert from "node:assert/strict";
 import { after, before, beforeEach, test } from "node:test";
 import { createElement } from "react";
@@ -57,7 +58,7 @@ before(async () => {
         removeItem: (key) => storage.delete(key),
     } });
     globalThis.__hrcmsRoutingTest = { redirects: [], navigations: [], buttons: [] };
-    server = await createServer({ configFile: false, plugins: [routingHarnessPlugin(), react()],
+    server = await createServer({ configFile: false, plugins: [ssrDependencies(),routingHarnessPlugin(), react()],
         server: { middlewareMode: true, hmr: false }, appType: "custom", logLevel: "error" });
     ({ AuthContext } = await server.ssrLoadModule("/src/context/useAuth.js"));
     ({ default: RoleRoute } = await server.ssrLoadModule("/src/routes/RoleRoute.jsx"));

@@ -1,3 +1,4 @@
+import { ssrDependencies } from "./ssrDependencies.js";
 import assert from "node:assert/strict";
 import { after, before, beforeEach, test } from "node:test";
 import { createElement as h } from "react";
@@ -56,7 +57,7 @@ before(async () => {
     Object.defineProperty(globalThis, "localStorage", { configurable: true, value: {
         getItem: (key) => storage.get(key) ?? null, setItem: (key, value) => storage.set(key, value), removeItem: (key) => storage.delete(key),
     } });
-    server = await createServer({ configFile: false, plugins: [harness(), react()], server: { middlewareMode: true, hmr: false, ws: false }, appType: "custom", logLevel: "error" });
+    server = await createServer({ configFile: false, plugins: [ssrDependencies(),harness(), react()], server: { middlewareMode: true, hmr: false, ws: false }, appType: "custom", logLevel: "error" });
     ({ default: api } = await server.ssrLoadModule("/src/services/api.js"));
     store = await server.ssrLoadModule("/src/services/sessionStore.js");
     services = await server.ssrLoadModule("/src/services/registrationService.js");

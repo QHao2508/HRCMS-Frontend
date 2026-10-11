@@ -1,3 +1,4 @@
+import { ssrDependencies } from "./ssrDependencies.js";
 import assert from "node:assert/strict";
 import { after,before,beforeEach,test } from "node:test";
 import axios from "axios";
@@ -12,7 +13,7 @@ import { isAssigned,localDateTime } from "../src/services/workflowHelpers.js";
 let server,api,store,club,training,AuthContext,AppRoutes;
 const reply=(config,data,status=200)=>({config,data,status,statusText:"",headers:{}});
 before(async()=>{
-    server=await createServer({configFile:false,plugins:[react()],server:{middlewareMode:true,hmr:false,ws:false},appType:"custom",logLevel:"error"});
+    server=await createServer({configFile:false,plugins: [ssrDependencies(),react()],server:{middlewareMode:true,hmr:false,ws:false},appType:"custom",logLevel:"error"});
     ({default:api}=await server.ssrLoadModule('/src/services/api.js'));
     store=await server.ssrLoadModule('/src/services/sessionStore.js');
     club=await server.ssrLoadModule('/src/services/clubService.js');
