@@ -1,3 +1,9 @@
+import MedicalDashboard from "../pages/medical/MedicalDashboard.jsx";
+import MedicalExamination from "../pages/medical/MedicalExamination.jsx";
+import MedicalInjury from "../pages/medical/MedicalInjury.jsx";
+import MedicalTreatment from "../pages/medical/MedicalTreatment.jsx";
+import MedicalRestrictions from "../pages/medical/MedicalRestrictions.jsx";
+import MedicalFollowUp from "../pages/medical/MedicalFollowUp.jsx";
 import { Routes,Route } from "react-router-dom";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
@@ -33,7 +39,7 @@ export default function AppRoutes() {return <Routes>
     <Route path="/forgot-password" element={<ForgotPassword/>}/><Route path="/verify-email" element={<VerifyEmail/>}/>
     <Route path="/reset-password" element={<ResetPassword/>}/><Route path="/accept-invitation" element={<AcceptInvitation/>}/>
     <Route element={<RoleRoute/>}><Route element={<AppLayout/>}>
-        <Route path="/dashboard" element={<Dashboard/>}/><Route path="/permission-denied" element={<PermissionDenied/>}/>
+        <Route element={<RoleRoute allowedRoles={ROLES.Veterinarian}/>}><Route path="/medical" element={<MedicalDashboard/>}/><Route path="/medical/examination" element={<MedicalExamination/>}/><Route path="/medical/injury" element={<MedicalInjury/>}/><Route path="/medical/treatment" element={<MedicalTreatment/>}/><Route path="/medical/restrictions" element={<MedicalRestrictions/>}/><Route path="/medical/follow-up" element={<MedicalFollowUp/>}/></Route><Route path="/dashboard" element={<Dashboard/>}/><Route path="/permission-denied" element={<PermissionDenied/>}/>
         <Route element={<RoleRoute allowedRoles={ROLES.HorseOwner}/>}><Route path="/registrations" element={<RegistrationList/>}/><Route path="/registrations/new" element={<RegistrationCreate/>}/><Route path="/registrations/:id" element={<RegistrationDetail/>}/></Route>
         <Route element={<RoleRoute allowedRoles={ROLES.ClubManager}/>}><Route path="/manager/staff" element={<StaffPage/>}/><Route path="/manager/audit" element={<AuditPage/>}/><Route path="/manager/website" element={<WebsitePage/>}/><Route path="/reviews" element={<ReviewList/>}/><Route path="/reviews/:id" element={<ReviewDetail/>}/></Route>
         <Route element={<RoleRoute allowedRoles={ALL_ROLES}/>}><Route path="/horses" element={<HorseList/>}/><Route path="/horses/:id" element={<HorseDetail/>}/></Route>

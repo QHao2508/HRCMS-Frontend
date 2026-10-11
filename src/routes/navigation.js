@@ -2,6 +2,7 @@ import { MSG, msg } from "../messages/index.js";
 import { ALL_ROLES,ROLES,isKnownRole,isRoleAllowed } from "../constants/roles.js";
 export const TRAINING_ROLES = [ROLES.HorseOwner,ROLES.ClubManager,ROLES.HeadTrainer,ROLES.Trainer,ROLES.WorkRider,ROLES.Veterinarian];
 const items = [
+    {to:"/medical",label:msg(MSG.MEDICAL_NAV),allowedRoles:ROLES.Veterinarian},
     {to:"/manager/staff",label:msg(MSG.ADMIN_STAFF),allowedRoles:ROLES.ClubManager},
     {to:"/manager/audit",label:msg(MSG.ADMIN_AUDIT),allowedRoles:ROLES.ClubManager},
     {to:"/manager/website",label:msg(MSG.ADMIN_WEBSITE),allowedRoles:ROLES.ClubManager},

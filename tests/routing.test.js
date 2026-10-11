@@ -186,6 +186,7 @@ test("navigation uses exact roles and exposes only implemented links for each ro
         if (role === ROLES.ClubManager) { expected.unshift({to:"/manager/staff",label:"Nhân sự"},{to:"/manager/audit",label:"Nhật ký hoạt động"},{to:"/manager/website",label:"Giao diện website"}); expected.push({ to: "/reviews", label: "Duyệt hồ sơ" }); }
         if ([ROLES.ClubManager,ROLES.HeadTrainer,ROLES.Trainer].includes(role)) expected.push({ to:"/training/templates",label:"Giáo án mẫu" });
         if (role !== ROLES.Groom) expected.push({to:"/training/plans",label:"Kế hoạch huấn luyện"},{to:"/training/sessions",label:"Buổi tập"});
+        if (role === ROLES.Veterinarian) expected.unshift({to:"/medical",label:"Thú y"});
         assert.deepEqual(getNavigationForRole(role).map(({ to, label }) => ({ to, label })), expected);
     }
     for (const role of ["Horse Owner", "horseowner", "Admin", "__proto__", 0, null]) assert.deepEqual(getNavigationForRole(role), []);
