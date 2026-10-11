@@ -2,6 +2,13 @@ import { MSG, msg } from "../messages/index.js";
 import { ALL_ROLES,ROLES,isKnownRole,isRoleAllowed } from "../constants/roles.js";
 export const TRAINING_ROLES = [ROLES.HorseOwner,ROLES.ClubManager,ROLES.HeadTrainer,ROLES.Trainer,ROLES.WorkRider,ROLES.Veterinarian];
 const items = [
+{to:'/medical/preventive-care',label:msg(MSG.SUPPORT_PREVENTIVE),allowedRoles:ALL_ROLES},
+{to:'/care/tasks',label:msg(MSG.SUPPORT_CARE),allowedRoles:[ROLES.ClubManager,ROLES.HorseOwner,ROLES.Groom,ROLES.Veterinarian]},
+{to:'/care/incidents',label:msg(MSG.SUPPORT_INCIDENTS),allowedRoles:[ROLES.ClubManager,ROLES.Veterinarian,ROLES.Trainer,ROLES.Groom,ROLES.WorkRider]},
+{to:'/care/stables',label:msg(MSG.SUPPORT_STABLES),allowedRoles:[ROLES.ClubManager,ROLES.Groom]},
+{to:'/inventory',label:msg(MSG.SUPPORT_INVENTORY),allowedRoles:[ROLES.ClubManager,ROLES.Groom]},
+{to:'/inventory/replenishments',label:msg(MSG.SUPPORT_REPLENISHMENTS),allowedRoles:[ROLES.ClubManager,ROLES.Groom]},
+{to:'/reports',label:msg(MSG.SUPPORT_REPORTS),allowedRoles:ALL_ROLES},
     {to:"/medical",label:msg(MSG.MEDICAL_NAV),allowedRoles:ROLES.Veterinarian},
     {to:"/manager/staff",label:msg(MSG.ADMIN_STAFF),allowedRoles:ROLES.ClubManager},
     {to:"/manager/audit",label:msg(MSG.ADMIN_AUDIT),allowedRoles:ROLES.ClubManager},

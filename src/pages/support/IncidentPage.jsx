@@ -1,0 +1,47 @@
+import { useCallback, useEffect, useState } from 'react';
+import { useAuth } from '../../context/useAuth.js';
+import { useMutation } from '../../context/useMutation.js';
+import { useRegistrationResource } from '../../context/useRegistrationResource.js';
+import { MSG, msg } from '../../messages/index.js';
+import { PageHeading, MutationState, ResourceState } from '../../components/WorkflowUI.jsx';
+import { HorseSelect, SupportForm, SupportTable } from '../../components/SupportUI.jsx';
+import { useChoices, usePaged, when } from '../../services/supportResources.js';
+import { change, id, read } from '../../services/supportService.js';
+import api from '../../services/api.js';
+import { localDateTime, scheduledPayload } from '../../services/workflowHelpers.js';
+const types = ['TrainingObservation', 'CareObservation', 'Health', 'Training', 'Stable', 'Feeding', 'Other'];
+const severities = ['NeedsReview', 'Low', 'Medium', 'High', 'Critical'];
+const typeLabels = [MSG.SUPPORT_TRAINING_OBSERVATION, MSG.SUPPORT_CARE_OBSERVATION, MSG.SUPPORT_HEALTH, MSG.SUPPORT_TRAINING, MSG.SUPPORT_STABLES, MSG.SUPPORT_FEEDING, MSG.MEDICAL_OTHER];
+const severityLabels = [MSG.SUPPORT_NEEDS_REVIEW, MSG.SUPPORT_LOW, MSG.SUPPORT_MEDIUM, MSG.SUPPORT_HIGH, MSG.MEDICAL_CRITICAL];
+export default function IncidentPage() {
+    const { user } = useAuth(); const horses = useChoices('/api/horses'); const [horseId, setHorseId] = useState('');
+    return <><PageHeading title={msg(MSG.SUPPORT_INCIDENTS)} /><HorseSelect resource={horses} value={horseId} onChange={setHorseId} optional /><IncidentList key={horseId} horseId={horseId} horses={horses.data || []} user={user} /></>;
+}
+function IncidentList({ horseId, horses, user }) {
+    const resource = usePaged('/api/care/incidents', { horseId: horseId || undefined }); const [selected, setSelected] = useState(null);
+    return <>{horseId && user.role !== 'ClubManager' && <SupportForm title={msg(MSG.SUPPORT_REPORT_INCIDENT)} reload={resource.reload} initial={{ occurredAt: localDateTime(new Date()), type: types[0], description: '', severity: severities[0], routedTo: 'Veterinarian' }} submit={f => change('/api/care/incidents', { ...f, horseId, occurredAt: scheduledPayload(f.occurredAt) })} fields={[
+        { name: 'occurredAt', label: msg(MSG.SUPPORT_OCCURRED), type: 'datetime-local', required: true }, { name: 'type', label: msg(MSG.SUPPORT_TYPE), options: types.map((value, i) => ({ value, label: msg(typeLabels[i]) })), required: true },
+        { name: 'severity', label: msg(MSG.SUPPORT_SEVERITY), options: severities.map((value, i) => ({ value, label: msg(severityLabels[i]) })), required: true }, { name: 'routedTo', label: msg(MSG.SUPPORT_ROUTED_TO), options: [{ value: 'Veterinarian', label: msg(MSG.HOME_REFERENCE_VET) }, { value: 'Trainer', label: msg(MSG.HOME_REFERENCE_TRAINER) }], required: true },
+        { name: 'description', label: msg(MSG.SUPPORT_DESCRIPTION), multiline: true, required: true, maxLength: 4000 },
+    ]} />}
+        <SupportTable resource={resource} columns={[{ key: 'horseId', label: msg(MSG.MEDICAL_HORSE), render: x => horses.find(h => h.id === x.horseId)?.name || x.horseId }, { key: 'occurredAt', label: msg(MSG.SUPPORT_OCCURRED), render: x => when(x.occurredAt) }, { key: 'type', label: msg(MSG.SUPPORT_TYPE), render: x => msg(typeLabels[types.indexOf(x.type)] || MSG.CHUA_XAC_DINH) }, { key: 'severity', label: msg(MSG.SUPPORT_SEVERITY), render: x => msg(severityLabels[severities.indexOf(x.severity)] || MSG.CHUA_XAC_DINH) }, { key: 'description', label: msg(MSG.SUPPORT_DESCRIPTION) }, { key: 'resolved', label: msg(MSG.TRANG_THAI), render: x => msg(x.resolved ? MSG.SUPPORT_RESOLVED : MSG.SUPPORT_NEEDS_REVIEW) }]} actions={row => <button className="btn btn-outline-primary" onClick={() => setSelected(row)}>{msg(MSG.CHI_TIET)}</button>} />
+        {selected && <IncidentDetails key={selected.id} incident={selected} user={user} reload={() => { setSelected(null); resource.reload(); }} />}
+    </>;
+}
+function IncidentDetails({ incident, user, reload }) {
+    const base = `/api/care/incidents/${id(incident.id)}`; const load = useCallback(() => read(`${base}/photos`), [base]); const resource = useRegistrationResource(load);
+    const mutation = useMutation(); const [file, setFile] = useState(null);
+    return <section className="surface-card"><h2>{msg(MSG.SUPPORT_INCIDENT_DETAILS)}</h2><p>{incident.description}</p><MutationState mutation={mutation} reload={() => { resource.reload(); reload(); }} /><ResourceState resource={resource} />
+        {resource.data?.map(photo => <IncidentPhoto key={photo.id} base={base} photo={photo} />)}
+        {!resource.data?.length && <p>{msg(MSG.SUPPORT_NO_PHOTOS)}</p>}
+        {!incident.resolved && incident.reporterId === user.id && <form onSubmit={e => { e.preventDefault(); mutation.run(() => { if (!file || !['image/png', 'image/jpeg'].includes(file.type) || file.size > 10485760) throw Object.assign(new Error(msg(MSG.SUPPORT_PHOTO_INVALID)), { status: 400 }); const data = new FormData(); data.append('file', file); return change(`${base}/photos`, data); }, () => { setFile(null); resource.reload(); }); }}>
+            <fieldset disabled={mutation.pending || mutation.uncertain}><label htmlFor="incident-photo" className="form-label">{msg(MSG.SUPPORT_UPLOAD_PHOTO)}</label><input id="incident-photo" className="form-control" type="file" accept="image/png,image/jpeg" required onChange={e => setFile(e.target.files[0] || null)} /><button className="btn btn-primary mt-3" disabled={!file}>{msg(MSG.SUPPORT_UPLOAD_PHOTO)}</button></fieldset>
+        </form>}
+        {!incident.resolved && incident.routedTo === user.role && <SupportForm title={msg(MSG.SUPPORT_RESOLVE)} initial={{ notes: '' }} reload={reload} fields={[{ name: 'notes', label: msg(MSG.SUPPORT_RESOLVE_CONFIRM), required: true, multiline: true, maxLength: 4000 }]} submit={() => change(`${base}/resolve`)} />}
+    </section>;
+}
+function IncidentPhoto({ base, photo }) {
+    const [url, setUrl] = useState(null); const [error, setError] = useState(null);
+    useEffect(() => { let active = true, objectUrl; api.get(`${base}/photos/${id(photo.id)}`, { responseType: 'blob' }).then(r => { if (active) { objectUrl = URL.createObjectURL(r.data); setUrl(objectUrl); } }).catch(e => { if (active) setError(e); }); return () => { active = false; if (objectUrl) URL.revokeObjectURL(objectUrl); }; }, [base, photo.id]);
+    return <figure>{url && <><img src={url} alt={photo.fileName} style={{ maxWidth: '100%', maxHeight: 300 }} /><figcaption><a href={url} download={photo.fileName}>{photo.fileName}</a></figcaption></>}{error && <p role="alert">{error.message}</p>}</figure>;
+}
