@@ -1,3 +1,4 @@
+import { getMedicalLabel } from '../../constants/medicalLabels.js';
 import { MSG, msg } from "../../messages/index.js";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ClipboardPlus, Eye, Pencil, Plus, Search, X } from "lucide-react";
@@ -41,7 +42,7 @@ function idOf(object) {
 }
 
 function horseName(horse) {
-    return firstDefined(horse, ["name", "Name", "horseName", "HorseName"], "Unnamed horse");
+    return firstDefined(horse, ["name", "Name", "horseName", "HorseName"], msg(MSG.MEDICAL_TEXT_17));
 }
 
 function horseRegistration(horse) {
@@ -56,7 +57,7 @@ function formatDateTime(value) {
     if (!value) return "—";
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return String(value);
-    return date.toLocaleString([], {
+    return date.toLocaleString("vi-VN", {
         dateStyle: "medium",
         timeStyle: "short",
     });
@@ -125,7 +126,7 @@ function MedicalExamination() {
                 }
             } catch (err) {
                 console.error(err);
-                setError(getErrorMessage(err, "Unable to load horses."));
+                setError(getErrorMessage(err, msg(MSG.MEDICAL_TEXT_1)));
             } finally {
                 setLoadingHorses(false);
             }
@@ -155,7 +156,7 @@ function MedicalExamination() {
             if(version === requestVersion.current) setRecords(listFromResponse(data));
         } catch (err) {
             console.error(err);
-            if(version === requestVersion.current) setError(getErrorMessage(err, "Unable to load medical records."));
+            if(version === requestVersion.current) setError(getErrorMessage(err, msg(MSG.MEDICAL_TEXT_2)));
         } finally {
             if(version === requestVersion.current) setLoadingRecords(false);
         }
@@ -233,24 +234,24 @@ function MedicalExamination() {
         event.preventDefault();
 
         if (!selectedHorseId) {
-            setError("Select a horse before saving the examination.");
+            setError(msg(MSG.MEDICAL_TEXT_3));
             return;
         }
 
         if (!form.examinationAt) {
-            setError("Examination date and time are required.");
+            setError(msg(MSG.MEDICAL_TEXT_4));
             return;
         }
 
         const examinationDate = new Date(form.examinationAt);
 
         if (Number.isNaN(examinationDate.getTime())) {
-            setError("Examination date and time are invalid.");
+            setError(msg(MSG.MEDICAL_DATE_INVALID));
             return;
         }
 
         if (examinationDate > new Date()) {
-            setError("Examination date cannot be in the future.");
+            setError(msg(MSG.MEDICAL_DATE_FUTURE));
             return;
         }
 
@@ -265,7 +266,7 @@ function MedicalExamination() {
         };
 
         if (!payload.reason || !payload.symptoms || !payload.findings || !payload.diagnosis) {
-            setError("Reason, symptoms, findings, and diagnosis are required.");
+            setError(msg(MSG.MEDICAL_TEXT_5));
             return;
         }
 
@@ -276,10 +277,10 @@ function MedicalExamination() {
 
             if (editingRecord) {
                 await correctMedicalRecord(selectedHorseId, idOf(editingRecord), payload);
-                setSuccess("Medical record corrected successfully.");
+                setSuccess(msg(MSG.MEDICAL_TEXT_6));
             } else {
                 await createMedicalRecord(selectedHorseId, payload);
-                setSuccess("Medical examination recorded successfully.");
+                setSuccess(msg(MSG.MEDICAL_TEXT_7));
             }
 
             setShowModal(false);
@@ -292,8 +293,8 @@ function MedicalExamination() {
                 getErrorMessage(
                     err,
                     editingRecord
-                        ? "Unable to correct the medical record."
-                        : "Unable to create the medical record."
+                        ? msg(MSG.MEDICAL_TEXT_8)
+                        : msg(MSG.MEDICAL_TEXT_9)
                 )
             );
         } finally {
@@ -377,13 +378,13 @@ function MedicalExamination() {
                         <option value="">{msg(MSG.MERGED_UI_332)}</option>
                         {HEALTH_STATUSES.map((status) => (
                             <option key={status} value={status}>
-                                {status}
+                                {getMedicalLabel(status)}
                             </option>
                         ))}
                     </select>
 
                     <span className="medical-record-count">
-                        {filteredRecords.length}{msg(MSG.MERGED_UI_333)}{filteredRecords.length === 1 ? "" : "s"}
+                        {filteredRecords.length}{msg(MSG.MERGED_UI_333)}
                     </span>
                 </div>
 
@@ -442,7 +443,7 @@ function MedicalExamination() {
                                             <span
                                                 className={`status-badge ${healthClass(status)}`}
                                             >
-                                                {status}
+                                                {getMedicalLabel(status)}
                                             </span>
                                         </div>
 
@@ -500,12 +501,12 @@ function MedicalExamination() {
                         <div className="medical-modal-header">
                             <div>
                                 <span className="medical-section-eyebrow">
-                                    {editingRecord ? "CORRECTION" : "NEW EXAMINATION"}
+                                    {editingRecord ? msg(MSG.MEDICAL_TEXT_13) : msg(MSG.MEDICAL_TEXT_14)}
                                 </span>
                                 <h2>
                                     {editingRecord
-                                        ? "Correct Medical Record"
-                                        : "Record Medical Examination"}
+                                        ? msg(MSG.MEDICAL_TEXT_15)
+                                        : msg(MSG.MEDICAL_CREATE_EXAMINATION)}
                                 </h2>
                             </div>
 
@@ -551,7 +552,7 @@ function MedicalExamination() {
                                     >
                                         {HEALTH_STATUSES.map((status) => (
                                             <option key={status} value={status}>
-                                                {status}
+                                                {getMedicalLabel(status)}
                                             </option>
                                         ))}
                                     </select>
@@ -633,10 +634,10 @@ function MedicalExamination() {
                                 >
                                     <ClipboardPlus size={14} />
                                     {saving
-                                        ? "Saving..."
+                                        ? msg(MSG.MEDICAL_TEXT_10)
                                         : editingRecord
-                                            ? "Save Correction"
-                                            : "Save Examination"}
+                                            ? msg(MSG.MEDICAL_TEXT_11)
+                                            : msg(MSG.MEDICAL_TEXT_12)}
                                 </button>
                             </div>
                         </form>
@@ -682,11 +683,7 @@ function MedicalExamination() {
                             <div>
                                 <span>{msg(MSG.MERGED_UI_357)}</span>
                                 <strong>
-                                    {firstDefined(
-                                        viewingRecord,
-                                        ["healthStatus", "HealthStatus"],
-                                        "Unknown"
-                                    )}
+                                    {getMedicalLabel(firstDefined(viewingRecord, ["healthStatus", "HealthStatus"], "Unknown"))}
                                 </strong>
                             </div>
 

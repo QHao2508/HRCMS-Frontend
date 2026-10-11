@@ -1,3 +1,4 @@
+import { Buffer } from 'node:buffer';
 import assert from 'node:assert/strict';
 import process from 'node:process';
 import test from 'node:test';
@@ -30,7 +31,7 @@ test('frontend services connect to the live SQL Server API', { timeout: 90000 },
 
     if (process.env.HRCMS_LIVE_ROLES === '1') {
       for (const role of enums.Role) {
-        const user = await auth.login({ email: role === 'ClubManager' ? managerEmail : `${role.toLowerCase()}@frontend.example.test`, password });
+        const user = await auth.login({ email: role === 'ClubManager' ? managerEmail : `${role.toLowerCase()}@${process.env.HRCMS_LIVE_EMAIL_SUFFIX || 'frontend.example.test'}`, password });
         assert.equal(user.role, role);
         assert.equal(typeof (await api.get('/api/dashboard')).data.horseCount, 'number');
         assert.ok(Array.isArray((await club.listHorses()).items));
@@ -41,7 +42,7 @@ test('frontend services connect to the live SQL Server API', { timeout: 90000 },
     // Mutating checks require a deliberately prepared disposable fixture, never ordinary live accounts.
     if (process.env.HRCMS_LIVE_FIXTURE === '1') {
       assert.equal(manager.role, 'ClubManager');
-      const signIn = role => auth.login({ email: `${role.toLowerCase()}@frontend.example.test`, password });
+      const signIn = role => auth.login({ email: role === 'ClubManager' ? managerEmail : `${role.toLowerCase()}@${process.env.HRCMS_LIVE_EMAIL_SUFFIX || 'frontend.example.test'}`, password });
       const directory = {};
       for (const role of enums.Role) {
         const user = role === 'ClubManager' ? manager : await signIn(role);
@@ -52,14 +53,14 @@ test('frontend services connect to the live SQL Server API', { timeout: 90000 },
       }
       await signIn('HorseOwner');
       assert.ok((await registrations.listPreferredStaff()).HeadTrainer.length);
-      const draft = await registrations.createRegistration({ name: 'Frontend smoke draft' });
+      const draft = await registrations.createRegistration({ name: `${process.env.HRCMS_LIVE_MARKER || 'Frontend smoke'} draft` });
       assert.equal(draft.status, 'Draft');
       assert.equal((await registrations.cancelRegistration(draft.id)).status, 'Cancelled');
       const today = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Ho_Chi_Minh' }).format(new Date());
-      const form = { name: 'Frontend integration horse', sire: 'Demo Sire', dam: 'Demo Dam', dateOfBirth: '2020-01-01', gender: 'Gelding', breed: 'Thoroughbred', heightCm: 160, weightKg: 450, measurementDate: today, declaredHealth: 'Fit', boardingStart: today, healthNotes: '', registrationNumber: `FE-${Date.now()}` };
+      const form = { name: `${process.env.HRCMS_LIVE_MARKER || 'Frontend smoke'} horse`, sire: 'Demo Sire', dam: 'Demo Dam', dateOfBirth: '2020-01-01', gender: 'Gelding', breed: 'Thoroughbred', heightCm: 160, weightKg: 450, measurementDate: today, declaredHealth: 'Fit', boardingStart: today, healthNotes: '', registrationNumber: `FE-${Date.now()}` };
       const registration = await registrations.createRegistration(form);
       assert.equal((await registrations.updateRegistration(registration.id, form)).name, form.name);
-      const png = new File([Uint8Array.from([137,80,78,71,13,10,26,10,0])], 'photo.png', { type: 'image/png' });
+      const png = new File([Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=', 'base64')], 'photo.png', { type: 'image/png' });
       const photo = await attachments.uploadAttachment(registration.id, { file: png, type: 'HorsePhoto' });
       await attachments.uploadAttachment(registration.id, { file: png, type: 'Certificate', certificateNumber: 'FE-TEST' });
       assert.equal((await attachments.listAttachments(registration.id)).length, 2);
@@ -73,7 +74,7 @@ test('frontend services connect to the live SQL Server API', { timeout: 90000 },
       for (const role of ['HeadTrainer', 'Groom', 'Veterinarian']) await club.assignStaff(approval.horseId, { staffId: directory[role].id, role, startDate: today, notes: 'Frontend fixture' });
       await signIn('HeadTrainer');
       await club.assignStaff(approval.horseId, { staffId: directory.Trainer.id, role: 'Trainer', startDate: today, notes: 'Frontend fixture' });
-      const template = await training.createTemplate({ name: 'Frontend template', goal: 'Fitness', phase: 'Base', distanceMetres: 1000, intensity: 'Light', surface: 'Sand', frequencyPerWeek: 3, notes: '' });
+      const template = await training.createTemplate({ name: `${process.env.HRCMS_LIVE_MARKER || 'Frontend smoke'} template`, goal: 'Fitness', phase: 'Base', distanceMetres: 1000, intensity: 'Light', surface: 'Sand', frequencyPerWeek: 3, notes: '' });
       assert.ok((await training.listTemplates({ page: 1, pageSize: 20 })).items.some(item => item.id === template.id));
       await signIn('Trainer');
       const plan = await training.createPlan({ horseId: approval.horseId, templateId: template.id, goal: 'Frontend plan', phase: 'Base', startDate: today, endDate: today, notes: '' });

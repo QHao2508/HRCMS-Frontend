@@ -1,3 +1,4 @@
+import { getMedicalLabel, getInjuryStatusLabel } from '../../constants/medicalLabels.js';
 import { MSG, msg } from "../../messages/index.js";
 import { useEffect, useMemo, useState } from "react";
 import { AlertTriangle, CalendarDays, Plus, Search, X } from "lucide-react";
@@ -33,7 +34,7 @@ function horseIdOf(horse) {
 }
 
 function horseNameOf(horse) {
-    return horse?.name ?? horse?.horseName ?? horse?.Name ?? "Unnamed horse";
+    return horse?.name ?? horse?.horseName ?? horse?.Name ?? msg(MSG.MEDICAL_TEXT_17);
 }
 
 function horseCodeOf(horse) {
@@ -44,7 +45,7 @@ function formatDate(value) {
     if (!value) return "—";
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return String(value);
-    return date.toLocaleDateString("en-GB", {
+    return date.toLocaleDateString("vi-VN", {
         day: "2-digit",
         month: "short",
         year: "numeric",
@@ -103,7 +104,7 @@ function MedicalInjury() {
                 setHorses(list);
                 if (list.length > 0) setSelectedHorseId(String(horseIdOf(list[0])));
             } catch (err) {
-                if (active) setError(err?.message || err?.response?.data?.message || "Unable to load horses.");
+                if (active) setError(err?.message || err?.response?.data?.message || msg(MSG.MEDICAL_TEXT_1));
             } finally {
                 if (active) setLoading(false);
             }
@@ -134,7 +135,7 @@ function MedicalInjury() {
                 setRecords(unwrapList(recordsData));
                 setInjuries(unwrapList(injuriesData));
             } catch (err) {
-                if (active) setError(err?.message || err?.response?.data?.message || "Unable to load injury records.");
+                if (active) setError(err?.message || err?.response?.data?.message || msg(MSG.MEDICAL_TEXT_23));
             } finally {
                 if (active) setLoadingInjuries(false);
             }
@@ -169,18 +170,18 @@ function MedicalInjury() {
         setSuccess("");
 
         if (!selectedHorseId) { let active=true; queueMicrotask(()=>{if(active){
-            setError("Please select a horse first.");
+            setError(msg(MSG.MEDICAL_TEXT_24));
             }}); return ()=>{active=false;}; }
         if (!form.medicalRecordId) {
-            setError("An existing Medical Examination / Record is required before creating an injury.");
+            setError(msg(MSG.MEDICAL_TEXT_25));
             return;
         }
         if (!form.injuryDate || !form.reviewDate) {
-            setError("Injury Date and Expected Review Date are required.");
+            setError(msg(MSG.MEDICAL_TEXT_26));
             return;
         }
         if (form.reviewDate < form.injuryDate) {
-            setError("Expected Review Date cannot be earlier than Injury Date.");
+            setError(msg(MSG.MEDICAL_REVIEW_DATE_INVALID));
             return;
         }
 
@@ -198,9 +199,9 @@ function MedicalInjury() {
 
             setInjuries((current) => [created, ...current]);
             setShowModal(false);
-            setSuccess("Injury record created successfully. The horse health status is now INJURED.");
+            setSuccess(msg(MSG.MEDICAL_TEXT_27));
         } catch (err) {
-            setError(err?.message || err?.response?.data?.message || "Unable to create the injury record.");
+            setError(err?.message || err?.response?.data?.message || msg(MSG.MEDICAL_TEXT_28));
         } finally {
             setSaving(false);
         }
@@ -246,7 +247,7 @@ function MedicalInjury() {
                     <label className="medical-field">
                         <span>{msg(MSG.MERGED_UI_407)}</span>
                         <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
-                            {statuses.map((status) => <option key={status}>{status}</option>)}
+                            {statuses.map((status) => <option key={status} value={status}>{getInjuryStatusLabel(status)}</option>)}
                         </select>
                     </label>
                 </div>
@@ -313,11 +314,11 @@ function MedicalInjury() {
                                 filteredInjuries.map((injury) => (
                                     <tr key={injury.id}>
                                         <td><strong>{formatDate(injury.injuryDate)}</strong></td>
-                                        <td>{injury.type}</td>
+                                        <td>{getMedicalLabel(injury.type)}</td>
                                         <td>{injury.bodyLocation}</td>
-                                        <td><span className={`injury-severity ${String(injury.severity ?? "").toLowerCase()}`}>{injury.severity}</span></td>
+                                        <td><span className={`injury-severity ${String(injury.severity ?? "").toLowerCase()}`}>{getMedicalLabel(injury.severity)}</span></td>
                                         <td>{injury.cause}</td>
-                                        <td><span className={`injury-status ${String(injury.status ?? "").toLowerCase()}`}>{statusLabel(injury.status)}</span></td>
+                                        <td><span className={`injury-status ${String(injury.status ?? "").toLowerCase()}`}>{getInjuryStatusLabel(injury.status)}</span></td>
                                         <td><CalendarDays size={13} /> {formatDate(injury.reviewDate)}</td>
                                     </tr>
                                 ))
@@ -334,7 +335,7 @@ function MedicalInjury() {
                             <div>
                                 <span>{msg(MSG.MERGED_UI_426)}</span>
                                 <h3>{msg(MSG.MERGED_UI_427)}</h3>
-                                <p>{selectedHorse ? horseNameOf(selectedHorse) : "Selected horse"}</p>
+                                <p>{selectedHorse ? horseNameOf(selectedHorse) : msg(MSG.MEDICAL_TEXT_19)}</p>
                             </div>
                             <button className="medical-icon-button" onClick={closeModal} disabled={saving}><X size={18} /></button>
                         </div>
@@ -346,7 +347,7 @@ function MedicalInjury() {
                                     <option value="">{msg(MSG.MERGED_UI_429)}</option>
                                     {records.map((record) => (
                                         <option key={record.id} value={record.id}>
-                                            {formatDate(record.examinationAt)}{msg(MSG.MERGED_UI_430)}{record.reason || record.diagnosis || "Medical examination"}
+                                            {formatDate(record.examinationAt)}{msg(MSG.MERGED_UI_430)}{record.reason || record.diagnosis || msg(MSG.MEDICAL_CREATE_EXAMINATION)}
                                         </option>
                                     ))}
                                 </select>
@@ -365,14 +366,14 @@ function MedicalInjury() {
                             <label className="medical-field">
                                 <span>{msg(MSG.MERGED_UI_433)}</span>
                                 <select name="type" value={form.type} onChange={handleChange} required>
-                                    {injuryTypes.map((type) => <option key={type}>{type}</option>)}
+                                    {injuryTypes.map((type) => <option key={type} value={type}>{getMedicalLabel(type)}</option>)}
                                 </select>
                             </label>
 
                             <label className="medical-field">
                                 <span>{msg(MSG.MERGED_UI_434)}</span>
                                 <select name="severity" value={form.severity} onChange={handleChange} required>
-                                    {severities.map((severity) => <option key={severity}>{severity}</option>)}
+                                    {severities.map((severity) => <option key={severity} value={severity}>{getMedicalLabel(severity)}</option>)}
                                 </select>
                             </label>
 
@@ -396,7 +397,7 @@ function MedicalInjury() {
                             <div className="medical-modal-actions medical-field-full">
                                 <button type="button" className="medical-secondary-button" onClick={closeModal} disabled={saving}>{msg(MSG.MERGED_UI_444)}</button>
                                 <button type="submit" className="medical-primary-button" disabled={saving}>
-                                    {saving ? "Saving..." : "Create Injury Record"}
+                                    {saving ? msg(MSG.MEDICAL_TEXT_10) : msg(MSG.MEDICAL_TEXT_29)}
                                 </button>
                             </div>
                         </form>

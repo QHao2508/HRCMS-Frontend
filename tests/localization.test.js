@@ -8,7 +8,21 @@ import { VI } from '../src/messages/vi.js';
 import { ENUMS, getEnumLabel } from '../src/constants/enumLabels.js';
 import { normalizeApiError } from '../src/services/apiError.js';
 import { backendErrorMessage } from '../src/messages/backendErrors.js';
+import { getMedicalLabel, getInjuryStatusLabel } from '../src/constants/medicalLabels.js';
 function files(dir) { return fs.readdirSync(dir, { withFileTypes: true }).flatMap(entry => entry.isDirectory() ? files(path.join(dir,entry.name)) : /\.(js|jsx)$/.test(entry.name) ? [path.join(dir,entry.name)] : []); }
+test('medical labels and actionable care/inventory errors are Vietnamese', async () => {
+    for (const value of ['Muscle','Tendon','Ligament','Bone','Joint','Hoof','Wound','Other','Mild','Moderate','Severe','Critical','Recovering','Recovered']) {
+        assert.notEqual(getMedicalLabel(value), value);
+        assert.notEqual(getMedicalLabel(value), msg(MSG.CHUA_XAC_DINH));
+    }
+    assert.equal(getInjuryStatusLabel('Active'), 'Chưa hồi phục');
+    for (const [detail, expected] of [
+        ['Consume/adjust remaining stock before archiving.', /tồn kho/],
+        ['A correction already exists. Edit the latest revision.', /bản mới nhất/],
+        ['Task is not assigned to you.', /không được giao/],
+        ['Injury does not belong to this medical record.', /không thuộc/],
+    ]) assert.match((await normalizeApiError({ response: { status: 400, data: { detail } } })).message, expected);
+});
 test('all referenced message keys exist; catalog and key enum are frozen and complete', () => {
     assert.ok(Object.isFrozen(MSG)); assert.ok(Object.isFrozen(VI));
     assert.deepEqual(Object.keys(MSG).sort(), Object.keys(VI).sort());

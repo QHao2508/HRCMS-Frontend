@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import MedicalLayout from '../../components/medical/MedicalLayout.jsx';
 import { MSG, msg, UI_LOCALE } from '../../messages/index.js';
-import { getEnumLabel } from '../../constants/enumLabels.js';
+import { getInjuryStatusLabel } from '../../constants/medicalLabels.js';
 import { Field, MutationState, ResourceState } from '../../components/WorkflowUI.jsx';
 import { useRegistrationResource } from '../../context/useRegistrationResource.js';
 import { useMutation } from '../../context/useMutation.js';
@@ -43,7 +43,7 @@ export function MedicalFollowUpForm({ horseId, data, reload }) {
                         {!eligible[key].length && <p>{msg(MSG.MEDICAL_CLEARANCE_EMPTY)}</p>}
                         {eligible[key].map(item => <label key={item.id} className="d-flex gap-2 mb-2">
                             <input type="checkbox" checked={form[key].includes(item.id)} onChange={event => toggle(key, item.id, event.target.checked)} />
-                            <span>{item.reason || item.bodyLocation || item.objective}{item.status && ` · ${getEnumLabel(item.status)}`}</span>
+                            <span>{item.reason || item.bodyLocation || item.objective}{item.status && ` · ${getInjuryStatusLabel(item.status)}`}</span>
                         </label>)}
                     </section>)}
                 </div>}
