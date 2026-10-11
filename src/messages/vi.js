@@ -833,4 +833,5 @@ export const VI = Object.freeze({
     "API_CLEARANCE_SELECTION_REQUIRED": "Hãy chọn cụ thể hạn chế, chấn thương hoặc phác đồ cần kết thúc. Tái khám không clearance thì không chọn mục để kết thúc.",
     "API_CLEARANCE_SELECTION_INVALID": "Các mục phải thuộc ngựa này, chưa kết thúc, có hiệu lực trước ngày tái khám và không được chọn trùng.",
     "API_FINISH_ACTIVE_CARE": "Hãy kết thúc công việc chăm sóc đang thực hiện trước khi lưu trữ ngựa.",
+"PLAN_OVERDUE":"Quá hạn","PLAN_OVERDUE_DATE":"Đã quá ngày kết thúc {date}",
 });

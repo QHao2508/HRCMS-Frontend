@@ -34,3 +34,6 @@ Dữ liệu mới được giữ để Khoa xem lại: registration 9f15309f-d8a
 ## Giới hạn cần review
 
 Màu/font/khoảng cách hiện được dựng theo quan sát canvas; chưa lấy được design token/font gốc qua Dev Mode, chưa nghiệm thu pixel chính xác. Các màn hình account lifecycle ngoài Login vẫn giữ nội dung chức năng cũ với style dùng chung. Chưa triển khai module medical/care/inventory/reports chi tiết. Không làm chức năng xóa/thay attachment khi backend chưa có API. Chưa kiểm live toàn bộ ca lỗi/concurrency/medical-lock hoặc phân trang hàng trăm record trên UI; unit tests kiểm contract, pagination và role guards, backend có suite riêng. Lệnh download được gọi và không có lỗi UI; browser automation không thu được event download, nên cần kiểm file tải về bằng trình duyệt người dùng. Chưa commit/push frontend.
+
+## Cập nhật quá hạn Plan — 07/10/2026
+Plan Active/Paused có endDate trước ngày hiện tại theo múi giờ câu lạc bộ hiển thị thêm Quá hạn trong danh sách và cảnh báo ở chi tiết. Ngày kết thúc vẫn bao gồm hết ngày đó; không tự Complete hoặc ghi thay đổi database. Completed/Archived không gắn dấu quá hạn. Lint/build đạt, 154/154 test pass. Thay đổi này chưa commit/push.
