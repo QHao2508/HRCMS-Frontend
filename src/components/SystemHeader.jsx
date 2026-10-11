@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import BrandMark from './BrandMark.jsx';
 import NotificationBell from './NotificationBell.jsx';
@@ -10,7 +11,16 @@ import '../style/system-header.css';
 
 export default function SystemHeader() {
     const { user, isAuthenticated } = useAuth();
-    return <header className="system-header">
+    const headerRef = useRef(null);
+    useEffect(() => {
+        const header = headerRef.current;
+        const update = () => document.documentElement.style.setProperty('--hc-header-height', `${header.getBoundingClientRect().height}px`);
+        update();
+        const observer = new ResizeObserver(update);
+        observer.observe(header);
+        return () => observer.disconnect();
+    }, []);
+    return <header ref={headerRef} className="system-header">
         <div className="system-header-inner">
             <Link className="system-brand" to="/" aria-label={msg(MSG.HRCMS_TRANG_CHU)}><BrandMark /><span>{msg(MSG.HRCMS)}</span></Link>
             <span className="system-portal-title">{msg(MSG.CONG_QUAN_TRI_CHIEN_MA_HOANG_GIA)}</span>
