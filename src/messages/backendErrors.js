@@ -1,5 +1,21 @@
 import { MSG, msg } from './index.js';
 const ERROR_MESSAGES = Object.freeze({
+    "Username must contain 3 to 80 letters, digits, dots, underscores or hyphens, without spaces or @.": "BR_API_INVALIDUSERNAME",
+    "Email is already registered.": "BR_API_EMAILALREADYREGISTERED",
+    "Username is already registered.": "BR_API_USERNAMEALREADYREGISTERED",
+    "Transfer open assignments and tasks before disabling this staff account, or use emergency disable with a reason.": "BR_API_STAFFHASOPENWORK",
+    "An emergency disable reason is required.": "BR_API_EMERGENCYDISABLEREASONREQUIRED",
+    "A staff account was disabled with open work requiring reassignment.": "BR_API_STAFFDISABLEDWITHOPENWORK",
+    "Incident is already resolved.": "BR_API_INCIDENTALREADYRESOLVED",
+    "An operational resolution summary is required.": "BR_API_RESOLUTIONREQUIRED",
+    "The horse or rider has an overlapping training session.": "BR_API_SESSIONSCHEDULEOVERLAP",
+    "Training duration must be between 1 and 480 minutes and end within the plan dates.": "BR_API_INVALIDSESSIONDURATION",
+    "Only an approved replenishment can be received.": "BR_API_REPLENISHMENTNOTAPPROVED",
+    "Receipt quantity must be positive and cannot exceed the remaining approved quantity.": "BR_API_INVALIDRECEIPTQUANTITY",
+    "Finish or reject open replenishments before archiving this item.": "BR_API_ITEMHASOPENREPLENISHMENTS",
+    "An archive category and operational reason are required.": "BR_API_ARCHIVEREASONREQUIRED",
+    "Finish in-progress care before replacing the groom.": "BR_API_FINISHCAREBEFOREREASSIGNMENT",
+
     "If eligible, a code will be emailed.": "API_BUSINESS_IFELIGIBLEACODEWILLBEEMAILED",
     "If eligible, a reset code will be emailed.": "API_BUSINESS_IFELIGIBLEARESETCODEWILLBEEMAILED",
     "Veterinarian assigns treatment or ice bath tasks.": "API_BUSINESS_VETERINARIANASSIGNSTREATMENTORICEBATHTASKS",

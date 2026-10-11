@@ -48,7 +48,7 @@ export default function Register() {
             <p className="form-text">{msg(MSG.REGISTRATION_EXPIRY_HELP)}</p>
             <AuthInput label={msg(MSG.FIRST_NAME)} {...form.field("firstName")} required maxLength={100} autoComplete="given-name" />
             <AuthInput label={msg(MSG.LAST_NAME)} {...form.field("lastName")} required maxLength={100} autoComplete="family-name" />
-            <AuthInput label={msg(MSG.USERNAME)} {...form.field("userName")} required minLength={3} maxLength={80} autoComplete="username" />
+            <AuthInput label={msg(MSG.USERNAME)} {...form.field("userName")} required minLength={3} maxLength={80} autoComplete="username" help={msg(MSG.BR_USERNAME_HELP)} />
             <AuthInput label={msg(MSG.EMAIL)} {...form.field("email")} type="email" required maxLength={254} autoComplete="email" />
             <AuthInput label={msg(MSG.PHONE)} {...form.field("phone")} type="tel" required maxLength={30} autoComplete="tel" />
             <AuthInput label={msg(MSG.ADDRESS)} {...form.field("address")} multiline rows={2} required maxLength={500} autoComplete="street-address" />

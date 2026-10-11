@@ -53,6 +53,7 @@ export function validateRegistration(values) {
         const value = values[field]?.trim() || "";
         if (value.length < min || value.length > max) errors[field] = msg(MSG.MUST_CONTAIN_CHARACTERS, { p0: label, p1: min, p2: max });
     }
+    if (!/^[a-zA-Z0-9._-]{3,80}$/.test(values.userName?.trim() || '')) errors.userName = msg(MSG.BR_USERNAME_HELP);
     if ((values.email?.trim().length || 0) > 254) errors.email = msg(MSG.EMAIL_MUST_BE_254_CHARACTERS_OR_FEWER);
     const nationalId = values.nationalId?.trim() || "";
     if (AUTH_POLICY.requireNationalId && !nationalId) errors.nationalId = msg(MSG.NATIONAL_ID_IS_REQUIRED);

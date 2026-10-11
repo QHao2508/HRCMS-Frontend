@@ -31,13 +31,13 @@ function IncidentList({ horseId, horses, user }) {
 function IncidentDetails({ incident, user, reload }) {
     const base = `/api/care/incidents/${id(incident.id)}`; const load = useCallback(() => read(`${base}/photos`), [base]); const resource = useRegistrationResource(load);
     const mutation = useMutation(); const [file, setFile] = useState(null);
-    return <section className="surface-card"><h2>{msg(MSG.SUPPORT_INCIDENT_DETAILS)}</h2><p>{incident.description}</p><MutationState mutation={mutation} reload={() => { resource.reload(); reload(); }} /><ResourceState resource={resource} />
+    return <section className="surface-card"><h2>{msg(MSG.SUPPORT_INCIDENT_DETAILS)}</h2><p>{incident.description}</p>{incident.resolved && <><h3>{msg(MSG.BR_RESOLUTION)}</h3><p>{incident.resolution || "—"}</p><p>{msg(MSG.BR_RESOLVED_AT)}{' '}{when(incident.resolvedAt)}</p></>}<MutationState mutation={mutation} reload={() => { resource.reload(); reload(); }} /><ResourceState resource={resource} />
         {resource.data?.map(photo => <IncidentPhoto key={photo.id} base={base} photo={photo} />)}
         {!resource.data?.length && <p>{msg(MSG.SUPPORT_NO_PHOTOS)}</p>}
         {!incident.resolved && incident.reporterId === user.id && <form onSubmit={e => { e.preventDefault(); mutation.run(() => { if (!file || !['image/png', 'image/jpeg'].includes(file.type) || file.size > 10485760) throw Object.assign(new Error(msg(MSG.SUPPORT_PHOTO_INVALID)), { status: 400 }); const data = new FormData(); data.append('file', file); return change(`${base}/photos`, data); }, () => { setFile(null); resource.reload(); }); }}>
             <fieldset disabled={mutation.pending || mutation.uncertain}><label htmlFor="incident-photo" className="form-label">{msg(MSG.SUPPORT_UPLOAD_PHOTO)}</label><input id="incident-photo" className="form-control" type="file" accept="image/png,image/jpeg" required onChange={e => setFile(e.target.files[0] || null)} /><button className="btn btn-primary mt-3" disabled={!file}>{msg(MSG.SUPPORT_UPLOAD_PHOTO)}</button></fieldset>
         </form>}
-        {!incident.resolved && incident.routedTo === user.role && <SupportForm title={msg(MSG.SUPPORT_RESOLVE)} initial={{ notes: '' }} reload={reload} fields={[{ name: 'notes', label: msg(MSG.SUPPORT_RESOLVE_CONFIRM), required: true, multiline: true, maxLength: 4000 }]} submit={() => change(`${base}/resolve`)} />}
+        {!incident.resolved && incident.routedTo === user.role && <SupportForm title={msg(MSG.SUPPORT_RESOLVE)} initial={{ resolution: '' }} reload={reload} fields={[{ name: 'resolution', label: msg(MSG.BR_RESOLUTION), help: msg(MSG.BR_RESOLUTION_HELP), required: true, multiline: true, maxLength: 2000 }]} submit={f => change(`${base}/resolve`, { resolution: f.resolution.trim() })} />}
     </section>;
 }
 function IncidentPhoto({ base, photo }) {

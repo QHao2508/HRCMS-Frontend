@@ -34,7 +34,7 @@ for(const role of [...ALL_ROLES,'Unknown'])test(`medical mutations are routed on
 });
 test('separate forms with the same field name keep distinct label targets', () => {
     const html = renderToStaticMarkup(h('div', null, h(Field, { name: 'status', label: 'Filter', value: '', onChange() {} }), h(Field, { name: 'status', label: 'Result', value: '', onChange() {} })));
-    const ids = [...html.matchAll(/<input[^>]*id="([^"]+)"/g)].map(x => x[1]);
+    const ids = [...html.matchAll(/<input[^>]*\sid="([^"]+)"/g)].map(x => x[1]);
     assert.equal(ids.length, 2);
     assert.notEqual(ids[0], ids[1]);
     for (const id of ids) assert.ok(html.includes(`for="${id}"`));

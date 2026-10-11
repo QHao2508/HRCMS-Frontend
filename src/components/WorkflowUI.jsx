@@ -33,11 +33,12 @@ export function BackLink({ to, children = msg(MSG.QUAY_LAI) }) { return <Link cl
  * Render input/select/textarea controlled; giữ option value enum API và chỉ dịch label.
  * @param options0 Đối tượng destructuring: { label, name, value, onChange, options, multiline, ...props }. Các props/callback lấy từ caller.
  */
-export function Field({ label, name, value, onChange, options, multiline, ...props }) {
-    const uniqueId = useId();
-    const id = `field-${name}-${uniqueId}`;
-    return <div className={props.wide ? "col-12" : "col-md-6"}><label className="form-label" htmlFor={id}>{label}</label>{options ? <select id={id} name={name} className="form-select" value={value ?? ""} onChange={onChange} required={props.required} disabled={props.disabled}>{options.map(option => { const o = typeof option === "string" ? { value: option, label: getEnumLabel(option) } : option; return <option key={o.value} value={o.value}>{o.label}</option>; })}</select> : multiline ? <textarea id={id} name={name} rows={3} className="form-control" value={value ?? ""} onChange={onChange} required={props.required} disabled={props.disabled} maxLength={props.maxLength} /> : <input id={id} name={name} className="form-control" value={value ?? ""} onChange={onChange} type={props.type || "text"} onInput={props.type?.startsWith("date") ? onChange : undefined} required={props.required} min={props.min} max={props.max} step={props.step} disabled={props.disabled} maxLength={props.maxLength} autoComplete={props.autoComplete} />}</div>;
+export function Field({ label, name, value, onChange, options, multiline, help, error, ...props }) {
+    const uniqueId = useId(); const id = `field-${name}-${uniqueId}`;
+    const shared = { id, name, value: value ?? '', onChange, required: props.required, disabled: props.disabled, 'aria-invalid': !!error, 'aria-describedby': [help && id+'-help', error && id+'-error'].filter(Boolean).join(' ') || undefined };
+    return <div className={props.wide ? 'col-12' : 'col-md-6'}><label className="form-label" htmlFor={id}>{label}</label>{options ? <select {...shared} className={`form-select${error ? ' is-invalid' : ''}`}>{options.map(option => { const o = typeof option === 'string' ? { value: option, label: getEnumLabel(option) } : option; return <option key={o.value} value={o.value}>{o.label}</option>; })}</select> : multiline ? <textarea {...shared} rows={3} className={`form-control${error ? ' is-invalid' : ''}`} maxLength={props.maxLength}/> : <input {...shared} className={`form-control${error ? ' is-invalid' : ''}`} type={props.type || 'text'} onInput={props.type?.startsWith('date') ? onChange : undefined} min={props.min} max={props.max} step={props.step} minLength={props.minLength} pattern={props.pattern} maxLength={props.maxLength} autoComplete={props.autoComplete}/>}{help && <div id={id+'-help'} className="form-text">{help}</div>}{error && <div id={id+'-error'} className="invalid-feedback">{error}</div>}</div>;
 }
+
 /**
  * Hiển thị pending/error/notice và yêu cầu reload khi kết quả ghi chưa chắc chắn.
  * Nhãn/thông báo lấy từ catalog; enum và dữ liệu người dùng giữ nguyên giá trị.
