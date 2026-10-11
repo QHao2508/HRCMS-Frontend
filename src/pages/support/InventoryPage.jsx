@@ -17,8 +17,8 @@ export default function InventoryPage() {
 }
 function ItemDetails({ item, manager, reload }) {
     const path = `/api/inventory/${id(item.id)}`; const resource = usePaged(`${path}/movements`);
-    return <><h2>{item.name}</h2>{manager && !item.archived && <SupportForm title={msg(MSG.SUPPORT_MOVEMENT)} initial={{ quantity: '', reason: '' }} reload={() => { resource.reload(); reload(); }} submit={f => change(`${path}/movements`, { quantity: Number(f.quantity), reason: f.reason })} fields={[{ name: 'quantity', label: msg(MSG.SUPPORT_MOVEMENT_QUANTITY), type: 'number', step: '0.001', required: true }, { name: 'reason', label: msg(MSG.MEDICAL_REASON), multiline: true, maxLength: 4000, required: true }]} />}
-        <SupportTable resource={resource} columns={[{ key: 'createdAt', label: msg(MSG.THOI_GIAN), render: x => when(x.createdAt) }, { key: 'quantity', label: msg(MSG.SUPPORT_QUANTITY) }, { key: 'reason', label: msg(MSG.MEDICAL_REASON) }]} />
+    return <><h2>{item.name}</h2>{manager && !item.archived && <SupportForm title={msg(MSG.SUPPORT_MOVEMENT)} initial={{ quantity: '', reason: '' }} reload={() => { resource.reload(); reload(); }} submit={f => change(`${path}/movements`, { quantity: Number(f.quantity), reason: f.reason })} fields={[{ name: 'quantity', label: msg(MSG.SUPPORT_MOVEMENT_QUANTITY), type: 'number', step: '0.001', required: true }, { name: 'reason', label: msg(MSG.SUPPORT_REASON), multiline: true, maxLength: 4000, required: true }]} />}
+        <SupportTable resource={resource} columns={[{ key: 'createdAt', label: msg(MSG.THOI_GIAN), render: x => when(x.createdAt) }, { key: 'quantity', label: msg(MSG.SUPPORT_QUANTITY) }, { key: 'reason', label: msg(MSG.SUPPORT_REASON) }]} />
         {manager && !item.archived && <SupportForm title={msg(MSG.SUPPORT_ARCHIVE_ITEM)} initial={{ confirm: '' }} reload={reload} fields={[{ name: 'confirm', label: msg(MSG.SUPPORT_CONFIRM_ITEM), required: true, maxLength: 100 }]} submit={f => { if (f.confirm !== item.name) throw Object.assign(new Error(msg(MSG.SUPPORT_CONFIRM_ERROR)), { status: 400 }); return change(`${path}/archive`); }} />}
     </>;
 }

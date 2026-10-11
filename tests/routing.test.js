@@ -187,6 +187,12 @@ test("navigation uses exact roles and exposes only implemented links for each ro
         if ([ROLES.ClubManager,ROLES.HeadTrainer,ROLES.Trainer].includes(role)) expected.push({ to:"/training/templates",label:"Giáo án mẫu" });
         if (role !== ROLES.Groom) expected.push({to:"/training/plans",label:"Kế hoạch huấn luyện"},{to:"/training/sessions",label:"Buổi tập"});
         if (role === ROLES.Veterinarian) expected.unshift({to:"/medical",label:"Thú y"});
+        const supporting = [{to:'/medical/preventive-care',label:'Chăm sóc phòng ngừa'}];
+        if ([ROLES.ClubManager,ROLES.HorseOwner,ROLES.Groom,ROLES.Veterinarian].includes(role)) supporting.push({to:'/care/tasks',label:'Công việc chăm sóc'});
+        if ([ROLES.ClubManager,ROLES.Veterinarian,ROLES.Trainer,ROLES.Groom,ROLES.WorkRider].includes(role)) supporting.push({to:'/care/incidents',label:'Sự cố'});
+        if ([ROLES.ClubManager,ROLES.Groom].includes(role)) supporting.push({to:'/care/stables',label:'Chuồng trại'},{to:'/inventory',label:'Kho vật tư'},{to:'/inventory/replenishments',label:'Yêu cầu bổ sung vật tư'});
+        supporting.push({to:'/reports',label:'Báo cáo hoạt động'});
+        expected.unshift(...supporting);
         assert.deepEqual(getNavigationForRole(role).map(({ to, label }) => ({ to, label })), expected);
     }
     for (const role of ["Horse Owner", "horseowner", "Admin", "__proto__", 0, null]) assert.deepEqual(getNavigationForRole(role), []);

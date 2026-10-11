@@ -4,6 +4,7 @@ import { getEnumLabel } from "../constants/enumLabels.js";
 import { MSG, msg } from "../messages/index.js";
 import { Link } from "react-router-dom";
 import RegistrationError from "./registrations/RegistrationError.jsx";
+import { useId } from 'react';
 
 /**
  * Dựng tiêu đề, mô tả và action của màn hình theo cùng bố cục.
@@ -33,7 +34,8 @@ export function BackLink({ to, children = msg(MSG.QUAY_LAI) }) { return <Link cl
  * @param options0 Đối tượng destructuring: { label, name, value, onChange, options, multiline, ...props }. Các props/callback lấy từ caller.
  */
 export function Field({ label, name, value, onChange, options, multiline, ...props }) {
-    const id = `field-${name}`;
+    const uniqueId = useId();
+    const id = `field-${name}-${uniqueId}`;
     return <div className={props.wide ? "col-12" : "col-md-6"}><label className="form-label" htmlFor={id}>{label}</label>{options ? <select id={id} name={name} className="form-select" value={value ?? ""} onChange={onChange} required={props.required} disabled={props.disabled}>{options.map(option => { const o = typeof option === "string" ? { value: option, label: getEnumLabel(option) } : option; return <option key={o.value} value={o.value}>{o.label}</option>; })}</select> : multiline ? <textarea id={id} name={name} rows={3} className="form-control" value={value ?? ""} onChange={onChange} required={props.required} disabled={props.disabled} maxLength={props.maxLength} /> : <input id={id} name={name} className="form-control" value={value ?? ""} onChange={onChange} type={props.type || "text"} onInput={props.type?.startsWith("date") ? onChange : undefined} required={props.required} min={props.min} max={props.max} step={props.step} disabled={props.disabled} maxLength={props.maxLength} autoComplete={props.autoComplete} />}</div>;
 }
 /**

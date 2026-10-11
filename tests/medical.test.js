@@ -9,6 +9,7 @@ import { MemoryRouter } from 'react-router-dom';
 import axios from 'axios';
 import { ALL_ROLES } from '../src/constants/roles.js';
 let server, api, store, medical, AppRoutes, AuthContext;
+let Field;
 const reply = (config, data, status=200) => ({ config, data, status, statusText:'', headers:{} });
 before(async()=>{
     server=await createServer({configFile:false,plugins:[ssrDependencies(),react()],server:{middlewareMode:true,hmr:false,ws:false},appType:'custom',logLevel:'error'});
@@ -17,6 +18,7 @@ before(async()=>{
     medical=await server.ssrLoadModule('/src/services/medicalService.js');
     ({default:AppRoutes}=await server.ssrLoadModule('/src/routes/AppRoutes.jsx'));
     ({AuthContext}=await server.ssrLoadModule('/src/context/useAuth.js'));
+    ({Field}=await server.ssrLoadModule('/src/components/WorkflowUI.jsx'));
 });
 after(async()=>server.close());
 beforeEach(()=>{
@@ -28,6 +30,29 @@ for(const role of [...ALL_ROLES,'Unknown'])test(`medical mutations are routed on
         const user={id:'vet-id',role,active:true,emailVerified:true};
         const html=renderToStaticMarkup(h(MemoryRouter,{initialEntries:[path]},h(AuthContext.Provider,{value:{user,isAuthenticated:true,loading:false}},h(AppRoutes))));
         assert.equal(html.includes('medical-app'),role==='Veterinarian');
+    }
+});
+test('separate forms with the same field name keep distinct label targets', () => {
+    const html = renderToStaticMarkup(h('div', null, h(Field, { name: 'status', label: 'Filter', value: '', onChange() {} }), h(Field, { name: 'status', label: 'Result', value: '', onChange() {} })));
+    const ids = [...html.matchAll(/<input[^>]*id="([^"]+)"/g)].map(x => x[1]);
+    assert.equal(ids.length, 2);
+    assert.notEqual(ids[0], ids[1]);
+    for (const id of ids) assert.ok(html.includes(`for="${id}"`));
+});
+const supportingRoutes = [
+    ['/care/tasks', ['HorseOwner','ClubManager','Groom','Veterinarian'], 'Công việc chăm sóc'],
+    ['/care/incidents', ['ClubManager','Groom','Trainer','Veterinarian','WorkRider'], 'Sự cố'],
+    ['/care/stables', ['ClubManager','Groom'], 'Chuồng trại'],
+    ['/inventory', ['ClubManager','Groom'], 'Kho vật tư'],
+    ['/inventory/replenishments', ['ClubManager','Groom'], 'Yêu cầu bổ sung vật tư'],
+    ['/reports', ALL_ROLES, 'Báo cáo hoạt động'],
+    ['/medical/preventive-care', ALL_ROLES, 'Chăm sóc phòng ngừa'],
+];
+for (const [path, allowed, title] of supportingRoutes) test(`supporting route access matches backend roles: ${path}`, () => {
+    for (const role of [...ALL_ROLES, 'Unknown']) {
+        const user = { id: 'test-id', role, active: true, emailVerified: true };
+        const html = renderToStaticMarkup(h(MemoryRouter, {initialEntries:[path]}, h(AuthContext.Provider, {value:{user,isAuthenticated:true,loading:false}},h(AppRoutes))));
+        assert.equal(html.includes(`<h1>${title}</h1>`), allowed.includes(role));
     }
 });
 for(const [name,suffix] of [['getMedicalRecords','records'],['getMedicalInjuries','injuries'],['getMedicalTreatments','treatments'],['getMedicalRestrictions','restrictions'],['getMedicalFollowUps','follow-ups']])test(`${name} preserves scoped paging and encodes horse ID`,async()=>{

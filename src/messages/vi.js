@@ -1178,6 +1178,7 @@ export const VI = Object.freeze({
     "API_BUSINESS_REPORTRANGEEXCEEDSCONFIGUREDLIMITS": "Khoảng thời gian báo cáo vượt giới hạn cho phép.",
     "API_BUSINESS_TOOMUCHREPORTDATANARROWHORSEDATEFILTERS": "Có quá nhiều dữ liệu báo cáo. Hãy chọn ngựa hoặc thu hẹp khoảng thời gian.",
     "API_BUSINESS_THEPLANWASARCHIVEDANDTHISSESSIONWASCANCELLED": "Kế hoạch đã được lưu trữ và buổi tập này đã bị hủy.",
+    "SUPPORT_REASON": "Lý do nhập / xuất",
     "SUPPORT_SELECT": "Chọn một mục...",
     "SUPPORT_SAVE": "Lưu",
     "SUPPORT_EMPTY": "Chưa có dữ liệu phù hợp.",
