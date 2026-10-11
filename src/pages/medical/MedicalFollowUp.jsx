@@ -1,29 +1,90 @@
-import { MSG, msg } from "../../messages/index.js";
-import { useEffect, useMemo, useState } from "react";
-import { CheckCircle2, ClipboardCheck, Plus } from "lucide-react";
-import MedicalLayout from "../../components/medical/MedicalLayout";
-import { createMedicalFollowUp, getMedicalFollowUps, getMedicalHorses, getMedicalRecords } from "../../services/medicalService";
+import { useCallback, useState } from 'react';
+import MedicalLayout from '../../components/medical/MedicalLayout.jsx';
+import { MSG, msg, UI_LOCALE } from '../../messages/index.js';
+import { getEnumLabel } from '../../constants/enumLabels.js';
+import { Field, MutationState, ResourceState } from '../../components/WorkflowUI.jsx';
+import { useRegistrationResource } from '../../context/useRegistrationResource.js';
+import { useMutation } from '../../context/useMutation.js';
+import { createMedicalFollowUp, getMedicalFollowUps, getMedicalHorses, getMedicalRecords, getMedicalRestrictions, getMedicalInjuries, getMedicalTreatments } from '../../services/medicalService.js';
+import { allMedicalPages, clearanceOptions, followUpPayload } from '../../services/medicalValidation.js';
 
-const healthStatuses=["Fit","Monitoring","Injured","Isolated"];
-function unwrapList(data){if(Array.isArray(data))return data;return data?.items??data?.data??data?.results??data?.value??[];}
-function horseIdOf(h){return h?.id??h?.horseId;}
-function horseNameOf(h){return h?.name??h?.horseName??h?.Name??"Unnamed horse";}
-function formatDate(value){if(!value)return"—";const d=new Date(value);return Number.isNaN(d.getTime())?String(value):d.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"});}
-function localDateTimeNow(){const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16);}
-const emptyForm={previousRecordId:"",examinationAt:"",reason:"",symptoms:"",findings:"",diagnosis:"",healthStatus:"Monitoring",notes:"",clearance:false,outcome:""};
+const sections = [
+    ['restrictionIds', MSG.MEDICAL_CLEARANCE_RESTRICTIONS],
+    ['injuryIds', MSG.MEDICAL_CLEARANCE_INJURIES],
+    ['treatmentIds', MSG.MEDICAL_CLEARANCE_TREATMENTS],
+];
+const dateTime = value => new Date(value).toLocaleString(UI_LOCALE, { timeZone: 'Asia/Ho_Chi_Minh' });
+function localNow() { const now = new Date(); return new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16); }
 
-function MedicalFollowUp(){
- const [horses,setHorses]=useState([]),[selectedHorseId,setSelectedHorseId]=useState(""),[records,setRecords]=useState([]),[followUps,setFollowUps]=useState([]);
- const [loading,setLoading]=useState(true),[loadingData,setLoadingData]=useState(false),[error,setError]=useState(""),[success,setSuccess]=useState(""),[showModal,setShowModal]=useState(false),[saving,setSaving]=useState(false),[form,setForm]=useState(emptyForm);
- const selectedHorse=useMemo(()=>horses.find(h=>String(horseIdOf(h))===String(selectedHorseId)),[horses,selectedHorseId]);
- useEffect(()=>{let active=true;(async()=>{try{setLoading(true);const d=await getMedicalHorses({page:1,pageSize:100});const list=unwrapList(d);if(!active)return;setHorses(list);if(list.length)setSelectedHorseId(String(horseIdOf(list[0])));}catch(e){if(active)setError(e?.message||e?.response?.data?.message||"Unable to load horses.");}finally{if(active)setLoading(false);}})();return()=>{active=false}},[]);
- useEffect(()=>{if (!selectedHorseId) { let active=true; queueMicrotask(()=>{if(active){setRecords([]);setFollowUps([]);}}); return ()=>{active=false;}; }let active=true;(async()=>{try{setLoadingData(true);setError("");const [r,f]=await Promise.all([getMedicalRecords(selectedHorseId,{page:1,pageSize:100}),getMedicalFollowUps(selectedHorseId,{page:1,pageSize:100})]);if(!active)return;setRecords(unwrapList(r));setFollowUps(unwrapList(f));}catch(e){if(active)setError(e?.message||e?.response?.data?.message||"Unable to load follow-ups.");}finally{if(active)setLoadingData(false);}})();return()=>{active=false}},[selectedHorseId]);
- const openCreate=()=>{setForm({...emptyForm,previousRecordId:records[0]?.id??"",examinationAt:localDateTimeNow()});setError("");setSuccess("");setShowModal(true)};
- const submit=async(e)=>{e.preventDefault();setError("");setSuccess("");if(!form.previousRecordId)return setError("Previous Medical Record is required.");if(!form.examinationAt)return setError("Examination Date is required.");if(new Date(form.examinationAt)>new Date())return setError("Examination Date cannot be in the future.");if(form.clearance&&form.healthStatus!=="Fit")return setError("Medical clearance requires Health Status = FIT.");if(!form.reason.trim()||!form.symptoms.trim()||!form.findings.trim()||!form.diagnosis.trim()||!form.outcome.trim())return setError("Reason, Symptoms, Findings, Diagnosis and Outcome are required.");try{setSaving(true);const created=await createMedicalFollowUp(selectedHorseId,{previousRecordId:form.previousRecordId,examination:{examinationAt:new Date(form.examinationAt).toISOString(),reason:form.reason.trim(),symptoms:form.symptoms.trim(),findings:form.findings.trim(),diagnosis:form.diagnosis.trim(),healthStatus:form.healthStatus,notes:form.notes.trim()},clearance:form.clearance,outcome:form.outcome.trim()});setFollowUps(c=>[created,...c]);setShowModal(false);setSuccess(form.clearance?"Medical clearance issued. Active restrictions, injuries and treatment plans were closed by the backend.":"Follow-up completed. Review the horse's current medical restrictions before training.");}catch(e){setError(e?.message||e?.response?.data?.message||"Unable to create the medical follow-up.");}finally{setSaving(false)}};
- return <MedicalLayout><div className="medical-page-heading-row"><div><div className="medical-page-intro">{msg(MSG.MERGED_UI_363)}</div><h2 className="medical-page-title">{msg(MSG.MERGED_UI_364)}</h2><p className="medical-page-subtitle">{msg(MSG.MERGED_UI_365)}</p></div><button className="medical-primary-button" onClick={openCreate} disabled={!selectedHorseId||!records.length}><Plus size={15}/>{msg(MSG.MERGED_UI_366)}</button></div>{error&&<div className="medical-alert medical-alert-error">{error}</div>}{success&&<div className="medical-alert medical-alert-success">{success}</div>}
- <section className="medical-table-card medical-selector-card"><label className="medical-field"><span>{msg(MSG.MERGED_UI_367)}</span><select value={selectedHorseId} onChange={e=>setSelectedHorseId(e.target.value)} disabled={loading || saving}><option value="">{msg(MSG.MERGED_UI_368)}</option>{horses.map(h=><option key={horseIdOf(h)} value={horseIdOf(h)}>{horseNameOf(h)}</option>)}</select></label><div className="medical-selected-horse"><span>{msg(MSG.MERGED_UI_369)}</span><strong>{selectedHorse?horseNameOf(selectedHorse):"—"}</strong><small>{loadingData?"Loading medical history...":"Follow-up history is preserved."}</small></div></section>
- <section className="medical-table-card"><div className="medical-section-title-row"><div><div className="medical-section-eyebrow">{msg(MSG.MERGED_UI_370)}</div><h3 className="medical-subheading">{selectedHorse?horseNameOf(selectedHorse):"Select a horse"}</h3></div><span className="medical-record-count">{loadingData?"Loading...":`${followUps.length} follow-up(s)`}</span></div>{!followUps.length?<div className="medical-empty-state"><ClipboardCheck size={22}/><strong>{msg(MSG.MERGED_UI_371)}</strong><span>{msg(MSG.MERGED_UI_372)}</span></div>:<div className="medical-table-wrapper"><table className="medical-table"><thead><tr><th>{msg(MSG.MERGED_UI_373)}</th><th>{msg(MSG.MERGED_UI_374)}</th><th>{msg(MSG.MERGED_UI_375)}</th><th>{msg(MSG.MERGED_UI_376)}</th></tr></thead><tbody>{followUps.map(f=><tr key={f.id}><td>{formatDate(f.createdAt)}</td><td className="horse-id">{f.previousRecordId?String(f.previousRecordId).slice(0,8):"—"}</td><td>{f.outcome||"—"}</td><td>{f.clearance?<span className="medical-treatment-status completed"><CheckCircle2 size={11}/>{msg(MSG.MERGED_UI_377)}</span>:<span className="medical-treatment-status active">{msg(MSG.MERGED_UI_378)}</span>}</td></tr>)}</tbody></table></div>}</section>
- {showModal&&<div className="medical-modal-backdrop" onMouseDown={()=>!saving&&setShowModal(false)}><div className="medical-modal medical-wide-modal" onMouseDown={e=>e.stopPropagation()}><div className="medical-modal-header"><div><span>{msg(MSG.MERGED_UI_379)}</span><h3>{msg(MSG.MERGED_UI_380)}</h3><p>{msg(MSG.MERGED_UI_381)}</p></div><button className="medical-icon-button" onClick={()=>!saving&&setShowModal(false)}>{msg(MSG.MERGED_UI_382)}</button></div><form className="medical-form" onSubmit={submit}><div className="medical-form-grid"><label className="medical-field"><span>{msg(MSG.MERGED_UI_383)}</span><select value={form.previousRecordId} onChange={e=>setForm({...form,previousRecordId:e.target.value})}><option value="">{msg(MSG.MERGED_UI_384)}</option>{records.map(r=><option key={r.id} value={r.id}>{formatDate(r.examinationAt)}{msg(MSG.MERGED_UI_385)}{r.diagnosis||r.reason||"Medical record"}</option>)}</select></label><label className="medical-field"><span>{msg(MSG.MERGED_UI_386)}</span><input type="datetime-local" value={form.examinationAt} onChange={e=>setForm({...form,examinationAt:e.target.value})}/></label><label className="medical-field"><span>{msg(MSG.MERGED_UI_387)}</span><select value={form.healthStatus} onChange={e=>setForm({...form,healthStatus:e.target.value})}>{healthStatuses.map(s=><option key={s}>{s}</option>)}</select></label><label className="medical-check-card"><input type="checkbox" checked={form.clearance} onChange={e=>setForm({...form,clearance:e.target.checked,healthStatus:e.target.checked?"Fit":form.healthStatus})}/><span><strong>{msg(MSG.MERGED_UI_388)}</strong><small>{msg(MSG.MERGED_UI_389)}</small></span></label><label className="medical-field medical-field-full"><span>{msg(MSG.MERGED_UI_390)}</span><textarea rows="2" value={form.reason} onChange={e=>setForm({...form,reason:e.target.value})}/></label><label className="medical-field"><span>{msg(MSG.MERGED_UI_391)}</span><textarea rows="3" value={form.symptoms} onChange={e=>setForm({...form,symptoms:e.target.value})}/></label><label className="medical-field"><span>{msg(MSG.MERGED_UI_392)}</span><textarea rows="3" value={form.findings} onChange={e=>setForm({...form,findings:e.target.value})}/></label><label className="medical-field"><span>{msg(MSG.MERGED_UI_393)}</span><textarea rows="2" value={form.diagnosis} onChange={e=>setForm({...form,diagnosis:e.target.value})}/></label><label className="medical-field"><span>{msg(MSG.MERGED_UI_394)}</span><textarea rows="2" value={form.notes} onChange={e=>setForm({...form,notes:e.target.value})}/></label><label className="medical-field medical-field-full"><span>{msg(MSG.MERGED_UI_395)}</span><textarea rows="3" value={form.outcome} onChange={e=>setForm({...form,outcome:e.target.value})} placeholder={msg(MSG.MERGED_UI_396)}/></label></div><div className="medical-modal-actions"><button type="button" className="medical-secondary-button" onClick={()=>!saving&&setShowModal(false)}>{msg(MSG.MERGED_UI_397)}</button><button type="submit" className="medical-primary-button" disabled={saving}>{saving?"Saving...":form.clearance?"Issue Medical Clearance":"Complete Follow-up"}</button></div></form></div></div>}
- </MedicalLayout>
+export function MedicalFollowUpForm({ horseId, data, reload }) {
+    const [form, setForm] = useState(() => ({ previousRecordId: data.records[0]?.id || '', examinationAt: localNow(), reason: '', symptoms: '', findings: '', diagnosis: '', healthStatus: 'Monitoring', notes: '', clearance: false, outcome: '', restrictionIds: [], injuryIds: [], treatmentIds: [] }));
+    const mutation = useMutation();
+    const eligible = clearanceOptions(data, form.examinationAt);
+    const change = event => setForm(current => ({ ...current, [event.target.name]: event.target.value }));
+    const toggle = (key, id, selected) => setForm(current => ({ ...current, [key]: selected ? [...current[key], id] : current[key].filter(value => value !== id) }));
+    return <section className="medical-table-card">
+        <h2>{msg(MSG.MEDICAL_FOLLOWUP_CREATE)}</h2>
+        <MutationState mutation={mutation} reload={reload} />
+        <form onSubmit={event => { event.preventDefault(); mutation.run(() => createMedicalFollowUp(horseId, followUpPayload(form, data)), reload, msg(MSG.MEDICAL_FOLLOWUP_SAVED)); }}>
+            <fieldset disabled={mutation.pending || mutation.uncertain}>
+                <div className="row g-3">
+                    <Field label={msg(MSG.MEDICAL_PREVIOUS_RECORD)} name="previousRecordId" value={form.previousRecordId} onChange={change} required
+                        options={[{ value: '', label: msg(MSG.MEDICAL_SELECT_RECORD) }, ...data.records.map(record => ({ value: record.id, label: `${dateTime(record.examinationAt)} · ${record.diagnosis}` }))]} />
+                    <Field label={msg(MSG.MEDICAL_EXAMINATION_AT)} name="examinationAt" type="datetime-local" value={form.examinationAt} onChange={change} required />
+                    {[["reason", MSG.MEDICAL_REASON], ["symptoms", MSG.MEDICAL_SYMPTOMS], ["findings", MSG.MEDICAL_FINDINGS], ["diagnosis", MSG.MEDICAL_DIAGNOSIS], ["outcome", MSG.MEDICAL_OUTCOME]].map(([name, label]) =>
+                        <Field key={name} label={msg(label)} name={name} value={form[name]} onChange={change} required multiline maxLength={4000} />)}
+                    <Field label={msg(MSG.MEDICAL_HEALTH)} name="healthStatus" value={form.healthStatus} onChange={change} options={['Fit', 'Monitoring', 'Injured', 'Isolated']} />
+                    <Field label={msg(MSG.GHI_CHU)} name="notes" value={form.notes} onChange={change} multiline maxLength={4000} />
+                </div>
+                <label className="d-flex gap-2 my-3"><input type="checkbox" checked={form.clearance} onChange={event => setForm(current => ({ ...current, clearance: event.target.checked, restrictionIds: [], injuryIds: [], treatmentIds: [] }))} />{msg(MSG.MEDICAL_CLEARANCE_SELECT)}</label>
+                {form.clearance && <div>
+                    <p>{msg(MSG.MEDICAL_CLEARANCE_HELP)}</p>
+                    {sections.map(([key, label]) => <section key={key} className="mb-3"><h3 className="h6">{msg(label)}</h3>
+                        {!eligible[key].length && <p>{msg(MSG.MEDICAL_CLEARANCE_EMPTY)}</p>}
+                        {eligible[key].map(item => <label key={item.id} className="d-flex gap-2 mb-2">
+                            <input type="checkbox" checked={form[key].includes(item.id)} onChange={event => toggle(key, item.id, event.target.checked)} />
+                            <span>{item.reason || item.bodyLocation || item.objective}{item.status && ` · ${getEnumLabel(item.status)}`}</span>
+                        </label>)}
+                    </section>)}
+                </div>}
+                <button className="medical-primary-button" disabled={!data.records.length}>{msg(MSG.MEDICAL_FOLLOWUP_SAVE)}</button>
+            </fieldset>
+        </form>
+    </section>;
 }
-export default MedicalFollowUp;
+
+function FollowUpForHorse({ horseId }) {
+    const load = useCallback(async () => {
+        const [records, followUps, restrictions, injuries, treatments] = await Promise.all([
+            getMedicalRecords, getMedicalFollowUps, getMedicalRestrictions, getMedicalInjuries, getMedicalTreatments,
+        ].map(service => allMedicalPages(params => service(horseId, params))));
+        return { records, followUps, restrictions, injuries, treatments };
+    }, [horseId]);
+    const resource = useRegistrationResource(load, { realtime: true });
+    return <><ResourceState resource={resource} />{resource.data && <>
+        <MedicalFollowUpForm key={horseId} horseId={horseId} data={resource.data} reload={resource.reload} />
+        <section className="medical-table-card"><h2>{msg(MSG.MEDICAL_FOLLOWUP_HISTORY)}</h2>
+            {!resource.data.followUps.length && <p>{msg(MSG.MEDICAL_FOLLOWUP_EMPTY)}</p>}
+            <table className="medical-table"><thead><tr><th>{msg(MSG.THOI_GIAN)}</th><th>{msg(MSG.MEDICAL_OUTCOME)}</th><th>{msg(MSG.MEDICAL_CLEARANCE_SELECT)}</th></tr></thead>
+                <tbody>{resource.data.followUps.map(item => <tr key={item.id}><td>{dateTime(item.createdAt)}</td><td>{item.outcome}</td><td>{msg(item.clearance ? MSG.CO : MSG.KHONG)}</td></tr>)}</tbody>
+            </table>
+        </section>
+    </>}</>;
+}
+
+export default function MedicalFollowUp() {
+    const [selected, setSelected] = useState('');
+    const load = useCallback(() => allMedicalPages(getMedicalHorses), []);
+    const horses = useRegistrationResource(load);
+    const horseId = selected || horses.data?.[0]?.id;
+    return <MedicalLayout><h1>{msg(MSG.MEDICAL_FOLLOWUP_TITLE)}</h1><p>{msg(MSG.MEDICAL_CLEARANCE_HELP)}</p>
+        <ResourceState resource={horses} />
+        {horses.data && <label className="medical-field"><span>{msg(MSG.MEDICAL_HORSE)}</span>
+            <select value={horseId || ''} onChange={event => setSelected(event.target.value)} disabled={!horses.data.length}>
+                {!horses.data.length && <option value="">{msg(MSG.MEDICAL_EMPTY)}</option>}
+                {horses.data.map(horse => <option key={horse.id} value={horse.id}>{horse.name}</option>)}
+            </select>
+        </label>}
+        {horseId && <FollowUpForHorse key={horseId} horseId={horseId} />}
+    </MedicalLayout>;
+}

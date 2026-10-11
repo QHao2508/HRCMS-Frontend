@@ -3,11 +3,12 @@ import process from 'node:process';
 import test from 'node:test';
 import { createServer } from 'vite';
 import react from '@vitejs/plugin-react';
+import { ssrDependencies } from '../ssrDependencies.js';
 
 test('frontend services connect to the live SQL Server API', { timeout: 90000 }, async () => {
   const password = process.env.HRCMS_LIVE_PASSWORD;
   assert.ok(password, 'Set HRCMS_LIVE_EMAIL and HRCMS_LIVE_PASSWORD for a test account.');
-  const server = await createServer({ configFile: false, plugins: [react()], server: { middlewareMode: true, hmr: false, ws: false }, appType: 'custom', logLevel: 'error' });
+  const server = await createServer({ configFile: false, plugins: [ssrDependencies(), react()], server: { middlewareMode: true, hmr: false, ws: false }, appType: 'custom', logLevel: 'error' });
   let api, auth;
   try {
     ({ default: api } = await server.ssrLoadModule('/src/services/api.js'));
@@ -26,6 +27,16 @@ test('frontend services connect to the live SQL Server API', { timeout: 90000 },
     assert.ok(enums.Role.includes(manager.role));
     assert.equal(typeof (await api.get('/api/dashboard')).data.horseCount, 'number');
     assert.ok(Array.isArray((await club.listHorses()).items));
+
+    if (process.env.HRCMS_LIVE_ROLES === '1') {
+      for (const role of enums.Role) {
+        const user = await auth.login({ email: role === 'ClubManager' ? managerEmail : `${role.toLowerCase()}@frontend.example.test`, password });
+        assert.equal(user.role, role);
+        assert.equal(typeof (await api.get('/api/dashboard')).data.horseCount, 'number');
+        assert.ok(Array.isArray((await club.listHorses()).items));
+      }
+      await auth.login({ email: managerEmail, password });
+    }
 
     // Mutating checks require a deliberately prepared disposable fixture, never ordinary live accounts.
     if (process.env.HRCMS_LIVE_FIXTURE === '1') {

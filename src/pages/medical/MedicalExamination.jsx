@@ -255,7 +255,7 @@ function MedicalExamination() {
         }
 
         const payload = {
-            examinationAt: examinationDate.toISOString(),
+            examinationAt: editingRecord ? firstDefined(editingRecord, ["examinationAt", "ExaminationAt"]) : examinationDate.toISOString(),
             reason: form.reason.trim(),
             symptoms: form.symptoms.trim(),
             findings: form.findings.trim(),
@@ -530,6 +530,7 @@ function MedicalExamination() {
                                     <input
                                         id="examinationAt"
                                         type="datetime-local"
+                                        disabled={!!editingRecord}
                                         value={form.examinationAt}
                                         onChange={(event) =>
                                             updateField("examinationAt", event.target.value)
