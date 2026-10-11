@@ -1,10 +1,9 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, FileText, Activity, HeartPulse } from 'lucide-react';
+import { FileText, Activity, HeartPulse } from 'lucide-react';
 import { useAuth } from '../context/useAuth.js';
 import { MSG, msg } from '../messages/index.js';
 import BrandLogo from '../components/BrandLogo.jsx';
-import BrandMark from '../components/BrandMark.jsx';
+import SystemHeader from '../components/SystemHeader.jsx';
 import {useWebsite,websiteAsset} from '../services/websiteStore.js';
 import '../style/home.css';
 
@@ -33,27 +32,11 @@ const roles = [
 export default function Home() {
     const { isAuthenticated } = useAuth();
     const website=useWebsite();
-    const [menuOpen, setMenuOpen] = useState(false);
     const management = isAuthenticated ? '/dashboard' : '/login';
-    const closeMenu = () => setMenuOpen(false);
 
     return <div className="hp" id="hp-top">
         <a className="visually-hidden-focusable hp-skip" href="#hp-main">{msg(MSG.HOME_REFERENCE_SKIP)}</a>
-        <header className="hp-header">
-            <div className="hp-container hp-header-inner">
-                <Link className="hp-brand" to="/" aria-label={msg(MSG.HRCMS_TRANG_CHU)}><BrandMark /><span>{msg(MSG.HRCMS)}</span></Link>
-                <button className="hp-menu-toggle" type="button" aria-expanded={menuOpen} aria-controls="hp-navigation" aria-label={msg(menuOpen ? MSG.HOME_REFERENCE_CLOSE_MENU : MSG.HOME_REFERENCE_OPEN_MENU)} onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X size={24} /> : <Menu size={24} />}</button>
-                <nav className={`hp-navigation${menuOpen ? ' is-open' : ''}`} id="hp-navigation" aria-label={msg(MSG.HOME_REFERENCE_NAV)}>
-                    <a className="is-active" href="#hp-top" aria-current="page" onClick={closeMenu}>{msg(MSG.HOME_REFERENCE_HOME)}</a>
-                    <a href="#hp-intake" onClick={closeMenu}>{msg(MSG.HOME_REFERENCE_HORSE_RECORDS)}</a>
-                    <a href="#hp-training" onClick={closeMenu}>{msg(MSG.HOME_REFERENCE_TRAINING_NAV)}</a>
-                    <a href="#hp-health" onClick={closeMenu}>{msg(MSG.HOME_REFERENCE_MEDICAL_NAV)}</a>
-                    <a href="#hp-roles" onClick={closeMenu}>{msg(MSG.HOME_REFERENCE_PERMISSIONS)}</a>
-                    <div className="hp-mobile-actions"><a href="#hp-footer" onClick={closeMenu}>{msg(MSG.HOME_REFERENCE_SUPPORT)}</a><Link className="hp-button hp-button-brown" to={management} onClick={closeMenu}>{msg(isAuthenticated ? MSG.HOME_REFERENCE_MANAGEMENT : MSG.HOME_REFERENCE_VIEW_SCOPE)}</Link></div>
-                </nav>
-                <div className="hp-header-actions"><a className="hp-support-link" href="#hp-footer">{msg(MSG.HOME_REFERENCE_SUPPORT)}</a><Link className="hp-button hp-button-brown" to={management}>{msg(isAuthenticated ? MSG.HOME_REFERENCE_MANAGEMENT : MSG.HOME_REFERENCE_VIEW_SCOPE)}</Link></div>
-            </div>
-        </header>
+        <SystemHeader />
 
         <main id="hp-main">
             <section className="hp-hero" aria-labelledby="hp-hero-title" style={website?.backgroundImageVersion?{backgroundImage:`linear-gradient(#eaddcae8,#eaddcae8),url("${websiteAsset("Background",website.backgroundImageVersion)}")`,backgroundSize:"cover",backgroundPosition:"center"}:undefined}>

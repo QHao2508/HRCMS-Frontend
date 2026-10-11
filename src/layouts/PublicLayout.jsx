@@ -1,6 +1,5 @@
-import BrandMark from "../components/BrandMark.jsx";
+import SystemHeader from "../components/SystemHeader.jsx";
 import { MSG, msg } from "../messages/index.js";
-import { Link } from "react-router-dom";
 
 /**
  * Dựng header/logo trỏ về Home, nội dung và footer cho các trang public; className chỉ điều chỉnh theme của màn hình gọi.
@@ -9,10 +8,7 @@ import { Link } from "react-router-dom";
  */
 export default function PublicLayout({ children, className = "" }) {
     return <div className={`public-layout${className ? ` ${className}` : ""}`}>
-        <header className="public-header">
-            <Link className="brand" to="/" aria-label={msg(MSG.HRCMS_TRANG_CHU)}><BrandMark /><span>{msg(MSG.HRCMS)}</span></Link>
-            <span className="portal-title">{msg(MSG.CONG_QUAN_TRI_CHIEN_MA_HOANG_GIA)}</span>
-        </header>
+        <SystemHeader />
         {children}
         <footer className="public-footer">
             <div className="footer-columns">
