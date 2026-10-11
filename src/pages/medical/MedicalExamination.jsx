@@ -1,3 +1,5 @@
+import { currentMedicalRecords } from '../../services/medicalRecordVersions.js';
+import MedicalRecordHistory from '../../components/medical/MedicalRecordHistory.jsx';
 import { useMedicalPatientSelection } from '../../services/medicalPatientSelection.js';
 import { allMedicalPages } from '../../services/medicalValidation.js';
 import { getMedicalLabel } from '../../constants/medicalLabels.js';
@@ -50,7 +52,7 @@ function horseName(horse) {
 function horseRegistration(horse) {
     return firstDefined(
         horse,
-        ["registrationNumber", "RegistrationNumber", "identifier", "Identifier", "horseId", "HorseId"],
+        ["registrationNumber", "RegistrationNumber", "identifier", "Identifier"],
         ""
     );
 }
@@ -175,7 +177,7 @@ function MedicalExamination() {
     const filteredRecords = useMemo(() => {
         const query = search.trim().toLowerCase();
 
-        return records.filter((record) => {
+        return currentMedicalRecords(records).filter((record) => {
             const status = firstDefined(record, ["healthStatus", "HealthStatus"], "");
             const diagnosis = firstDefined(record, ["diagnosis", "Diagnosis"], "");
             const reason = firstDefined(record, ["reason", "Reason"], "");
@@ -352,7 +354,7 @@ function MedicalExamination() {
                     <div className="medical-selected-horse">
                         <span>{msg(MSG.MERGED_UI_330)}</span>
                         <strong>{horseName(selectedHorse)}</strong>
-                        <small>{horseRegistration(selectedHorse) || idOf(selectedHorse)}</small>
+                        <small>{horseRegistration(selectedHorse) || msg(MSG.MEDICAL_WORKSPACE_NO_CODE)}</small>
                     </div>
                 )}
             </section>
@@ -468,6 +470,7 @@ function MedicalExamination() {
                                             </div>
                                         )}
 
+                                        <MedicalRecordHistory record={record} records={records} onView={setViewingRecord} />
                                         <div className="medical-record-actions">
                                             <button
                                                 type="button"

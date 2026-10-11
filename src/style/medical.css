@@ -1543,3 +1543,18 @@
  .app-shell:has(.medical-app) .app-sidebar .sidebar-link { white-space: nowrap; margin-bottom: 0; padding: 10px 12px; font-size: 14px; }
  .medical-overview-metric > div { min-height: 44px; }
 }
+
+.medical-app .medical-record-source { font-size: 14px; line-height: 1.65; color: var(--hc-muted); margin: 4px 0 0; }
+.medical-app .medical-record-source a { font-weight: 600; }
+.medical-app .medical-record-selection { border: 1px solid var(--hc-border); border-left: 4px solid var(--hc-brown); border-radius: 8px; padding: 16px; background: #f3ede3; }
+.medical-app .medical-record-selection strong { font-size: 15px; }
+.medical-app .medical-record-selection dl { margin: 12px 0 0; display: grid; gap: 10px; }
+.medical-app .medical-record-selection dt { font-size: 13px; color: var(--hc-muted); }
+.medical-app .medical-record-selection dd { margin: 3px 0 0; font-size: 15px; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+.medical-app .medical-record-history { margin: 16px 0; border-top: 1px solid var(--hc-border); padding-top: 14px; }
+.medical-app .medical-record-history summary { color: var(--hc-brown); font-weight: 600; cursor: pointer; }
+.medical-app .medical-record-history > p { margin: 12px 0; font-size: 14px; color: var(--hc-muted); }
+.medical-app .medical-record-history-item { padding: 14px; margin-top: 10px; border-radius: 8px; border: 1px solid var(--hc-border); background: var(--hc-input); }
+.medical-app .medical-record-history-item > div { display: flex; gap: 12px; justify-content: space-between; flex-wrap: wrap; }
+.medical-app .medical-record-history-item p { margin: 10px 0; }
