@@ -1,0 +1,186 @@
+/* Presentation from feat/auth-f01-clean, scoped to the current Auth and Flow 1 views. */
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
+
+.flow-one-auth,
+.flow-one-page {
+  --flow-primary: #7a4325;
+  --flow-secondary: #2d6a3f;
+  --flow-accent: #d9822b;
+  --flow-bg: #f4efe6;
+  --flow-surface: #faf6ed;
+  --flow-text: #2d1d16;
+  --flow-muted: #6b5d55;
+  --flow-border: #e2dac9;
+  font-family: 'Plus Jakarta Sans', 'HRCMS Manrope', Arial, sans-serif;
+  color: var(--flow-text);
+}
+
+.flow-one-auth { width: 100%; max-width: 100%; overflow-x: clip; background: var(--flow-bg); }
+.flow-one-auth .system-header { background: var(--flow-surface); border-color: var(--flow-border); }
+.flow-one-auth .system-header-inner { min-height: 80px; min-width: 0; }
+.flow-one-auth .system-brand { font-family: Merriweather, 'HRCMS Lora', Georgia, serif; font-size: 20px; font-weight: 900; }
+.flow-one-auth .system-header .brand-crest { width: 32px; height: 32px; border-radius: 8px; background: var(--flow-primary); }
+.flow-one-auth .system-header .brand-crest > * { display: none; }
+.flow-one-auth .system-portal-title { color: var(--flow-primary); font-size: 14px; letter-spacing: 0; }
+.flow-one-auth .auth-page { width: 100%; min-width: 0; align-items: flex-start; padding: 64px 24px; }
+.flow-one-auth .auth-workspace,
+.flow-one-auth .auth-workspace:has(input[name="userName"]) {
+  display: block; width: min(100%, 960px); max-width: 100%; min-width: 0;
+}
+.flow-one-auth .auth-intro { display: none; }
+.flow-one-auth .auth-card,
+.flow-one-auth .auth-workspace .auth-card {
+  width: min(100%, 520px); margin-inline: auto; padding: 48px;
+  border: 1px solid var(--flow-border); border-radius: 16px;
+  background: #fff; box-shadow: none;
+}
+.flow-one-auth .auth-workspace:has(input[name="userName"]) .auth-card { width: min(100%, 960px); }
+.flow-one-auth .auth-workspace .login-card { padding-bottom: 28px; }
+.flow-one-auth .auth-card h1,
+.flow-one-auth .auth-workspace .auth-card h1 {
+  margin: 0 0 8px; color: var(--flow-text); text-align: center;
+  font: 900 32px/1.25 Merriweather, 'HRCMS Lora', Georgia, serif;
+}
+.flow-one-auth .auth-workspace:has(input[name="userName"]) .auth-card h1 { text-align: left; }
+.flow-one-auth .auth-card > p,
+.flow-one-auth .auth-workspace .auth-card > p { margin: 0 0 28px; color: var(--flow-muted); text-align: center; font-size: 14px; line-height: 20px; }
+.flow-one-auth .auth-workspace:has(input[name="userName"]) .auth-card > p { text-align: left; }
+.flow-one-auth .auth-workspace .login-card > p { margin-bottom: 12px; }
+.flow-one-auth .auth-staff-info { margin-bottom: 20px; padding: 16px; border: 1px solid #b2dfdb; border-radius: 12px; background: #e0f2f1; color: #00796b; font-size: 14px; line-height: 18px; }
+.flow-one-auth .auth-staff-info a { color: #00796b; font-weight: 700; }
+.flow-one-auth .auth-owner-notice { margin: 0; padding: 12px 16px; border-color: #b2dfdb; border-radius: 10px; background: #e0f2f1; color: #376c69; font-size: 13px; line-height: 1.5; }
+.flow-one-auth .auth-required-marker::after { content: ' *'; color: #ba3f00; }
+.flow-one-auth .auth-card form { margin: 0; }
+.flow-one-auth .auth-card fieldset { border: 0; padding: 0; margin: 0; }
+.flow-one-auth .auth-workspace:has(input[name="userName"]) fieldset { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.flow-one-auth .auth-workspace:has(input[name="userName"]) fieldset > .mb-3 { margin: 0 !important; }
+.flow-one-auth .auth-workspace:has(input[name="userName"]) fieldset > .form-text,
+.flow-one-auth .auth-workspace:has(input[name="userName"]) fieldset > .auth-owner-notice { grid-column: 1 / -1; margin: 0; }
+.flow-one-auth .auth-workspace:has(input[name="userName"]) fieldset > .mb-3:has(#auth-address),
+.flow-one-auth .auth-workspace:has(input[name="userName"]) fieldset > .btn { grid-column: 1 / -1; }
+.flow-one-auth .auth-card .mb-3 { margin-bottom: 20px !important; }
+.flow-one-auth .auth-card .form-label { color: var(--flow-text); font-size: 13px; font-weight: 700; line-height: 18px; }
+.flow-one-auth .auth-card .form-control {
+  min-height: 42px; padding: 10px 16px; border: 1px solid var(--flow-border);
+  border-radius: 8px; background: var(--flow-surface); color: var(--flow-text);
+  font: 400 14px/20px 'Plus Jakarta Sans', 'HRCMS Manrope', Arial, sans-serif;
+}
+.flow-one-auth .auth-card textarea.form-control { min-height: 72px; }
+.flow-one-auth .auth-card .form-control:focus { border-color: var(--flow-primary); box-shadow: 0 0 0 3px #d9822b2e; }
+.flow-one-auth .auth-card .form-control.is-invalid { border-color: #ba3f00; }
+.flow-one-auth .auth-card .form-control::placeholder { color: var(--flow-muted); }
+.flow-one-auth .otp-entry { position: relative; display: flex; justify-content: center; gap: 12px; }
+.flow-one-auth .otp-entry input { position: absolute; z-index: 1; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: text; }
+.flow-one-auth .otp-entry span { display: grid; place-items: center; flex: 0 1 56px; width: 56px; height: 56px; border: 1px solid var(--flow-border); border-radius: 8px; background: var(--flow-surface); font-size: 20px; font-weight: 700; }
+.flow-one-auth .otp-entry:focus-within span.otp-active { border: 2px solid var(--flow-primary); }
+.flow-one-auth .otp-entry:focus-visible { outline: 3px solid var(--flow-accent); }
+.flow-one-auth .auth-card .form-text { font-size: 12px; color: var(--flow-muted) !important; }
+.flow-one-auth .auth-card .btn { min-height: 42px; border-radius: 8px; padding: 10px 20px; font-size: 14px; font-weight: 700; }
+.flow-one-auth .auth-card .btn-primary { --bs-btn-bg: #7a4325; --bs-btn-border-color: #7a4325; --bs-btn-hover-bg: #65361e; --bs-btn-hover-border-color: #65361e; }
+.flow-one-auth .auth-forgot { color: #c66700; font-size: 13px; font-weight: 600; text-decoration: none; }
+.flow-one-auth .auth-register { margin-top: 28px; padding-top: 22px; color: var(--flow-muted); font-size: 14px; }
+.flow-one-auth .auth-register a { font-weight: 700; }
+.flow-one-auth .auth-support-links { margin-top: 16px; }
+.flow-one-auth .public-footer { margin-top: auto; padding: 60px max(24px, calc((100vw - 1280px)/2)) 40px; background: var(--flow-text); color: var(--flow-border); }
+.flow-one-auth .footer-title { font: 900 24px/30px Merriweather, 'HRCMS Lora', Georgia, serif; }
+.flow-one-auth .footer-columns { gap: 48px; }
+.flow-one-auth .footer-columns > div { min-width: 0; max-width: 100%; }
+.flow-one-auth .footer-columns p { color: var(--flow-border); font-size: 14px; line-height: 18px; overflow-wrap: anywhere; }
+.flow-one-auth .footer-support { color: #fff; font-size: 14px; }
+.flow-one-auth .footer-copyright { margin-top: 32px; padding-top: 32px; color: #a8978e; }
+
+.flow-one-page { width: 100%; max-width: 1120px; margin-inline: auto; font-size: 14px; }
+.flow-one-page :is(a, button, input, select, textarea):focus-visible,
+.flow-one-auth :is(a, button, input, textarea):focus-visible { outline: 3px solid var(--flow-accent); outline-offset: 3px; }
+.flow-one-page h1 { font: 700 30px/1.5 'Plus Jakarta Sans', 'HRCMS Manrope', Arial, sans-serif; letter-spacing: -.03em; }
+.flow-one-page h2,
+.flow-one-page .form-card legend { font: 700 18px/1.5 'Plus Jakarta Sans', 'HRCMS Manrope', Arial, sans-serif; letter-spacing: -.02em; }
+.flow-one-page .page-heading { display: flex; align-items: flex-start; gap: 24px; margin: 0 0 24px; }
+.flow-one-page .page-heading p { color: var(--flow-muted); font-size: 14px; font-weight: 700; }
+.flow-one-page .page-back,
+.flow-one-page > a:first-child { display: inline-flex; margin-bottom: 24px; color: var(--flow-primary); font-weight: 700; text-decoration: underline; }
+.flow-one-page .surface-card,
+.flow-one-page .form-card {
+  margin-bottom: 24px; padding: 24px; border: 1px solid var(--flow-border);
+  border-radius: 12px; background: #fff; box-shadow: none;
+}
+.flow-one-page .form-card legend { margin-bottom: 16px; }
+.flow-one-page .card-description { color: var(--flow-muted); font-size: 14px; line-height: 1.6; }
+.flow-one-page .form-label { color: var(--flow-text); font-size: 13px; font-weight: 700; }
+.flow-one-page .form-control,
+.flow-one-page .form-select { min-height: 42px; border: 1px solid var(--flow-border); border-radius: 8px; background-color: var(--flow-surface); font-size: 14px; }
+.flow-one-page .form-control:focus,
+.flow-one-page .form-select:focus { border-color: var(--flow-primary); box-shadow: 0 0 0 3px #d9822b2e; }
+.flow-one-page .btn { min-height: 42px; border-radius: 8px; padding: 10px 20px; font-size: 14px; font-weight: 700; }
+.flow-one-page .btn-primary { --bs-btn-bg: #7a4325; --bs-btn-border-color: #7a4325; --bs-btn-hover-bg: #65361e; --bs-btn-hover-border-color: #65361e; }
+.flow-one-page .btn-success { --bs-btn-bg: #2d6a3f; --bs-btn-border-color: #2d6a3f; }
+.flow-one-page .btn-outline-primary { --bs-btn-color: #7a4325; --bs-btn-border-color: #7a4325; --bs-btn-hover-bg: #7a4325; --bs-btn-hover-border-color: #7a4325; }
+.flow-one-page .wizard-steps { gap: 8px; margin: 0 0 24px; }
+.flow-one-page .wizard-step { min-height: 42px; padding: 12px; border: 0; border-radius: 0; background: #fff; color: var(--flow-muted); font-size: 12px; font-weight: 700; line-height: 18px; }
+.flow-one-page .wizard-step[aria-current="step"] { background: var(--flow-primary); color: #fff; }
+.flow-one-page .wizard-actions { gap: 12px; margin-block: 24px; }
+.flow-one-page .summary-grid { gap: 16px 24px; }
+.flow-one-page .summary-grid dt { color: var(--flow-muted); font-size: 13px; }
+.flow-one-page .summary-grid dd { font-size: 14px; font-weight: 700; }
+.flow-one-page .upload-zone { border: 1px dashed var(--flow-border); border-radius: 12px; background: var(--flow-surface); }
+.flow-one-page .table { --bs-table-border-color: var(--flow-border); font-size: 14px; }
+.flow-one-page .table th { background: var(--flow-surface); color: var(--flow-muted); font-size: 12px; font-weight: 700; }
+.flow-one-page .table td { padding: 16px 12px; }
+.flow-one-page .table a { color: var(--flow-primary); font-weight: 700; }
+.flow-one-page .table a.btn { color: var(--flow-primary); text-decoration: none; }
+.flow-one-page .table a.btn:hover { color: #fff; }
+.flow-one-page .section-tabs { gap: 8px; max-width: 100%; overflow-x: auto; flex-wrap: nowrap; }
+.flow-one-page .section-tabs a { flex: none; min-height: 42px; padding: 10px 20px; border: 1.5px solid var(--flow-primary); border-radius: 8px; background: transparent; color: var(--flow-primary); font-weight: 700; white-space: nowrap; }
+.flow-one-page .section-tabs a:first-child { background: var(--flow-primary); color: #fff; }
+.flow-one-page .section-tabs a:hover,
+.flow-one-page .section-tabs a:focus-visible { background: var(--flow-primary); color: #fff; }
+.flow-one-page .horse-photo { width: 200px; height: 150px; object-fit: cover; border: 1px solid var(--flow-border); border-radius: 12px; }
+.flow-one-horse #horse-overview { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 16px 24px; }
+.flow-one-horse #horse-overview h2 { grid-column: 1 / -1; }
+.flow-one-horse #horse-overview .summary-grid { align-self: start; }
+.flow-one-horse .horse-health-card { display: flex; align-items: center; gap: 24px; }
+.flow-one-horse .horse-health-card h2 { margin: 0; }
+.flow-one-page .filter-row { gap: 16px; }
+.flow-one-page .status-pill { border-radius: 6px; font-weight: 700; }
+.flow-one-page .alert { border-radius: 12px; }
+.flow-one-dialog { width: min(100% - 32px, 520px); padding: 28px; border: 1px solid var(--flow-border, #e2dac9); border-radius: 16px; background: #fff; color: #2d1d16; font-family: 'Plus Jakarta Sans', 'HRCMS Manrope', Arial, sans-serif; box-shadow: 0 18px 60px #2d1d1633; }
+.flow-one-dialog::backdrop { background: #2d1d1680; }
+.flow-one-dialog h2 { margin-bottom: 18px; font-size: 20px; }
+.flow-one-dialog .summary-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-bottom: 18px; }
+.flow-one-dialog .summary-grid dt { color: #6b5d55; font-size: 12px; }
+.flow-one-dialog .summary-grid dd { margin: 0; font-weight: 700; overflow-wrap: anywhere; }
+.flow-one-dialog p { overflow-wrap: anywhere; }
+.flow-one-dialog .inline-actions { justify-content: flex-end; margin-top: 24px; }
+
+@media (max-width: 760px) {
+  .flow-one-auth .auth-page { display: block; width: 100%; min-width: 0; padding: 32px 16px 48px; }
+  .flow-one-auth .auth-workspace,
+  .flow-one-auth .auth-workspace:has(input[name="userName"]) { display: grid; grid-template-columns: minmax(0, 1fr); width: 100%; max-width: 100%; min-width: 0; }
+  .flow-one-auth .auth-workspace .auth-card { width: 100%; max-width: 100%; min-width: 0; margin-inline: 0; }
+  .flow-one-auth .system-portal-title { display: none; }
+  .flow-one-auth .system-header-inner { width: calc(100% - 32px); }
+  .flow-one-auth .system-portal-title { max-width: 130px; white-space: normal; overflow-wrap: anywhere; }
+  .flow-one-auth .auth-card,
+  .flow-one-auth .auth-workspace .auth-card { padding: 28px 20px; }
+  .flow-one-auth .auth-card h1,
+  .flow-one-auth .auth-workspace .auth-card h1 { font-size: 28px; }
+  .flow-one-auth .public-footer { padding: 40px 24px 32px; }
+  .flow-one-auth .otp-entry { gap: 8px; }
+  .flow-one-auth .otp-entry { width: 100%; }
+  .flow-one-auth .otp-entry span { flex: 1 1 0; min-width: 0; width: auto; height: 48px; }
+  .flow-one-auth .auth-workspace:has(input[name="userName"]) fieldset { grid-template-columns: 1fr; }
+  .flow-one-auth .auth-workspace:has(input[name="userName"]) fieldset > .mb-3:has(#auth-address),
+  .flow-one-auth .auth-workspace:has(input[name="userName"]) fieldset > .btn { grid-column: auto; }
+  .flow-one-page .wizard-steps { display: flex; overflow-x: auto; }
+  .flow-one-page .wizard-step { flex: 0 0 150px; }
+  .flow-one-page .surface-card,
+  .flow-one-page .form-card { padding: 20px; }
+  .flow-one-page .page-heading { flex-direction: column; }
+  .flow-one-page .summary-grid { grid-template-columns: 1fr; }
+  .flow-one-horse #horse-overview { grid-template-columns: 1fr; }
+  .flow-one-horse .horse-health-card { align-items: flex-start; flex-direction: column; }
+}
+@media (max-width: 420px) {
+  .flow-one-auth .auth-page { padding-inline: 16px; }
+  .flow-one-auth .auth-workspace .auth-card { padding-inline: 20px; }
+}

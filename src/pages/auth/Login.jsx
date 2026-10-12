@@ -53,8 +53,9 @@ export default function Login() {
         finally { setLoading(false); }
     }
     if (isAuthenticated && !restoring) return <Navigate to={destination} replace />;
-    return <PublicLayout><main className="auth-page"><div className="auth-workspace"><AuthIntro /><div className="auth-card login-card">
+    return <PublicLayout className="flow-one-auth"><main className="auth-page"><div className="auth-workspace"><AuthIntro /><div className="auth-card login-card">
         <h1>{msg(MSG.DANG_NHAP)}</h1><p>{msg(MSG.AUTH_LOGIN_DESCRIPTION)}</p>
+        <div className="alert alert-info auth-staff-info" role="note">{msg(MSG.STAFF_ACCOUNTS_ARE_CREATED_BY_CLUB_MANAGEMENT)}{' '}<Link to="/accept-invitation">{msg(MSG.ACCEPT_STAFF_INVITATION)}</Link></div>
         {restoring && <p role="status">{msg(MSG.LOADING_DANG_KIEM_TRA_PHIEN_DANG_NHAP)}</p>}
         {notices[location.state?.authNotice] && <div className="alert alert-success" role="status">{notices[location.state.authNotice]}</div>}
         {location.state?.logoutError && <div className="alert alert-warning" role="alert">{msg(MSG.DA_DANG_XUAT_TREN_THIET_BI_CHUA_XAC_NHAN_DUOC_DANG_XUAT_PHIA_MAY_CHU)}{' '}{location.state.logoutError}</div>}
@@ -66,6 +67,5 @@ export default function Login() {
             <button className="btn btn-primary w-100" type="submit" disabled={loading || restoring}>{loading ? msg(MSG.DANG_DANG_NHAP) : msg(MSG.DANG_NHAP)}</button>
         </form>
         <div className="auth-register">{msg(MSG.CHUA_CO_TAI_KHOAN)}{' '}<Link to="/register">{msg(MSG.DANG_KY)}</Link></div>
-        <div className="auth-support-links"><Link to="/accept-invitation">{msg(MSG.ACCEPT_STAFF_INVITATION)}</Link></div>
     </div></div></main></PublicLayout>;
 }

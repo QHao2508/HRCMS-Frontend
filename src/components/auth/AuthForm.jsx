@@ -11,7 +11,7 @@ import AuthButton from "./AuthButton.jsx";
 export default function AuthForm({ title, description, form, onSubmit, submitLabel, pendingLabel,
     success, children, footer, submitDisabled = false }) {
     return (
-        <PublicLayout><main className="auth-page"><div className="auth-workspace"><AuthIntro />
+        <PublicLayout className="flow-one-auth"><main className="auth-page"><div className="auth-workspace"><AuthIntro />
             <div className="auth-card">
                 <h1>{title}</h1>
                 <p>{description}</p>

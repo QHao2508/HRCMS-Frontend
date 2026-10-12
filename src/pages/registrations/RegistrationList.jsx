@@ -34,7 +34,7 @@ export default function RegistrationList() {
      */
     const load = useCallback(() => listRegistrations(filter), [filter]);
     const resource = useRegistrationResource(load, { realtime: true });
-    return <section className="surface-card">
+    return <section className="surface-card flow-one-page flow-one-list">
         <div className="d-flex flex-wrap justify-content-between gap-2 mb-3"><h1>{msg(MSG.YEU_CAU_DANG_KY_NGUA)}</h1><Link to="/registrations/new" className="btn btn-primary align-self-start">{msg(MSG.DANG_KY_NGUA)}</Link></div>
         <label htmlFor="registration-status-filter" className="form-label">{msg(MSG.TRANG_THAI)}</label>
         <select id="registration-status-filter" value={filter.status} onChange={(event) => setFilter({ status: event.target.value, page: 1 })} className="form-select mb-3">

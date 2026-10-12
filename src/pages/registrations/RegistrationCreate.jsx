@@ -42,7 +42,7 @@ export default function RegistrationCreate() {
         catch (failure) { setError(failure); if (!failure.status || failure.status >= 500 || [403, 404, 409].includes(failure.status)) setUncertain(true); }
         finally { lock.current = false; setBusy(false); }
     }
-    return <section><BackLink to="/registrations">{msg(MSG.YEU_CAU_DANG_KY)}</BackLink><PageHeading title={msg(MSG.DANG_KY_NGUA_MOI)} description={msg(MSG.BAN_NHAP_CHU_SO_HUU)} />
+    return <section className="flow-one-page flow-one-registration"><BackLink to="/registrations">{msg(MSG.YEU_CAU_DANG_KY)}</BackLink><PageHeading title={msg(MSG.DANG_KY_NGUA_MOI)} description={msg(MSG.BAN_NHAP_CHU_SO_HUU)} />
         <WizardSteps step={step} onChange={setStep} disabled={busy} /><RegistrationError error={error} />
         {!!Object.keys(errors).length && <div className="alert alert-danger" role="alert">{msg(MSG.KIEM_TRA_THONG_TIN_DA_NHAP_BAN_CO_THE_CHUYEN_GIUA_CAC_BUOC_DE_SUA_LOI)}</div>}
         {savedDraftId && <p className="alert alert-info">{msg(MSG.PHOTO_SAVED_DRAFT)}{' '}<Link to={`/registrations/${savedDraftId}`}>{msg(MSG.PHOTO_OPEN_SAVED_DRAFT)}</Link></p>}

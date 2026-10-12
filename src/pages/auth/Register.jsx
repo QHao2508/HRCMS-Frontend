@@ -45,19 +45,20 @@ export default function Register() {
             form={form} onSubmit={() => form.submit(submit)} submitLabel={msg(MSG.DANG_KY)} pendingLabel={msg(MSG.CREATING_ACCOUNT)}
             footer={<>{existingAccount && <p className="alert alert-info">{msg(MSG.VERIFY_RECOVERY_HELP)}{' '}<Link to="/verify-email" state={{ email: form.values.email.trim() }}>{msg(MSG.VERIFY_EXISTING_ACCOUNT)}</Link></p>}<Link to="/login">{msg(MSG.BACK_TO_SIGN_IN)}</Link><p className="mt-2">{msg(MSG.STAFF_ACCOUNTS_ARE_CREATED_BY_CLUB_MANAGEMENT)}{' '}<Link to="/accept-invitation">{msg(MSG.ACCEPT_STAFF_INVITATION)}</Link></p></>}>
             {location.state?.authNotice === AUTH_NOTICE.RegistrationExpired && <p className="alert alert-warning" role="alert">{msg(MSG.ACCOUNT_REGISTRATION_EXPIRED)}</p>}
+            <p className="alert alert-info auth-owner-notice" role="note">{msg(MSG.PUBLIC_REGISTRATION_IS_FOR_HORSE_OWNERS)}{' '}{msg(MSG.STAFF_ACCOUNTS_ARE_CREATED_BY_CLUB_MANAGEMENT)}</p>
             <p className="form-text">{msg(MSG.REGISTRATION_EXPIRY_HELP)}</p>
-            <AuthInput label={msg(MSG.FIRST_NAME)} {...form.field("firstName")} required maxLength={100} autoComplete="given-name" />
-            <AuthInput label={msg(MSG.LAST_NAME)} {...form.field("lastName")} required maxLength={100} autoComplete="family-name" />
-            <AuthInput label={msg(MSG.USERNAME)} {...form.field("userName")} required minLength={3} maxLength={80} autoComplete="username" help={msg(MSG.BR_USERNAME_HELP)} />
-            <AuthInput label={msg(MSG.EMAIL)} {...form.field("email")} type="email" required maxLength={254} autoComplete="email" />
-            <AuthInput label={msg(MSG.PHONE)} {...form.field("phone")} type="tel" required maxLength={30} autoComplete="tel" />
-            <AuthInput label={msg(MSG.ADDRESS)} {...form.field("address")} multiline rows={2} required maxLength={500} autoComplete="street-address" />
+            <AuthInput label={msg(MSG.LAST_NAME)} {...form.field("lastName")} required requiredIndicator maxLength={100} autoComplete="family-name" />
+            <AuthInput label={msg(MSG.FIRST_NAME)} {...form.field("firstName")} required requiredIndicator maxLength={100} autoComplete="given-name" />
+            <AuthInput label={msg(MSG.USERNAME)} {...form.field("userName")} required requiredIndicator minLength={3} maxLength={80} autoComplete="username" help={msg(MSG.BR_USERNAME_HELP)} />
+            <AuthInput label={msg(MSG.EMAIL)} {...form.field("email")} type="email" required requiredIndicator maxLength={254} autoComplete="email" />
+            <AuthInput label={msg(MSG.PHONE)} {...form.field("phone")} type="tel" required requiredIndicator maxLength={30} autoComplete="tel" />
             <AuthInput label={msg(MSG.NATIONAL_ID, { p0: AUTH_POLICY.requireNationalId ? "" : " " + msg(MSG.KHONG_BAT_BUOC) })} {...form.field("nationalId")}
-                required={AUTH_POLICY.requireNationalId} inputMode="numeric" maxLength={AUTH_POLICY.nationalIdDigits}
+                required={AUTH_POLICY.requireNationalId} requiredIndicator={AUTH_POLICY.requireNationalId} inputMode="numeric" maxLength={AUTH_POLICY.nationalIdDigits}
                 autoComplete="off" help={msg(MSG.IF_SUPPLIED_ENTER_EXACTLY_DIGITS, { p0: AUTH_POLICY.nationalIdDigits })} />
-            <AuthInput label={msg(MSG.MAT_KHAU)} {...form.field("password")} type="password" required
+            <AuthInput label={msg(MSG.ADDRESS)} {...form.field("address")} multiline rows={2} required requiredIndicator maxLength={500} autoComplete="street-address" />
+            <AuthInput label={msg(MSG.MAT_KHAU)} {...form.field("password")} type="password" required requiredIndicator
                 maxLength={AUTH_POLICY.passwordMaxLength} autoComplete="new-password" help={passwordHelp} />
-            <AuthInput label={msg(MSG.CONFIRM_PASSWORD)} {...form.field("confirmPassword")} type="password" required
+            <AuthInput label={msg(MSG.CONFIRM_PASSWORD)} {...form.field("confirmPassword")} type="password" required requiredIndicator
                 maxLength={AUTH_POLICY.passwordMaxLength} autoComplete="new-password" />
         </AuthForm>
     );

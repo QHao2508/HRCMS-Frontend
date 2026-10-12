@@ -20,9 +20,11 @@ const items = [
     {to:"/training/templates",label:msg(MSG.GIAO_AN_MAU),allowedRoles:[ROLES.ClubManager,ROLES.HeadTrainer,ROLES.Trainer]},
     {to:"/training/plans",label:msg(MSG.KE_HOACH_HUAN_LUYEN),allowedRoles:TRAINING_ROLES},
     {to:"/training/sessions",label:msg(MSG.BUOI_TAP),allowedRoles:TRAINING_ROLES},
+    {to:"/training/evaluations",label:msg(MSG.TRAINING_AWAITING_EVALUATION),allowedRoles:ROLES.Trainer},
+    {to:"/training/dashboard",label:msg(MSG.TRAINING_DASHBOARD),allowedRoles:ROLES.Trainer},
 ];
 /**
  * Lọc menu đã triển khai theo allowlist role; đây là điều hướng, bảo vệ thực tế vẫn nằm ở route/API.
  * @param role Role enum chính xác của backend để kiểm quyền/lọc dữ liệu.
  */
-export function getNavigationForRole(role) {return isKnownRole(role) ? items.filter(item=>isRoleAllowed(role,item.allowedRoles)).map(item => item.to === "/horses" ? {...item,label:msg(role === ROLES.HorseOwner ? MSG.NGUA_CUA_TOI : MSG.HORSES_LABEL)} : item) : [];}
+export function getNavigationForRole(role) {return isKnownRole(role) ? items.filter(item=>isRoleAllowed(role,item.allowedRoles)).map(item => item.to === "/horses" ? {...item,label:msg(role === ROLES.HorseOwner ? MSG.NGUA_CUA_TOI : MSG.HORSES_LABEL)} : item.to === "/training/sessions" && role === ROLES.WorkRider ? {...item,to:"/training/my-schedule",label:msg(MSG.TRAINING_MY_SCHEDULE)} : item) : [];}

@@ -185,7 +185,8 @@ test("navigation uses exact roles and exposes only implemented links for each ro
         if (role === ROLES.HorseOwner) expected.push({ to: "/registrations", label: "Yêu cầu đăng ký ngựa" });
         if (role === ROLES.ClubManager) { expected.unshift({to:"/manager/staff",label:"Nhân sự"},{to:"/manager/audit",label:"Nhật ký hoạt động"},{to:"/manager/website",label:"Giao diện website"}); expected.push({ to: "/reviews", label: "Duyệt hồ sơ" }); }
         if ([ROLES.ClubManager,ROLES.HeadTrainer,ROLES.Trainer].includes(role)) expected.push({ to:"/training/templates",label:"Giáo án mẫu" });
-        if (role !== ROLES.Groom) expected.push({to:"/training/plans",label:"Kế hoạch huấn luyện"},{to:"/training/sessions",label:"Buổi tập"});
+        if (role !== ROLES.Groom) expected.push({to:"/training/plans",label:"Kế hoạch huấn luyện"},role === ROLES.WorkRider ? {to:"/training/my-schedule",label:"Lịch tập của tôi"} : {to:"/training/sessions",label:"Buổi tập"});
+        if (role === ROLES.Trainer) expected.push({to:"/training/evaluations",label:"Kết quả buổi tập để xem xét"},{to:"/training/dashboard",label:"Tổng quan huấn luyện"});
         if (role === ROLES.Veterinarian) expected.unshift({to:"/medical",label:"Thú y"});
         const supporting = [{to:'/medical/preventive-care',label:'Chăm sóc phòng ngừa'}];
         if ([ROLES.ClubManager,ROLES.HorseOwner,ROLES.Groom,ROLES.Veterinarian].includes(role)) supporting.push({to:'/care/tasks',label:'Công việc chăm sóc'});
@@ -196,6 +197,23 @@ test("navigation uses exact roles and exposes only implemented links for each ro
         assert.deepEqual(getNavigationForRole(role).map(({ to, label }) => ({ to, label })), expected);
     }
     for (const role of ["Horse Owner", "horseowner", "Admin", "__proto__", 0, null]) assert.deepEqual(getNavigationForRole(role), []);
+});
+
+test("Flow 2 V2 pages keep Rider and Trainer route boundaries", () => {
+    const cases = [
+        ["/training/my-schedule", ROLES.WorkRider, ROLES.Trainer, "Lịch tập của tôi"],
+        ["/training/evaluations", ROLES.Trainer, ROLES.WorkRider, "Kết quả buổi tập để xem xét"],
+        ["/training/dashboard", ROLES.Trainer, ROLES.WorkRider, "Tổng quan huấn luyện"],
+    ];
+    for (const [path, allowed, denied, heading] of cases) {
+        const permitted = render(h(AppRoutes), authValue({ user: { ...owner, role: allowed } }), path);
+        assert.ok(permitted.includes(heading), path);
+        assert.deepEqual(globalThis.__hrcmsRoutingTest.redirects, []);
+        const rejected = render(h(AppRoutes), authValue({ user: { ...owner, role: denied } }), path);
+        assert.equal(rejected.includes(heading), false);
+        assert.equal(globalThis.__hrcmsRoutingTest.redirects.at(-1).to, "/permission-denied");
+        globalThis.__hrcmsRoutingTest.redirects.length = 0;
+    }
 });
 
 test("shell displays the current user, readable role, navigation and nested Outlet content", () => {

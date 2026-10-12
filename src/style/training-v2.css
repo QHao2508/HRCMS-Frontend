@@ -1,0 +1,134 @@
+/* Flow 2 canonical V2. All shell rules are active only while a Training page is mounted. */
+@font-face { font-family: 'Plus Jakarta Sans'; src: url('/fonts/training/plus-jakarta-sans.ttf') format('truetype'); font-weight: 200 800; font-display: swap; }
+@font-face { font-family: Merriweather; src: url('/fonts/training/merriweather.ttf') format('truetype'); font-weight: 300 900; font-display: swap; }
+.app-shell:has(.training-page) {
+  --training-brown: #7a4325;
+  --training-green: #2d6a3f;
+  --training-orange: #d9822b;
+  --training-cream: #f4efe6;
+  --training-paper: #faf6ed;
+  --training-ink: #2d1d16;
+  --training-muted: #6b5d55;
+  --training-line: #e2dac9;
+  background: var(--training-cream);
+  color: var(--training-ink);
+  font-family: 'Plus Jakarta Sans', 'HRCMS Manrope', Arial, sans-serif;
+}
+.app-shell:has(.training-page) .system-header { background: var(--training-brown); border: 0; color: #fff; }
+.app-shell:has(.training-page) .system-header-inner { width: calc(100% - 64px); max-width: none; min-height: 76px; }
+.app-shell:has(.training-page) .system-brand,
+.app-shell:has(.training-page) .system-header .system-dashboard-link,
+.app-shell:has(.training-page) .system-account,
+.app-shell:has(.training-page) .system-account small { color: #fff; }
+.app-shell:has(.training-page) .system-portal-title { color: #faf6ed; }
+.app-shell:has(.training-page) .system-account-controls .btn { background: #fff; border-color: #fff; color: var(--training-brown); }
+.app-shell:has(.training-page) .app-body { grid-template-columns: 220px minmax(0, 1fr); min-height: calc(100vh - 76px); }
+.app-shell:has(.training-page) .app-sidebar { background: #fff; border-color: var(--training-line); padding: 26px 16px; }
+.app-shell:has(.training-page) .app-sidebar::before { content: 'TRAINING'; display: block; margin: 0 8px 12px; color: var(--training-muted); font-size: 11px; font-weight: 800; letter-spacing: .05em; }
+.app-shell:has(.training-page) .sidebar-link { margin-bottom: 3px; padding: 10px 8px; color: var(--training-ink); font-size: 13px; }
+.app-shell:has(.training-page) .sidebar-link.active { background: var(--training-paper); color: var(--training-brown); font-weight: 700; }
+.app-shell:has(.training-page) .app-content { max-width: none; padding: 24px 30px 48px; }
+.training-page { width: 100%; max-width: 1150px; min-width: 0; margin-inline: auto; }
+.training-page .page-back { color: var(--training-brown); font-size: 12px; margin-bottom: 10px; }
+.training-page .page-heading { align-items: center; margin-bottom: 24px; }
+.training-page .page-heading h1 { color: var(--training-ink); font: 700 22px/1.4 Merriweather, 'HRCMS Lora', Georgia, serif; }
+.training-page .page-heading p { color: var(--training-muted); font-size: 13px; }
+.training-page .surface-card { background: #fff; border: 1px solid var(--training-line); border-radius: 10px; padding: 20px; box-shadow: none; }
+.training-page .surface-card h2 { color: var(--training-ink); font: 700 16px/1.4 Merriweather, 'HRCMS Lora', Georgia, serif; }
+.training-page .form-label { color: var(--training-muted); font-size: 11px; font-weight: 700; }
+.training-page .row > div:has(:is(input, select, textarea)[required]) > .form-label::after { content: ' *'; color: var(--training-brown); }
+.training-page .form-control,
+.training-page .form-select { min-height: 42px; background-color: var(--training-paper); border: 1px solid var(--training-line); border-radius: 7px; color: var(--training-ink); font-size: 13px; }
+.training-page textarea.form-control { min-height: 72px; }
+.training-page .form-control:focus,
+.training-page .form-select:focus { border-color: var(--training-brown); box-shadow: 0 0 0 3px #7a432522; }
+.training-page .btn { min-height: 36px; padding: 8px 14px; border-radius: 7px; font-size: 12px; font-weight: 700; }
+.training-page .btn-primary,
+.training-page .btn-success { --bs-btn-bg: var(--training-brown); --bs-btn-border-color: var(--training-brown); --bs-btn-hover-bg: #65361e; --bs-btn-hover-border-color: #65361e; }
+.training-page .btn-outline-primary { --bs-btn-color: var(--training-brown); --bs-btn-border-color: var(--training-brown); --bs-btn-hover-bg: var(--training-brown); --bs-btn-hover-border-color: var(--training-brown); }
+.training-page .table { --bs-table-border-color: var(--training-line); color: var(--training-ink); font-size: 12px; }
+.training-page .table thead th { background: var(--training-brown); color: #fff; font-size: 11px; font-weight: 800; text-transform: uppercase; }
+.training-page .table td { padding: 14px 12px; }
+.training-page .table tbody tr:hover td { background: #faf6ed; }
+.training-evaluation .table thead th { background: var(--training-cream); color: var(--training-muted); }
+.training-page .summary-grid dt { color: var(--training-muted); font-size: 11px; }
+.training-page .summary-grid dd { color: var(--training-ink); font-size: 13px; }
+.training-page .status-pill { border-radius: 99px; font-size: 11px; padding: 6px 12px; }
+.training-available { padding: 6px 12px; border-radius: 99px; background: #edf6ee; color: var(--training-green); font-size: 11px; font-weight: 700; }
+.training-page .empty-state { background: #fff; border: 1px solid var(--training-line); border-radius: 10px; color: var(--training-muted); text-align: left; }
+.training-page .pagination-row { color: var(--training-muted); font-size: 12px; }
+.training-page .filter-row { gap: 12px; }
+.training-page .filter-row > div { min-width: 160px; }
+.training-page .wizard-actions { margin-bottom: 0; }
+.training-page .restriction-card,
+.training-safety { background: #fff6e0 !important; border: 1px solid var(--training-orange) !important; border-radius: 10px; padding: 16px 20px; margin-bottom: 20px; }
+.training-safety strong { display: block; color: #aa6200; font-size: 12px; margin-bottom: 5px; }
+.training-safety p { margin: 0; font-size: 12px; }
+.training-safety ul { margin: 10px 0 0; padding-left: 18px; font-size: 12px; }
+.training-safety li + li { margin-top: 8px; }
+.training-page .alert { border-radius: 9px; font-size: 13px; }
+.training-page .section-tabs { border-bottom: 1px solid var(--training-line); padding-bottom: 12px; }
+.training-page .history-item { border-color: var(--training-line); }
+.training-kicker { margin: 0 0 6px; color: var(--training-muted); font-size: 13px; }
+.training-card-list { display: grid; gap: 12px; }
+.training-session-group { margin-bottom: 20px; }
+.training-session-group > h2 { margin: 0 0 12px; color: var(--training-ink); font: 700 16px/1.4 Merriweather, 'HRCMS Lora', Georgia, serif; }
+.training-session-card { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px 20px; align-items: center; padding: 18px 20px; background: #fff; border: 1px solid var(--training-line); border-radius: 10px; }
+.training-session-card h2 { margin: 0 0 7px; font: 700 15px/1.4 'Plus Jakarta Sans', sans-serif; }
+.training-session-card p { margin: 3px 0; color: var(--training-muted); font-size: 12px; }
+.training-session-card .status-pill { margin-left: 8px; }
+.training-session-card .btn { white-space: nowrap; }
+.training-page .training-template-form .row,
+.training-page .training-plan-form .row,
+.training-page .training-session-form .row { row-gap: 22px; }
+.training-page .training-template-form .row > div,
+.training-page .training-plan-form .row > div,
+.training-page .training-session-form .row > div { min-width: 0; }
+.training-page .training-template-form .row > div:not(.col-12),
+.training-page .training-plan-form .row > div:not(.col-12),
+.training-page .training-session-form .row > div:not(.col-12) { width: 33.333333%; }
+.training-overview { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 16px; }
+.training-overview > .surface-card { min-width: 0; }
+.training-kpis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+.training-kpi { min-height: 120px; padding: 18px; background: #fff; border: 1px solid var(--training-line); border-radius: 8px; }
+.training-kpi dt { color: var(--training-muted); font-size: 12px; }
+.training-kpi dd { margin: 16px 0 6px; color: var(--training-brown); font-size: 28px; font-weight: 800; }
+.training-kpi small { color: var(--training-muted); font-size: 11px; }
+.training-report-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
+.training-report-grid .surface-card { min-height: 180px; }
+.training-trend { display: grid; gap: 12px; margin-top: 22px; }
+.training-trend-row { display: grid; grid-template-columns: minmax(70px, auto) minmax(0, 1fr) 32px; align-items: center; gap: 10px; color: var(--training-muted); font-size: 12px; }
+.training-trend-track { height: 12px; background: var(--training-paper); border-radius: 99px; overflow: hidden; }
+.training-trend-track span { display: block; height: 100%; background: var(--training-brown); border-radius: inherit; }
+@media (max-width: 1050px) {
+  .app-shell:has(.training-page) .app-body { grid-template-columns: 190px minmax(0, 1fr); }
+  .training-page .training-template-form .row > div:not(.col-12),
+  .training-page .training-plan-form .row > div:not(.col-12),
+  .training-page .training-session-form .row > div:not(.col-12) { width: 50%; }
+  .training-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 768px) {
+  .app-shell:has(.training-page) .app-body { display: block; }
+  .app-shell:has(.training-page) .app-sidebar { border-right: 0; border-bottom: 1px solid var(--training-line); padding: 10px 16px; }
+  .app-shell:has(.training-page) .app-sidebar::before { display: none; }
+  .app-shell:has(.training-page) .app-sidebar ul { display: flex; flex-wrap: nowrap; overflow-x: auto; }
+  .app-shell:has(.training-page) .app-sidebar li { flex: 0 0 auto; }
+  .app-shell:has(.training-page) .system-header-inner { width: calc(100% - 32px); }
+  .app-shell:has(.training-page) .app-content { padding: 24px 16px; }
+  .training-page .page-heading { align-items: flex-start; }
+  .training-page .training-template-form .row > div:not(.col-12),
+  .training-page .training-plan-form .row > div:not(.col-12),
+  .training-page .training-session-form .row > div:not(.col-12) { width: 100%; }
+  .training-overview,
+  .training-report-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 420px) {
+  .app-shell:has(.training-page) .system-header .system-brand { font-size: 20px; }
+  .app-shell:has(.training-page) .system-header .brand-crest { display: none; }
+  .training-page .surface-card { padding: 16px; }
+  .training-session-card { grid-template-columns: 1fr; padding: 16px; }
+  .training-session-card .btn { justify-self: start; }
+  .training-kpis { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .training-kpi { padding: 12px; }
+  .training-kpi dd { font-size: 22px; }
+}

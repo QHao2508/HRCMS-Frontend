@@ -160,7 +160,7 @@ export default function RegistrationDetail() {
         return { record, attachments };
     }, [id]);
     const resource = useRegistrationResource(load);
-    return <section>
+    return <section className="flow-one-page flow-one-registration">
         <Link to="/registrations">{msg(MSG.QUAY_LAI_YEU_CAU_DANG_KY)}</Link>
         {resource.loading && <p role="status">{msg(MSG.DANG_TAI_HO_SO)}</p>}
         {resource.error && <><RegistrationError error={resource.error} /><button className="btn btn-outline-primary" onClick={resource.reload}>{msg(MSG.THU_LAI)}</button></>}

@@ -36,6 +36,8 @@ import { HorseList,HorseDetail } from "../pages/horses/HorsePages.jsx";
 import { TemplateList } from "../pages/training/TemplatePages.jsx";
 import { PlanList,PlanCreate,PlanDetail } from "../pages/training/PlanPages.jsx";
 import { SessionList,SessionCreate,SessionDetail } from "../pages/training/SessionPages.jsx";
+import { EvaluationQueue } from "../pages/training/EvaluationPages.jsx";
+import TrainingDashboard from "../pages/training/TrainingDashboard.jsx";
 /**
  * Khai báo route public/protected và giới hạn role; nối URL với page/layout tương ứng.
  */
@@ -56,5 +58,7 @@ export default function AppRoutes() {return <Routes>
         <Route element={<RoleRoute allowedRoles={[ROLES.ClubManager,ROLES.HeadTrainer,ROLES.Trainer]}/>}><Route path="/training/templates" element={<TemplateList/>}/></Route>
         <Route element={<RoleRoute allowedRoles={TRAINING_ROLES}/>}><Route path="/training/plans" element={<PlanList/>}/><Route path="/training/plans/:id" element={<PlanDetail/>}/><Route path="/training/sessions" element={<SessionList/>}/><Route path="/training/sessions/:id" element={<SessionDetail/>}/></Route>
         <Route element={<RoleRoute allowedRoles={ROLES.Trainer}/>}><Route path="/training/plans/new" element={<PlanCreate/>}/><Route path="/training/plans/:id/sessions/new" element={<SessionCreate/>}/></Route>
+        <Route element={<RoleRoute allowedRoles={ROLES.WorkRider}/>}><Route path="/training/my-schedule" element={<SessionList/>}/><Route path="/training/my-schedule/:id" element={<SessionDetail backTo="/training/my-schedule"/>}/></Route>
+        <Route element={<RoleRoute allowedRoles={ROLES.Trainer}/>}><Route path="/training/evaluations" element={<EvaluationQueue/>}/><Route path="/training/evaluations/:id" element={<SessionDetail backTo="/training/evaluations" evaluationView/>}/><Route path="/training/dashboard" element={<TrainingDashboard/>}/></Route>
     </Route></Route><Route path="*" element={<NotFound/>}/>
 </Routes>;}
