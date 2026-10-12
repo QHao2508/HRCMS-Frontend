@@ -82,3 +82,11 @@ test('definitive validation errors allow correction',async()=>{
     await assert.rejects(medical.createMedicalRecord('validation-horse',{}));
     assert.equal((await medical.createMedicalRecord('validation-horse',{})).id,'fixed');
 });
+
+test('medical tabs preserve the selected patient with URL encoding', async () => {
+    const {default:MedicalLayout} = await server.ssrLoadModule('/src/components/medical/MedicalLayout.jsx');
+    const html = renderToStaticMarkup(h(MemoryRouter,{initialEntries:['/medical/examination?horseId=horse%2Fid']},h(MedicalLayout,null,h('p',null,'Content'))));
+    assert.ok(html.includes('/medical/treatment?horseId=horse%2Fid'));
+    assert.ok(html.includes('/medical/follow-up?horseId=horse%2Fid'));
+    assert.ok(html.includes('Các nghiệp vụ thú y'));
+});

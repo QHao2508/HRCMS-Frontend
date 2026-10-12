@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { useMedicalPatientSelection } from '../../services/medicalPatientSelection.js';
 import MedicalLayout from '../../components/medical/MedicalLayout.jsx';
 import { MSG, msg, UI_LOCALE } from '../../messages/index.js';
 import { getInjuryStatusLabel } from '../../constants/medicalLabels.js';
@@ -73,11 +74,11 @@ function FollowUpForHorse({ horseId }) {
 }
 
 export default function MedicalFollowUp() {
-    const [selected, setSelected] = useState('');
+    const [selected, setSelected] = useMedicalPatientSelection();
     const load = useCallback(() => allMedicalPages(getMedicalHorses), []);
     const horses = useRegistrationResource(load);
     const horseId = selected || horses.data?.[0]?.id;
-    return <MedicalLayout><h1>{msg(MSG.MEDICAL_FOLLOWUP_TITLE)}</h1><p>{msg(MSG.MEDICAL_CLEARANCE_HELP)}</p>
+    return <MedicalLayout><h2 className="medical-page-title">{msg(MSG.MEDICAL_FOLLOWUP_TITLE)}</h2><p>{msg(MSG.MEDICAL_CLEARANCE_HELP)}</p>
         <ResourceState resource={horses} />
         {horses.data && <label className="medical-field"><span>{msg(MSG.MEDICAL_HORSE)}</span>
             <select value={horseId || ''} onChange={event => setSelected(event.target.value)} disabled={!horses.data.length}>

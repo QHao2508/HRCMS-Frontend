@@ -1,3 +1,7 @@
+import { currentMedicalRecords } from '../../services/medicalRecordVersions.js';
+import MedicalRecordHistory from '../../components/medical/MedicalRecordHistory.jsx';
+import { useMedicalPatientSelection } from '../../services/medicalPatientSelection.js';
+import { allMedicalPages } from '../../services/medicalValidation.js';
 import { getMedicalLabel } from '../../constants/medicalLabels.js';
 import { MSG, msg } from "../../messages/index.js";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -48,7 +52,7 @@ function horseName(horse) {
 function horseRegistration(horse) {
     return firstDefined(
         horse,
-        ["registrationNumber", "RegistrationNumber", "identifier", "Identifier", "horseId", "HorseId"],
+        ["registrationNumber", "RegistrationNumber", "identifier", "Identifier"],
         ""
     );
 }
@@ -90,7 +94,7 @@ function getErrorMessage(error, fallback) {
 
 function MedicalExamination() {
     const [horses, setHorses] = useState([]);
-    const [selectedHorseId, setSelectedHorseId] = useState("");
+    const [selectedHorseId, setSelectedHorseId] = useMedicalPatientSelection();
     const [records, setRecords] = useState([]);
 
     const [loadingHorses, setLoadingHorses] = useState(true);
@@ -108,32 +112,32 @@ function MedicalExamination() {
     const [form, setForm] = useState(emptyForm);
 
     useEffect(() => {
+        let active = true;
         const loadHorses = async () => {
             try {
                 setLoadingHorses(true);
                 setError("");
 
-                const data = await getMedicalHorses({
-                    page: 1,
-                    pageSize: 100,
-                });
+                const data = await allMedicalPages(getMedicalHorses);
 
+                if (!active) return;
                 const items = listFromResponse(data);
                 setHorses(items);
 
                 if (items.length > 0) {
-                    setSelectedHorseId(idOf(items[0]));
+                    setSelectedHorseId(current => items.some(horse => idOf(horse) === current) ? current : idOf(items[0]));
                 }
             } catch (err) {
                 console.error(err);
-                setError(getErrorMessage(err, msg(MSG.MEDICAL_TEXT_1)));
+                if (active) setError(getErrorMessage(err, msg(MSG.MEDICAL_TEXT_1)));
             } finally {
-                setLoadingHorses(false);
+                if (active) setLoadingHorses(false);
             }
         };
 
         loadHorses();
-    }, []);
+        return () => { active = false; };
+    }, [setSelectedHorseId]);
 
     const requestVersion = useRef(0);
     const loadRecords = useCallback(async () => {
@@ -148,10 +152,7 @@ function MedicalExamination() {
             setLoadingRecords(true);
             setError("");
 
-            const data = await getMedicalRecords(selectedHorseId, {
-                page: 1,
-                pageSize: 100,
-            });
+            const data = await allMedicalPages(params => getMedicalRecords(selectedHorseId, params));
 
             if(version === requestVersion.current) setRecords(listFromResponse(data));
         } catch (err) {
@@ -176,7 +177,7 @@ function MedicalExamination() {
     const filteredRecords = useMemo(() => {
         const query = search.trim().toLowerCase();
 
-        return records.filter((record) => {
+        return currentMedicalRecords(records).filter((record) => {
             const status = firstDefined(record, ["healthStatus", "HealthStatus"], "");
             const diagnosis = firstDefined(record, ["diagnosis", "Diagnosis"], "");
             const reason = firstDefined(record, ["reason", "Reason"], "");
@@ -320,7 +321,7 @@ function MedicalExamination() {
                     type="button"
                     className="medical-primary-button"
                     onClick={openCreate}
-                    disabled={!selectedHorseId}
+                    disabled={!selectedHorseId || loadingHorses || !selectedHorse}
                 >
                     <Plus size={14} />{msg(MSG.MERGED_UI_326)}</button>
             </section>
@@ -353,7 +354,7 @@ function MedicalExamination() {
                     <div className="medical-selected-horse">
                         <span>{msg(MSG.MERGED_UI_330)}</span>
                         <strong>{horseName(selectedHorse)}</strong>
-                        <small>{horseRegistration(selectedHorse) || idOf(selectedHorse)}</small>
+                        <small>{horseRegistration(selectedHorse) || msg(MSG.MEDICAL_WORKSPACE_NO_CODE)}</small>
                     </div>
                 )}
             </section>
@@ -469,6 +470,7 @@ function MedicalExamination() {
                                             </div>
                                         )}
 
+                                        <MedicalRecordHistory record={record} records={records} onView={setViewingRecord} />
                                         <div className="medical-record-actions">
                                             <button
                                                 type="button"
@@ -495,7 +497,7 @@ function MedicalExamination() {
             {showModal && (
                 <div className="medical-modal-backdrop" onMouseDown={() => !saving && setShowModal(false)}>
                     <div
-                        className="medical-modal"
+                        className="medical-modal" role="dialog" aria-modal="true" aria-label={editingRecord ? msg(MSG.MEDICAL_TEXT_15) : msg(MSG.MEDICAL_CREATE_EXAMINATION)}
                         onMouseDown={(event) => event.stopPropagation()}
                     >
                         <div className="medical-modal-header">
@@ -508,11 +510,13 @@ function MedicalExamination() {
                                         ? msg(MSG.MEDICAL_TEXT_15)
                                         : msg(MSG.MEDICAL_CREATE_EXAMINATION)}
                                 </h2>
+<p className="medical-modal-patient"><span>{msg(MSG.MEDICAL_WORKSPACE_PATIENT_LABEL)}</span><strong>{selectedHorse ? horseName(selectedHorse) : ""}</strong><span>{selectedHorse ? horseRegistration(selectedHorse) || msg(MSG.MEDICAL_WORKSPACE_NO_CODE) : ""}</span></p>
                             </div>
 
                             <button
                                 type="button"
                                 className="medical-icon-button"
+                                aria-label={msg(MSG.MEDICAL_WORKSPACE_CLOSE)}
                                 onClick={() => setShowModal(false)}
                                 disabled={saving}
                             >
@@ -654,12 +658,13 @@ function MedicalExamination() {
                         <div className="medical-modal-header">
                             <div>
                                 <span className="medical-section-eyebrow">{msg(MSG.MERGED_UI_354)}</span>
-                                <h2>{msg(MSG.MERGED_UI_355)}</h2>
+                                <h2>{msg(MSG.MERGED_UI_355)}</h2><p className="medical-modal-patient"><span>{msg(MSG.MEDICAL_WORKSPACE_PATIENT_LABEL)}</span><strong>{selectedHorse ? horseName(selectedHorse) : ""}</strong><span>{selectedHorse ? horseRegistration(selectedHorse) || msg(MSG.MEDICAL_WORKSPACE_NO_CODE) : ""}</span></p>
                             </div>
 
                             <button
                                 type="button"
                                 className="medical-icon-button"
+                                aria-label={msg(MSG.MEDICAL_WORKSPACE_CLOSE)}
                                 onClick={() => setViewingRecord(null)}
                             >
                                 <X size={16} />

@@ -1,3 +1,6 @@
+import { horseRegistrationCode } from '../../services/careUi.js';
+import { useMedicalPatientSelection } from '../../services/medicalPatientSelection.js';
+import { allMedicalPages } from '../../services/medicalValidation.js';
 import { getMedicalLabel, getInjuryStatusLabel } from '../../constants/medicalLabels.js';
 import { MSG, msg } from "../../messages/index.js";
 import { useEffect, useMemo, useState } from "react";
@@ -38,7 +41,7 @@ function horseNameOf(horse) {
 }
 
 function horseCodeOf(horse) {
-    return horse?.registrationNumber ?? horse?.registrationNo ?? horse?.identifier ?? horse?.id ?? "—";
+    return horseRegistrationCode(horse);
 }
 
 function formatDate(value) {
@@ -58,7 +61,7 @@ function statusLabel(status) {
 
 function MedicalInjury() {
     const [horses, setHorses] = useState([]);
-    const [selectedHorseId, setSelectedHorseId] = useState("");
+    const [selectedHorseId, setSelectedHorseId] = useMedicalPatientSelection();
     const [records, setRecords] = useState([]);
     const [injuries, setInjuries] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -98,11 +101,11 @@ function MedicalInjury() {
             try {
                 setLoading(true);
                 setError("");
-                const data = await getMedicalHorses({ page: 1, pageSize: 100 });
+                const data = await allMedicalPages(getMedicalHorses);
                 const list = unwrapList(data);
                 if (!active) return;
                 setHorses(list);
-                if (list.length > 0) setSelectedHorseId(String(horseIdOf(list[0])));
+                if (list.length > 0) setSelectedHorseId(current => list.some(horse => String(horseIdOf(horse)) === current) ? current : String(horseIdOf(list[0])));
             } catch (err) {
                 if (active) setError(err?.message || err?.response?.data?.message || msg(MSG.MEDICAL_TEXT_1));
             } finally {
@@ -114,7 +117,7 @@ function MedicalInjury() {
         return () => {
             active = false;
         };
-    }, []);
+    }, [setSelectedHorseId]);
 
     useEffect(() => {
         if (!selectedHorseId) { let active=true; queueMicrotask(()=>{if(active){
@@ -128,8 +131,8 @@ function MedicalInjury() {
                 setLoadingInjuries(true);
                 setError("");
                 const [recordsData, injuriesData] = await Promise.all([
-                    getMedicalRecords(selectedHorseId, { page: 1, pageSize: 100 }),
-                    getMedicalInjuries(selectedHorseId, { page: 1, pageSize: 100 }),
+                    allMedicalPages(params => getMedicalRecords(selectedHorseId, params)),
+                    allMedicalPages(params => getMedicalInjuries(selectedHorseId, params)),
                 ]);
                 if (!active) return;
                 setRecords(unwrapList(recordsData));
@@ -230,7 +233,7 @@ function MedicalInjury() {
                             <option value="">{msg(MSG.MERGED_UI_403)}</option>
                             {horses.map((horse) => (
                                 <option key={horseIdOf(horse)} value={horseIdOf(horse)}>
-                                    {horseNameOf(horse)}{msg(MSG.MERGED_UI_404)}{horseCodeOf(horse)}
+                                    {horseNameOf(horse)}{horseCodeOf(horse) ? ` · ${horseCodeOf(horse)}` : ""}
                                 </option>
                             ))}
                         </select>
@@ -258,7 +261,7 @@ function MedicalInjury() {
                     <div>
                         <span>{msg(MSG.MERGED_UI_408)}</span>
                         <strong>{horseNameOf(selectedHorse)}</strong>
-                        <small>{horseCodeOf(selectedHorse)}</small>
+                        <small>{horseCodeOf(selectedHorse) || msg(MSG.MEDICAL_WORKSPACE_NO_CODE)}</small>
                     </div>
                     <div>
                         <span>{msg(MSG.MERGED_UI_409)}</span>
@@ -287,7 +290,7 @@ function MedicalInjury() {
                 <div className="medical-section-header">
                     <div>
                         <h3>{msg(MSG.MERGED_UI_415)}</h3>
-                        <span>{filteredInjuries.length}{msg(MSG.MERGED_UI_416)}{filteredInjuries.length === 1 ? "" : "s"}</span>
+                        <span>{filteredInjuries.length}{msg(MSG.MERGED_UI_416)}</span>
                     </div>
                     {selectedHorse && <span className="medical-section-context">{horseNameOf(selectedHorse)}</span>}
                 </div>
@@ -330,14 +333,14 @@ function MedicalInjury() {
 
             {showModal && (
                 <div className="medical-modal-backdrop" onMouseDown={closeModal}>
-                    <div className="medical-modal medical-injury-modal" onMouseDown={(event) => event.stopPropagation()}>
+                    <div className="medical-modal medical-injury-modal" role="dialog" aria-modal="true" aria-label={msg(MSG.MEDICAL_WORKSPACE_INJURIES)} onMouseDown={(event) => event.stopPropagation()}>
                         <div className="medical-modal-header">
                             <div>
-                                <span>{msg(MSG.MERGED_UI_426)}</span>
-                                <h3>{msg(MSG.MERGED_UI_427)}</h3>
-                                <p>{selectedHorse ? horseNameOf(selectedHorse) : msg(MSG.MEDICAL_TEXT_19)}</p>
+                                <span>{msg(MSG.MEDICAL_WORKSPACE_INJURIES)}</span>
+                                <h3>{msg(MSG.MERGED_UI_427)}</h3><p className="medical-modal-patient"><span>{msg(MSG.MEDICAL_WORKSPACE_PATIENT_LABEL)}</span><strong>{selectedHorse ? horseNameOf(selectedHorse) : ""}</strong><span>{selectedHorse?.registrationNumber || msg(MSG.MEDICAL_WORKSPACE_NO_CODE)}</span></p>
+
                             </div>
-                            <button className="medical-icon-button" onClick={closeModal} disabled={saving}><X size={18} /></button>
+                            <button className="medical-icon-button" aria-label={msg(MSG.MEDICAL_WORKSPACE_CLOSE)} onClick={closeModal} disabled={saving}><X size={18} /></button>
                         </div>
 
                         <form onSubmit={handleSubmit} className="medical-form-grid">
