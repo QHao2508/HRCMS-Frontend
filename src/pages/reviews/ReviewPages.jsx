@@ -12,6 +12,7 @@ import RegistrationStatus from "../../components/registrations/RegistrationStatu
 import RegistrationAttachments from "../../components/registrations/RegistrationAttachments.jsx";
 import { RegistrationSummary } from "../../components/registrations/RegistrationWizard.jsx";
 import { PageHeading,ResourceState,Pagination,BackLink,Field,MutationState } from "../../components/WorkflowUI.jsx";
+import { administrativeForm, administrativeEditPayload, hasUnsavedAdministrativeChanges } from '../../services/reviewValidation.js';
 
 function ReviewDecisionDialog({ approve, busy, error, reason, record, onConfirm, onClose }) {
     const dialog = useRef(null);
@@ -53,12 +54,13 @@ export function ReviewList() {
 function ReviewContent({ data,reload }) {
     const [record,setRecord] = useState(data.record);
     const [horseId,setHorseId] = useState(null);
-    const [admin,setAdmin] = useState({name:record.name || "",registrationNumber:record.registrationNumber || "",boardingStart:record.boardingStart || "",boardingEnd:record.boardingEnd || ""});
+    const [admin,setAdmin] = useState(() => administrativeForm(record));
     const [reason,setReason] = useState("");
     const [decision,setDecision] = useState(null);
     const mutation = useMutation();
     const pending = record.status === REGISTRATION_STATUS.PendingReview;
     const locked = mutation.pending || mutation.uncertain;
+    const adminDirty = hasUnsavedAdministrativeChanges(admin, record);
     /**
      * Cập nhật form theo name/value và reset lựa chọn phụ thuộc khi cần, không tự sửa dữ liệu server.
      * @param e Event UI/exception theo kiểu của hàm; xem nhánh xử lý trong thân hàm.
@@ -68,15 +70,15 @@ function ReviewContent({ data,reload }) {
      * Kiểm dữ liệu hiện có, lưu qua API và dùng ID/response thật để cập nhật form hoặc chuyển trang.
      * @param e Event UI/exception theo kiểu của hàm; xem nhánh xử lý trong thân hàm.
      */
-    async function save(e) { e.preventDefault(); if (!pending) return; await mutation.run(() => editAdministrativeRegistration(record.id,Object.fromEntries(Object.entries(admin).map(([k,v]) => [k,v || null]))),updated => setRecord(updated)); }
+    async function save(e) { e.preventDefault(); if (!pending) return; await mutation.run(() => editAdministrativeRegistration(record.id,administrativeEditPayload(admin)),updated => { setRecord(updated); setAdmin(administrativeForm(updated)); }); }
     /**
      * Gửi quyết định duyệt/yêu cầu chỉnh sửa của quản lý và tải trạng thái/hồ sơ ngựa thật sau response.
      * Nhãn/thông báo lấy từ catalog; enum và dữ liệu người dùng giữ nguyên giá trị.
      * @param approve Giá trị approve truyền vào review; tham chiếu phần thân để xem cách dùng.
      */
-    async function review(approve) { if (!pending || (!approve && !reason.trim())) return; const succeeded = await mutation.run(() => reviewRegistration(record.id,{approve,...(!approve && {reason:reason.trim()})}),response => { setRecord(response.registration); setHorseId(response.horseId); },approve ? msg(MSG.DA_PHE_DUYET_VA_TAO_HO_SO_NGUA) : msg(MSG.DA_GUI_YEU_CAU_CHINH_SUA_CHO_CHU_SO_HUU)); if (succeeded) setDecision(null); }
+    async function review(approve) { if (!pending || adminDirty || (!approve && !reason.trim())) return; const succeeded = await mutation.run(() => reviewRegistration(record.id,{approve,...(!approve && {reason:reason.trim()})}),response => { setRecord(response.registration); setHorseId(response.horseId); },approve ? msg(MSG.DA_PHE_DUYET_VA_TAO_HO_SO_NGUA) : msg(MSG.DA_GUI_YEU_CAU_CHINH_SUA_CHO_CHU_SO_HUU)); if (succeeded) setDecision(null); }
     return <><PageHeading title={msg(MSG.KIEM_TRA_HO_SO_2, { p0: record.name || msg(MSG.CHUA_CO_TEN) })} action={<RegistrationStatus status={record.status} />} /><MutationState mutation={mutation} reload={reload} />{horseId && <Link className="btn btn-success mb-3" to={`/horses/${horseId}`}>{msg(MSG.MO_HO_SO_NGUA_VA_PHAN_CONG_NHAN_SU)}</Link>}<RegistrationSummary record={record} /><RegistrationAttachments registrationId={record.id} attachments={data.attachments} editable={false} busy={locked} />
-        {pending && <><section className="surface-card"><h2>{msg(MSG.THONG_TIN_QUAN_LY)}</h2><form onSubmit={save}><fieldset disabled={locked}><div className="row g-3"><Field label={msg(MSG.TEN_NGUA)} name="name" value={admin.name} onChange={change} required maxLength={200} /><Field label={msg(MSG.MA_DANG_KY)} name="registrationNumber" value={admin.registrationNumber} onChange={change} maxLength={100} /><Field label={msg(MSG.BAT_DAU_LUU_TRU)} name="boardingStart" value={admin.boardingStart} onChange={change} type="date" required /><Field label={msg(MSG.KET_THUC_LUU_TRU)} name="boardingEnd" value={admin.boardingEnd} onChange={change} type="date" /></div><button className="btn btn-outline-primary mt-3" type="submit">{msg(MSG.LUU_THONG_TIN_QUAN_LY)}</button></fieldset></form></section><section className="surface-card"><h2>{msg(MSG.QUYET_DINH_DUYET_HO_SO)}</h2><label className="form-label" htmlFor="revision-reason">{msg(MSG.LY_DO_YEU_CAU_CHINH_SUA)}</label><textarea id="revision-reason" className="form-control mb-3" rows={3} maxLength={2000} value={reason} onChange={e => setReason(e.target.value)} disabled={locked} /><div className="inline-actions"><button className="btn btn-outline-primary" disabled={locked || !reason.trim()} onClick={() => setDecision(false)}>{msg(MSG.YEU_CAU_CHINH_SUA)}</button><button className="btn btn-success" disabled={locked} onClick={() => setDecision(true)}>{msg(MSG.PHE_DUYET_HO_SO)}</button></div></section></>}
+        {pending && <><section className="surface-card"><h2>{msg(MSG.THONG_TIN_QUAN_LY)}</h2><form onSubmit={save}><fieldset disabled={locked}><div className="row g-3"><Field label={msg(MSG.TEN_NGUA)} name="name" value={admin.name} onChange={change} required maxLength={200} /><Field label={msg(MSG.MA_DANG_KY)} name="registrationNumber" value={admin.registrationNumber} onChange={change} maxLength={100} /><Field label={msg(MSG.BAT_DAU_LUU_TRU)} name="boardingStart" value={admin.boardingStart} onChange={change} type="date" required /><Field label={msg(MSG.KET_THUC_LUU_TRU)} name="boardingEnd" value={admin.boardingEnd} onChange={change} type="date" /></div><button className="btn btn-outline-primary mt-3" type="submit">{msg(MSG.LUU_THONG_TIN_QUAN_LY)}</button></fieldset></form></section><section className="surface-card"><h2>{msg(MSG.QUYET_DINH_DUYET_HO_SO)}</h2>{adminDirty && <p role="status">{msg(MSG.REVIEW_SAVE_ADMIN_BEFORE_DECISION)}</p>}<label className="form-label" htmlFor="revision-reason">{msg(MSG.LY_DO_YEU_CAU_CHINH_SUA)}</label><textarea id="revision-reason" className="form-control mb-3" rows={3} maxLength={2000} value={reason} onChange={e => setReason(e.target.value)} disabled={locked} /><div className="inline-actions"><button className="btn btn-outline-primary" disabled={locked || adminDirty || !reason.trim()} onClick={() => setDecision(false)}>{msg(MSG.YEU_CAU_CHINH_SUA)}</button><button className="btn btn-success" disabled={locked || adminDirty} onClick={() => setDecision(true)}>{msg(MSG.PHE_DUYET_HO_SO)}</button></div></section></>}
         {decision !== null && <ReviewDecisionDialog approve={decision} busy={locked} error={mutation.error} reason={reason} record={record} onConfirm={() => review(decision)} onClose={() => setDecision(null)} />}
     </>;
 }

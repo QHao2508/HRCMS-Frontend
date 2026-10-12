@@ -13,7 +13,7 @@ import { EDITABLE_FIELDS, registrationForm, registrationPayload, submissionMissi
 
 // Real components/services rendered with Vite. Only navigation and DOM event
 // discovery are instrumented. Requests use Axios adapters, never the network.
-let server, api, store, services, files, AuthContext, AppRoutes, ListContent, DetailContent, Attachments, Create, ErrorView;
+let server, api, store, services, files, AuthContext, AppRoutes, ListContent, DetailContent, Attachments, Create, ErrorView, HorsePhotoInput;
 const storage = new Map();
 const owner = { id: "owner", role: ROLES.HorseOwner, active: true, emailVerified: true, firstName: "Test" };
 const draft = { id: "record-1", ownerId: "owner", status: "Draft", createdAt: "2026-01-02T12:00:00Z", name: "Comet",
@@ -46,6 +46,7 @@ function harness() {
                 export function jsxDEV(type, props, ...rest) {
                     if (type === 'button') globalThis.__intake.buttons.push(props);
                     if (type === 'form') globalThis.__intake.forms.push(props);
+                    if (type === 'input' && props.id === 'new-horse-photo') globalThis.__intake.photoInput = props;
                     if (type?.name === 'RegistrationAttachments') globalThis.__intake.attachmentPanel = props;
                     return original(type, props, ...rest);
                 }
@@ -69,6 +70,7 @@ before(async () => {
     ({ default: Create } = await server.ssrLoadModule("/src/pages/registrations/RegistrationCreate.jsx"));
     ({ default: Attachments } = await server.ssrLoadModule("/src/components/registrations/RegistrationAttachments.jsx"));
     ({ default: ErrorView } = await server.ssrLoadModule("/src/components/registrations/RegistrationError.jsx"));
+    ({ HorsePhotoInput } = await server.ssrLoadModule("/src/components/registrations/HorsePhotoInput.jsx"));
 });
 beforeEach(() => {
     globalThis.__intake = { redirects: [], navigation: [], forms: [], buttons: [] };
@@ -114,6 +116,15 @@ test("registration list uses backend pagination and exact status filtering", asy
 test("empty list has an explicit empty state and all-status requests omit status", async () => {
     api.defaults.adapter = async (config) => { assert.equal(Object.hasOwn(config.params, "status"), false); return reply(config, { items: [], page: 1, pageSize: 20, total: 0 }); };
     assert.match(render(h(ListContent, { data: await services.listRegistrations() })), /Chưa có hồ sơ phù hợp/);
+});
+test("invalid replacement photo clears the previous selection before draft save", () => {
+    const previous = new File(["valid"], "horse.jpg", { type: "image/jpeg" });
+    let selected = previous;
+    render(h(HorsePhotoInput, { file: previous, onChange: file => { selected = file; } }));
+    const target = { files: [new File(["bad"], "horse.pdf", { type: "application/pdf" })], value: "horse.pdf" };
+    globalThis.__intake.photoInput.onChange({ target });
+    assert.equal(selected, null);
+    assert.equal(target.value, "");
 });
 test("partial draft is valid and create whitelists all 17 nullable keys without ownerId or Trainer", async () => {
     assert.equal(EDITABLE_FIELDS.length, 17);

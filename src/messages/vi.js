@@ -341,6 +341,7 @@ export const VI = Object.freeze({
     "BAT_DAU_LUU_TRU": "Bắt đầu lưu trú",
     "KET_THUC_LUU_TRU": "Kết thúc lưu trú",
     "LUU_THONG_TIN_QUAN_LY": "Lưu thông tin quản lý",
+    "REVIEW_SAVE_ADMIN_BEFORE_DECISION": "Hãy lưu thay đổi thông tin quản lý trước khi đưa ra quyết định.",
     "QUYET_DINH_DUYET_HO_SO": "Quyết định duyệt hồ sơ",
     "YEU_CAU_CHINH_SUA": "Yêu cầu chỉnh sửa",
     "PHE_DUYET_HO_SO": "Phê duyệt hồ sơ",

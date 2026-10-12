@@ -9,7 +9,7 @@ import { MemoryRouter } from 'react-router-dom';
 import axios from 'axios';
 import { ALL_ROLES } from '../src/constants/roles.js';
 let server, api, store, medical, AppRoutes, AuthContext;
-let Field;
+let Field, MedicalSummaryDetails;
 const reply = (config, data, status=200) => ({ config, data, status, statusText:'', headers:{} });
 before(async()=>{
     server=await createServer({configFile:false,plugins:[ssrDependencies(),react()],server:{middlewareMode:true,hmr:false,ws:false},appType:'custom',logLevel:'error'});
@@ -19,6 +19,7 @@ before(async()=>{
     ({default:AppRoutes}=await server.ssrLoadModule('/src/routes/AppRoutes.jsx'));
     ({AuthContext}=await server.ssrLoadModule('/src/context/useAuth.js'));
     ({Field}=await server.ssrLoadModule('/src/components/WorkflowUI.jsx'));
+    ({MedicalSummaryDetails}=await server.ssrLoadModule('/src/components/training/TrainingMedicalContext.jsx'));
 });
 after(async()=>server.close());
 beforeEach(()=>{
@@ -38,6 +39,14 @@ test('separate forms with the same field name keep distinct label targets', () =
     assert.equal(ids.length, 2);
     assert.notEqual(ids[0], ids[1]);
     for (const id of ids) assert.ok(html.includes(`for="${id}"`));
+});
+test('medical summary renders operational restrictions without clinical details', () => {
+    const summary = { healthStatus: 'Monitoring', diagnosis: 'private diagnosis', restrictions: [{ id: 'r1', reason: 'No sprint', noSprint: true, maxDistanceMetres: 500 }] };
+    const html = renderToStaticMarkup(h(MedicalSummaryDetails, { summary, showHealthStatus: false }));
+    assert.match(html, /No sprint/);
+    assert.match(html, /500/);
+    assert.doesNotMatch(html, /Monitoring/);
+    assert.doesNotMatch(html, /private diagnosis/);
 });
 const supportingRoutes = [
     ['/care/tasks', ['HorseOwner','ClubManager','Groom','Veterinarian'], 'Công việc chăm sóc'],

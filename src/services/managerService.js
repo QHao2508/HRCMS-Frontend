@@ -1,5 +1,6 @@
 import api from './api.js';
 import {publishWebsite,refreshWebsite} from './websiteStore.js';
+import { clearSession, getSession } from './sessionStore.js';
 export const listStaff=params=>api.get('/api/staff',{params}).then(r=>r.data);
 export const inviteStaff=data=>api.post('/api/staff',data).then(r=>r.data);
 export const resendStaff=id=>api.post('/api/staff/'+encodeURIComponent(id)+'/resend-invitation').then(r=>r.data);
@@ -8,4 +9,9 @@ export const getWebsite=()=>refreshWebsite(true);
 export const saveWebsite=data=>api.put('/api/website',data).then(r=>publishWebsite(r.data));
 export const uploadWebsiteAsset=(kind,file,version)=>{const data=new FormData();data.append('file',file);data.append('version',version);return api.post('/api/website/assets/'+kind,data).then(r=>publishWebsite(r.data));};
 export const verifyInvitation=data=>api.post('/api/auth/invitation/verify',data).then(r=>r.data);
-export const finishInvitation=data=>api.post('/api/auth/invitation/password',data).then(r=>r.data);
+export const finishInvitation=async data=>{
+    const {generation}=getSession();
+    const response=await api.post('/api/auth/invitation/password',data);
+    if(response.data?.changed===true) clearSession(generation);
+    return response.data;
+};

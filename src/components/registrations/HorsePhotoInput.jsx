@@ -28,7 +28,7 @@ export function HorsePhotoInput({ file, onChange, disabled }) {
         const selected = event.target.files?.[0] || null;
         const failure = selected ? validateAttachment({ file: selected, type: ATTACHMENT_TYPE.HorsePhoto }) : '';
         setError(failure);
-        if (failure) { event.target.value = ''; return; }
+        if (failure) { event.target.value = ''; onChange(null); return; }
         onChange(selected);
     }
     /**

@@ -10,6 +10,7 @@ import { MemoryRouter } from "react-router-dom";
 import { ALL_ROLES } from "../src/constants/roles.js";
 import { sessionPayload } from "../src/services/trainingPayload.js";
 import { isAssigned,localDateTime } from "../src/services/workflowHelpers.js";
+import { administrativeEditPayload, hasUnsavedAdministrativeChanges } from '../src/services/reviewValidation.js';
 let server,api,store,club,training,AuthContext,AppRoutes;
 const reply=(config,data,status=200)=>({config,data,status,statusText:"",headers:{}});
 before(async()=>{
@@ -30,6 +31,15 @@ test('Manager review preserves the registration/horseId response and sends Beare
 test('Administrative edit sends only explicit management fields',async()=>{
     api.defaults.adapter=async config=>{assert.equal(config.method,'put');assert.deepEqual(JSON.parse(config.data),{name:'Comet',registrationNumber:'REG-1',boardingStart:'2026-10-07',boardingEnd:null});return reply(config,{id:'record'});};
     await club.editAdministrativeRegistration('record',{name:'Comet',registrationNumber:'REG-1',boardingStart:'2026-10-07',boardingEnd:null});
+});
+test('Review edit payload excludes clinical fields and decisions require saved administrative values',()=>{
+    const record={name:'Comet',registrationNumber:'REG-1',boardingStart:'2026-10-07',boardingEnd:null};
+    const form={...record,boardingEnd:'',sire:'Injected',declaredHealth:'Private'};
+    assert.equal(hasUnsavedAdministrativeChanges(form,record),false);
+    assert.deepEqual(administrativeEditPayload(form),{name:'Comet',registrationNumber:'REG-1',boardingStart:'2026-10-07',boardingEnd:null});
+    const changed={...form,name:'Comet corrected'};
+    assert.equal(hasUnsavedAdministrativeChanges(changed,record),true);
+    assert.deepEqual(administrativeEditPayload(changed),{name:'Comet corrected',registrationNumber:'REG-1',boardingStart:'2026-10-07',boardingEnd:null});
 });
 test('Staff directory follows every page and filters wrong roles',async()=>{
     const pages=[];api.defaults.adapter=async config=>{pages.push(config.params.page);assert.equal(config.params.role,'WorkRider');return reply(config,{page:config.params.page,pageSize:1,total:2,items:config.params.page===1 ? [{id:'rider',role:'WorkRider'}] : [{id:'wrong',role:'Trainer'}]});};

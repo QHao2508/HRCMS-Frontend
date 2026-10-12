@@ -4,6 +4,7 @@ import axios from "axios";
 import { AUTH_POLICY, getNavigationEmail, validateEmail, validatePasswordSetup,
     validateRegistration, validateVerification } from "../src/services/authValidation.js";
 import { startAuthCooldown } from "../src/context/useAuthCooldown.js";
+import { finishInvitation, verifyInvitation } from "../src/services/managerService.js";
 
 const storage = new Map();
 const cooldownStorage = new Map();
@@ -119,6 +120,61 @@ test("resend uses the generic message and sends email only", async () => {
     assert.deepEqual(await auth.resendVerification({ email: ` ${registration.email} `, code: "must-not-be-sent" }), response);
     verify();
     assert.equal(storage.size, 0);
+});
+
+test("two-step staff invitation uses the remote contract and clears an existing session only after success", async () => {
+    seedSession();
+    const calls = [];
+    api.defaults.adapter = async (config) => {
+        calls.push({ url: config.url, body: JSON.parse(config.data) });
+        assert.equal(config.skipAuth, true);
+        assert.equal(config.headers.get("Authorization"), undefined);
+        if (config.url === "/api/auth/invitation/verify") return reply(config, { verified: true, setupToken: "setup-proof" });
+        if (config.url === "/api/auth/invitation/password") return reply(config, { changed: true });
+        throw new Error("Unexpected invitation endpoint");
+    };
+    const verified = await verifyInvitation({ email: registration.email, code: "123456" });
+    assert.deepEqual(verified, { verified: true, setupToken: "setup-proof" });
+    assert.equal(store.getSession().status, "authenticated");
+    assert.deepEqual(await finishInvitation({ email: registration.email, setupToken: verified.setupToken,
+        password: registration.password, confirmPassword: registration.confirmPassword }), { changed: true });
+    assert.deepEqual(calls, [
+        { url: "/api/auth/invitation/verify", body: { email: registration.email, code: "123456" } },
+        { url: "/api/auth/invitation/password", body: { email: registration.email, setupToken: "setup-proof",
+            password: registration.password, confirmPassword: registration.confirmPassword } },
+    ]);
+    assert.equal(store.getSession().status, "anonymous");
+    assert.equal(storage.size, 0);
+});
+
+test("failed or uncertain invitation password setup preserves the existing session", async () => {
+    seedSession();
+    const previous = store.getSession();
+    api.defaults.adapter = async (config) => reply(config, { changed: false });
+    assert.deepEqual(await finishInvitation(passwordRequest), { changed: false });
+    assert.equal(store.getSession(), previous);
+    api.defaults.adapter = async (config) => { throw new axios.AxiosError("offline", "ERR_NETWORK", config); };
+    await assert.rejects(finishInvitation(passwordRequest), /Không kết nối được máy chủ/);
+    assert.equal(store.getSession(), previous);
+});
+
+test("a late invitation response cannot clear a newer login", async () => {
+    seedSession();
+    let complete;
+    let requestStarted;
+    const started = new Promise((resolve) => { requestStarted = resolve; });
+    api.defaults.adapter = async (config) => new Promise((resolve) => {
+        complete = () => resolve(reply(config, { changed: true }));
+        requestStarted();
+    });
+    const pending = finishInvitation(passwordRequest);
+    await started;
+    store.clearSession();
+    seedSession();
+    const newer = store.getSession();
+    complete();
+    await pending;
+    assert.equal(store.getSession(), newer);
 });
 
 test("forgot-password returns the same generic result for any email", async () => {
