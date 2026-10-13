@@ -8,7 +8,7 @@ export function SupportForm({ title, fields, initial = {}, submit, reload, disab
     const [form, setForm] = useState(initial);
     const mutation = useMutation();
     return <section className="surface-card"><h2>{title}</h2><MutationState mutation={mutation} reload={reload} />
-        <form onSubmit={e => { e.preventDefault(); mutation.run(() => submit(form), () => { setForm(initial); reload(); }); }}>
+        <form onSubmit={e => { e.preventDefault(); if (disabled || mutation.pending || mutation.uncertain || (typeof submitDisabled === 'function' ? submitDisabled(form) : submitDisabled)) return; mutation.run(() => submit(form), () => { setForm(initial); reload(); }); }}>
             <fieldset disabled={disabled || mutation.pending || mutation.uncertain}><div className="row g-3">
                 {(typeof fields === 'function' ? fields(form) : fields).map(field => <Field key={field.name} {...field} value={form[field.name] ?? ''} onChange={e => setForm({ ...form, [field.name]: e.target.value })} />)}
             </div><button className="btn btn-primary mt-3" type="submit" disabled={typeof submitDisabled === 'function' ? submitDisabled(form) : submitDisabled}>{msg(MSG.SUPPORT_SAVE)}</button></fieldset>

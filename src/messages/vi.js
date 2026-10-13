@@ -1,5 +1,11 @@
 // Vietnamese display text only. API values belong in constants/.
 export const VI = Object.freeze({
+    "FLOW34_STALL_HISTORY": "Lịch sử sử dụng ô chuồng",
+    "FLOW34_STALL_ENTER": "Vào chuồng",
+    "FLOW34_STALL_LEAVE": "Rời chuồng",
+    "FLOW34_CONSUME": "Xuất vật tư",
+    "FLOW34_CONSUME_QUANTITY": "Số lượng xuất (nhập số âm)",
+    "FLOW34_CONSUME_HELP": "Nhập số âm để xuất vật tư đã sử dụng (ví dụ: -2 kg).",
     "SCHED_TITLE": "Thời gian trống theo lịch huấn luyện",
     "SCHED_HELP": "Đối chiếu lịch tập, ca làm việc, thời gian nghỉ đã khai báo và hạn chế y tế. Các công việc chưa ghi nhận chưa được tính vào lịch.",
     "SCHED_DATE": "Ngày xem lịch",
