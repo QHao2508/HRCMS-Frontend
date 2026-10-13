@@ -1,3 +1,4 @@
+import { isUncertainMutationError } from '../services/mutationOutcome.js';
 import { MSG, msg } from "../messages/index.js";
 import { useRef, useState } from "react";
 /**
@@ -19,7 +20,7 @@ export function useMutation() {
         gate.current = true;
         setState({ pending: true, error: null, notice: "", uncertain: false });
         try { const data = await action(); if (onSuccess) await onSuccess(data); setState({ pending: false, error: null, notice, uncertain: false }); return true; }
-        catch (error) { setState({ pending: false, error, notice: "", uncertain: !error.status || error.status >= 500 || [403,404,409].includes(error.status) }); return false; }
+        catch (error) { setState({ pending: false, error, notice: "", uncertain: isUncertainMutationError(error) }); return false; }
         finally { gate.current = false; }
     }
     /**
