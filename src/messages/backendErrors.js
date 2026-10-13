@@ -1,5 +1,13 @@
 import { MSG, msg } from './index.js';
 const ERROR_MESSAGES = Object.freeze({
+    "The trainer has an overlapping training session.": "SCHED_ERROR_TRAINER",
+    "The trainer does not have the required training specialty.": "SCHED_ERROR_SKILL",
+    "The session falls outside staff working hours.": "SCHED_ERROR_HOURS",
+    "The staff member is on time off during this session.": "SCHED_ERROR_OFF",
+    "The updated profile would invalidate existing training bookings.": "SCHED_ERROR_BOOKINGS",
+    "Finish in-progress training before replacing the trainer.": "SCHED_ERROR_ACTIVE",
+    "A session duration is required to check working hours.": "SCHED_ERROR_DURATION",
+    "Assign an active trainer to the horse before scheduling.": "SCHED_UNASSIGNED",
     "Username must contain 3 to 80 letters, digits, dots, underscores or hyphens, without spaces or @.": "BR_API_INVALIDUSERNAME",
     "Email is already registered.": "BR_API_EMAILALREADYREGISTERED",
     "Username is already registered.": "BR_API_USERNAMEALREADYREGISTERED",

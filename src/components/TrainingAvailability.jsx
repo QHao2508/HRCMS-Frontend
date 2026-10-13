@@ -1,0 +1,26 @@
+import { useCallback, useState } from 'react';
+import { MSG, msg, UI_LOCALE } from '../messages/index.js';
+import { useRegistrationResource } from '../context/useRegistrationResource.js';
+import { getTrainingAvailability } from '../services/trainingSchedulingService.js';
+import { clubToday, localDateTime } from '../services/workflowHelpers.js';
+import { isInFreeRange } from '../services/trainingSchedulingHelpers.js';
+import { Field, ResourceState } from './WorkflowUI.jsx';
+
+const states = { Known: MSG.SCHED_KNOWN, Unknown: MSG.SCHED_UNKNOWN, HoursMissing: MSG.SCHED_HOURS_MISSING, SpecialtyMissing: MSG.SCHED_SKILL_MISSING, Unassigned: MSG.SCHED_UNASSIGNED, Inactive: MSG.SCHED_INACTIVE };
+const reasons = { session: MSG.SCHED_SESSION, in_progress: MSG.SCHED_IN_PROGRESS, duration_unknown: MSG.SCHED_DURATION_UNKNOWN, time_off: MSG.SCHED_TIME_OFF, medical_block: MSG.SCHED_MEDICAL, medical_restriction: MSG.SCHED_MEDICAL };
+const displayTime = (value, timeZone) => new Date(value).toLocaleTimeString(UI_LOCALE, { timeZone, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+const displayEnd = (value, timeZone) => { const clock = displayTime(value, timeZone); return clock === '00:00' ? '24:00' : clock; };
+export function AvailabilityResource({ resource, label, timeZone }) {
+    return <article className="availability-resource"><h4>{label}{resource.name && <span>{resource.name}</span>}</h4><p className={resource.state === 'Known' ? 'availability-state' : 'availability-state warning'}>{msg(states[resource.state] || MSG.SCHED_UNKNOWN)}</p><strong>{msg(MSG.SCHED_FREE)}</strong>{resource.free.length ? <ul className="availability-ranges">{resource.free.map((range, i) => <li key={i}>{displayTime(range.start, timeZone)}{' – '}{displayEnd(range.end, timeZone)}</li>)}</ul> : <p className="muted-caption">{msg(MSG.SCHED_EMPTY)}</p>}{resource.busy.length > 0 && <details><summary>{msg(MSG.SCHED_BUSY)}{' ('}{resource.busy.length}{')'}</summary><ul>{resource.busy.map((range, i) => <li key={i}>{displayTime(range.start, timeZone)}{' – '}{displayEnd(range.end, timeZone)}{' · '}{msg(reasons[range.reason] || MSG.SCHED_SESSION)}</li>)}</ul></details>}</article>;
+}
+export default function TrainingAvailability({ horseId, form, onPick, exceptSessionId, disabled = false, min, max }) {
+    const [searchDate, setSearchDate] = useState(form.scheduledAt?.slice(0, 10) || (min && min > clubToday() ? min : clubToday()));
+    const date = form.scheduledAt?.slice(0, 10) || searchDate;
+    const durationMinutes = Number(form.durationMinutes), distanceMetres = Number(form.distanceMetres);
+    const { trainingType, intensity, riderId } = form;
+    const valid = /^\d{4}-\d{2}-\d{2}$/.test(date) && Number.isInteger(durationMinutes) && durationMinutes >= 1 && durationMinutes <= 480 && Number.isFinite(distanceMetres) && distanceMetres > 0 && distanceMetres <= 100000;
+    const load = useCallback(() => valid ? getTrainingAvailability({ horseId, date, durationMinutes, trainingType, intensity, distanceMetres, riderId: riderId || undefined, exceptSessionId }) : null, [valid, horseId, date, durationMinutes, trainingType, intensity, distanceMetres, riderId, exceptSessionId]);
+    const resource = useRegistrationResource(load, { realtime: true });
+    const data = resource.data;
+    return <section className="availability-panel"><div className="availability-heading"><div><h3>{msg(MSG.SCHED_TITLE)}</h3><p>{msg(MSG.SCHED_HELP)}</p></div><button type="button" className="btn btn-outline-primary" disabled={!valid || resource.loading || disabled} onClick={resource.reload}>{msg(MSG.SCHED_REFRESH)}</button></div><fieldset disabled={disabled}><div className="row"><Field name="availabilityDate" label={msg(MSG.SCHED_DATE)} type="date" value={date} min={min} max={max} onChange={e => { setSearchDate(e.target.value); onPick?.(''); }}/></div></fieldset>{!valid ? <p>{msg(MSG.SCHED_PROMPT)}</p> : <ResourceState resource={resource}/>} {data && <><div className="availability-grid"><AvailabilityResource resource={data.horse} label={msg(MSG.TRAINING_HORSE)} timeZone={data.timeZone}/><AvailabilityResource resource={data.trainer} label={msg(MSG.TRAINING_TRAINER)} timeZone={data.timeZone}/>{data.rider && <AvailabilityResource resource={data.rider} label={msg(MSG.TRAINING_RIDER)} timeZone={data.timeZone}/>}</div><h4>{msg(MSG.SCHED_COMMON)}</h4>{data.commonFree.length ? <div className="availability-slots">{data.commonFree.map((range, i) => <div key={i}><span>{displayTime(range.start, data.timeZone)}{' – '}{displayEnd(range.end, data.timeZone)}</span>{onPick && <button type="button" className="btn btn-outline-success btn-sm" disabled={disabled} onClick={() => onPick(localDateTime(range.start))}>{msg(MSG.SCHED_PICK)} {displayTime(range.start, data.timeZone)}</button>}</div>)}</div> : <p>{msg(MSG.SCHED_EMPTY)}</p>}{form.scheduledAt && !isInFreeRange(form.scheduledAt, durationMinutes, data.commonFree) && <p role="status" className="alert alert-warning mt-3">{msg(MSG.SCHED_SELECT_WARN)}</p>}</>}</section>;
+}

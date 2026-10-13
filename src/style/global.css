@@ -227,3 +227,26 @@ html { scroll-padding-top: calc(var(--hc-header-height) + 16px); }
   .sidebar-link { white-space: nowrap; }
   html { scroll-padding-top: calc(var(--hc-header-height) + 84px); }
 }
+
+.availability-panel { margin: 24px 0; padding: 22px; border: 1px solid var(--hc-border); border-radius: 12px; background: #faf8f3; }
+.availability-heading { display: flex; align-items: start; justify-content: space-between; gap: 20px; }
+.availability-heading p { color: var(--hc-muted); max-width: 760px; }
+.availability-heading button { flex-shrink: 0; }
+.availability-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin: 20px 0; }
+.availability-resource { padding: 18px; border: 1px solid var(--hc-border); border-radius: 10px; background: #fffdf9; }
+.availability-resource h4 { font-size: 17px; }
+.availability-resource h4 span { display: block; margin-top: 6px; font-size: 15px; font-weight: 500; }
+.availability-state { color: #315c39; font-size: 14px; }
+.availability-state.warning { color: #936117; }
+.availability-ranges { display: flex; flex-wrap: wrap; gap: 6px; padding: 0; list-style: none; margin-top: 10px; }
+.availability-ranges li { background: #e7efe6; border-radius: 6px; padding: 5px 9px; font-variant-numeric: tabular-nums; }
+.availability-resource details { margin-top: 14px; font-size: 14px; }
+.availability-resource details ul { padding-left: 18px; margin-top: 10px; }
+.availability-slots { display: flex; flex-wrap: wrap; gap: 10px; }
+.availability-slots > div { display: flex; flex-direction: column; gap: 8px; background: #fff; border: 1px solid #b9cdb5; padding: 12px; border-radius: 8px; }
+.availability-match { color: #315c39; font-weight: 700; }
+.trainer-candidates { margin: 18px 0; }
+.profile-schedule-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; padding: 14px 0; }
+.profile-schedule-row > div { flex: 1 1 160px; width: auto; }
+.profile-schedule-row > button { margin-bottom: 1px; }
+@media (max-width: 700px) { .availability-panel { padding: 16px; } .availability-heading { flex-direction: column; } .availability-grid { grid-template-columns: 1fr; } .profile-schedule-row { flex-direction: column; align-items: stretch; } .profile-schedule-row > div { flex-basis: auto; width: 100%; } }
