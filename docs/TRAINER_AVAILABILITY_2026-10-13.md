@@ -10,6 +10,6 @@ BE mới cần migration 20261013044927_TrainerExpertiseAndAvailability trước
 
 Hồ sơ cũ thiếu ca/chuyên môn hoặc lịch thiếu thời lượng hiển thị chưa đủ dữ liệu; không tự giả định lịch rảnh. Lịch mới vẫn được kiểm lại ở BE khi lưu. Các công việc ngoài lịch huấn luyện và thời gian nghỉ chưa khai báo không được suy ra.
 
-Kiểm thử: lint/build đạt, 224 FE tests pass. Browser dùng component thật với adapter trong bộ nhớ; xác nhận đổi thời lượng, chọn giờ, lưu profile, hiển thị nguồn và bố cục desktop/mobile. Chưa xác nhận UAT trên database vận hành; chưa áp schema Azure trong đợt này.
+Kiểm thử: lint/build đạt, 224 FE tests pass. Browser dùng component thật với adapter trong bộ nhớ; xác nhận đổi thời lượng, chọn giờ, lưu profile, hiển thị nguồn và bố cục desktop/mobile. Migration đã áp vào Azure HRCMS ngày 13/10/2026; 17 kiểm tra BLL/repository trên database thật đạt, dữ liệu fixture rollback và không còn bản ghi thử. Chưa xác nhận HTTP/browser UAT hoặc restart BE của người dùng.
 
 Tài liệu BE và SQL rollout: [HRCMS](https://github.com/QHao2508/HRCMS/tree/codex/trainer-availability/docs).
