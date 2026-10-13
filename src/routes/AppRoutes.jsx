@@ -1,6 +1,7 @@
 import PreventivePage from '../pages/support/PreventivePage.jsx';
+import { PERMISSIONS } from '../constants/permissions.js';
 import CarePage from '../pages/support/CarePage.jsx';
-import InventoryPage, { ReplenishmentsPage } from '../pages/support/InventoryPage.jsx';
+import InventoryPage, { InventoryIssuePage, ReplenishmentsPage } from '../pages/support/InventoryPage.jsx';
 import IncidentPage from '../pages/support/IncidentPage.jsx';
 import StablePage from '../pages/support/StablePage.jsx';
 import ReportsPage from '../pages/support/ReportsPage.jsx';
@@ -46,9 +47,9 @@ export default function AppRoutes() {return <Routes>
     <Route path="/reset-password" element={<ResetPassword/>}/><Route path="/accept-invitation" element={<AcceptInvitation/>}/>
     <Route element={<RoleRoute/>}><Route element={<AppLayout/>}>
         <Route element={<RoleRoute allowedRoles={ROLES.Veterinarian}/>}><Route path="/medical" element={<MedicalDashboard/>}/><Route path="/medical/examination" element={<MedicalExamination/>}/><Route path="/medical/injury" element={<MedicalInjury/>}/><Route path="/medical/treatment" element={<MedicalTreatment/>}/><Route path="/medical/restrictions" element={<MedicalRestrictions/>}/><Route path="/medical/follow-up" element={<MedicalFollowUp/>}/></Route><Route element={<RoleRoute allowedRoles={ALL_ROLES}/>}><Route path="/medical/preventive-care" element={<PreventivePage/>}/><Route path="/reports" element={<ReportsPage/>}/></Route>
-<Route element={<RoleRoute allowedRoles={[ROLES.ClubManager,ROLES.HorseOwner,ROLES.Groom,ROLES.Veterinarian]}/>}><Route path="/care/tasks" element={<CarePage/>}/></Route>
-<Route element={<RoleRoute allowedRoles={[ROLES.ClubManager,ROLES.Veterinarian,ROLES.Trainer,ROLES.Groom,ROLES.WorkRider]}/>}><Route path="/care/incidents" element={<IncidentPage/>}/></Route>
-<Route element={<RoleRoute allowedRoles={[ROLES.ClubManager,ROLES.Groom]}/>}><Route path="/care/stables" element={<StablePage/>}/><Route path="/inventory" element={<InventoryPage/>}/><Route path="/inventory/replenishments" element={<ReplenishmentsPage/>}/></Route>
+<Route element={<RoleRoute allowedRoles={PERMISSIONS.careRead}/>}><Route path="/care/tasks" element={<CarePage/>}/></Route>
+<Route element={<RoleRoute allowedRoles={PERMISSIONS.incidentRead}/>}><Route path="/care/incidents" element={<IncidentPage/>}/></Route>
+<Route element={<RoleRoute allowedRoles={[ROLES.ClubManager,ROLES.Groom]}/>}><Route path="/care/stables" element={<StablePage/>}/><Route path="/inventory" element={<InventoryPage/>}/><Route path="/inventory/issue" element={<InventoryIssuePage/>}/><Route path="/inventory/replenishments" element={<ReplenishmentsPage/>}/></Route>
 <Route path="/dashboard" element={<Dashboard/>}/><Route path="/permission-denied" element={<PermissionDenied/>}/>
         <Route element={<RoleRoute allowedRoles={ROLES.HorseOwner}/>}><Route path="/registrations" element={<RegistrationList/>}/><Route path="/registrations/new" element={<RegistrationCreate/>}/><Route path="/registrations/:id" element={<RegistrationDetail/>}/></Route>
         <Route element={<RoleRoute allowedRoles={ROLES.ClubManager}/>}><Route path="/manager/staff" element={<StaffPage/>}/><Route path="/manager/audit" element={<AuditPage/>}/><Route path="/manager/website" element={<WebsitePage/>}/><Route path="/reviews" element={<ReviewList/>}/><Route path="/reviews/:id" element={<ReviewDetail/>}/></Route>

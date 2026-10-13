@@ -62,6 +62,11 @@ export const createMedicalTreatment = async (horseId, data) => {
     return response.data;
 };
 
+export const updateMedicalTreatmentStatus = async (horseId, treatmentId, completed) => {
+    const response = await write('put', `/api/horses/${encodeURIComponent(horseId)}/medical/treatments/${encodeURIComponent(treatmentId)}/status`, { completed });
+    return response.data;
+};
+
 export const getMedicalRestrictions = async (horseId, params = {}) => {
     const response = await api.get(`/api/horses/${encodeURIComponent(horseId)}/medical/restrictions`, { params });
     return response.data;
@@ -79,5 +84,14 @@ export const getMedicalFollowUps = async (horseId, params = {}) => {
 
 export const createMedicalFollowUp = async (horseId, data) => {
     const response = await write('post', `/api/horses/${encodeURIComponent(horseId)}/medical/follow-ups`, data);
+    return response.data;
+};
+
+export const getMedicalCaseHistory = async (horseId, recordId) => {
+    const response = await api.get(`/api/horses/${encodeURIComponent(horseId)}/medical/records/${encodeURIComponent(recordId)}/history`);
+    return response.data;
+};
+export const mergeMedicalCases = async (horseId, recordId, data) => {
+    const response = await write('post', `/api/horses/${encodeURIComponent(horseId)}/medical/records/${encodeURIComponent(recordId)}/merge`, data);
     return response.data;
 };

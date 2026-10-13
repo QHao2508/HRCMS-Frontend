@@ -35,7 +35,7 @@ export function SessionCreate() {
     /**
      * Đọc dữ liệu cần cho component qua service/API; hook resource quản lý loading, response muộn và lỗi.
      */
-    const load=useCallback(async()=>{const data=await getPlan(id);return {plan:data.plan,horse:await getHorse(data.plan.horseId),riders:await staffDirectory(ROLES.WorkRider),restrictions:data.restrictions};},[id]);
+    const load=useCallback(async()=>{const ridersRequest=staffDirectory(ROLES.WorkRider);ridersRequest.catch(()=>{});const data=await getPlan(id);const [horse,riders]=await Promise.all([getHorse(data.plan.horseId),ridersRequest]);return {plan:data.plan,horse,riders,restrictions:data.restrictions};},[id]);
     const resource=useRegistrationResource(load);const mutation=useMutation();
     return <section className="training-page"><BackLink to={`/training/plans/${id}`}>{msg(MSG.KE_HOACH_HUAN_LUYEN)}</BackLink><PageHeading title={msg(MSG.TAO_BUOI_TAP)} description={msg(MSG.CO_THE_GIAO_RIDER_NGAY_HOAC_LUU_BUOI_TAP_O_TRANG_THAI_PLANNED)}/><ResourceState resource={resource}/><MutationState mutation={mutation} reload={resource.reload}/>{resource.data && (isAssigned(resource.data.horse,user,ROLES.Trainer) && resource.data.plan.status === PLAN_STATUS.Active ? <form className="surface-card" onSubmit={e=>{e.preventDefault();mutation.run(()=>createSession(id,sessionPayload(form)),s=>navigate(`/training/sessions/${s.id}`));}}><SessionFields form={form} change={e=>setForm({...form,[e.target.name]:e.target.value})} riders={resource.data.riders} min={resource.data.plan.startDate} max={resource.data.plan.endDate} disabled={mutation.pending || mutation.uncertain}/><TrainingAvailability horseId={resource.data.plan.horseId} form={form} onPick={scheduledAt=>setForm({...form,scheduledAt})} min={resource.data.plan.startDate} max={resource.data.plan.endDate} disabled={mutation.pending || mutation.uncertain}/><div className="wizard-actions"><button className="btn btn-success" disabled={mutation.pending || mutation.uncertain}>{msg(MSG.LUU_BUOI_TAP)}</button></div></form> : <p className="alert alert-warning">{msg(MSG.CHI_TRAINER_DANG_DUOC_PHAN_CONG_CO_THE_TAO_BUOI_TAP_KHI_PLAN_DANG_ACTIVE)}</p>)}</section>;
 }
@@ -83,7 +83,7 @@ export function SessionDetail() {
     /**
      * Đọc dữ liệu cần cho component qua service/API; hook resource quản lý loading, response muộn và lỗi.
      */
-    const load=useCallback(async()=>{const data=await getSession(id);const horse=await trainingHorse(getHorse,data.session.horseId,data);const plan=await getPlan(data.session.planId);const riders=isAssigned(horse,user,ROLES.Trainer) ? await staffDirectory(ROLES.WorkRider) : [];return {...data,horse,plan:plan.plan,riders};},[id,user]);
+    const load=useCallback(async()=>{const ridersRequest=user?.role===ROLES.Trainer ? staffDirectory(ROLES.WorkRider).catch(()=>[]) : Promise.resolve([]);const data=await getSession(id);const [horse,plan]=await Promise.all([trainingHorse(getHorse,data.session.horseId,data),getPlan(data.session.planId)]);const riders=isAssigned(horse,user,ROLES.Trainer) ? await ridersRequest : [];return {...data,horse,plan:plan.plan,riders};},[id,user]);
     const resource=useRegistrationResource(load);
     return <section className="training-page"><BackLink to="/training/sessions">{msg(MSG.DANH_SACH_BUOI_TAP)}</BackLink><ResourceState resource={resource}/>{resource.data && <SessionContent key={`${id}-${resource.data.session.version}`} data={resource.data} user={user} reload={resource.reload}/>}</section>;
 }

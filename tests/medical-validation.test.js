@@ -14,7 +14,8 @@ test('partial clearance sends only explicit selections and allows monitoring', (
   assert.equal(payload.examination.reason, 'reason');
 });
 test('clearance validates selection, scope, duplicates and examination dates', () => {
-  for (const change of [{ restrictionIds: [] }, { restrictionIds: ['other-horse'] }, { restrictionIds: ['selected', 'selected'] }, { examinationAt: '2026-10-08T00:00:00Z' }, { examinationAt: '2026-10-12T00:00:00Z' }]) assert.throws(() => followUpPayload({ ...form, ...change }, data, now));
+  assert.deepEqual(followUpPayload({ ...form, restrictionIds: [] }, data, now).restrictionIds, []);
+  for (const change of [{ restrictionIds: ['other-horse'] }, { restrictionIds: ['selected', 'selected'] }, { examinationAt: '2026-10-08T00:00:00Z' }, { examinationAt: '2026-10-12T00:00:00Z' }]) assert.throws(() => followUpPayload({ ...form, ...change }, data, now));
   assert.deepEqual(followUpPayload({ ...form, clearance: false }, data, now).restrictionIds, []);
 });
 test('date-only eligibility uses the club timezone', () => {

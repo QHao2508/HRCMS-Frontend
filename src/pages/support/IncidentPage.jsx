@@ -9,6 +9,7 @@ import { HorseSelect, SupportForm, SupportTable } from '../../components/Support
 import { useChoices, usePaged, when } from '../../services/supportResources.js';
 import { change, id, read } from '../../services/supportService.js';
 import api from '../../services/api.js';
+import { can, canResolveIncident } from '../../constants/permissions.js';
 import { localDateTime, scheduledPayload } from '../../services/workflowHelpers.js';
 const types = ['TrainingObservation', 'CareObservation', 'Health', 'Training', 'Stable', 'Feeding', 'Other'];
 const severities = ['NeedsReview', 'Low', 'Medium', 'High', 'Critical'];
@@ -20,7 +21,7 @@ export default function IncidentPage() {
 }
 function IncidentList({ horseId, horses, user }) {
     const resource = usePaged('/api/care/incidents', { horseId: horseId || undefined }); const [selected, setSelected] = useState(null);
-    return <>{horseId && user.role !== 'ClubManager' && <SupportForm title={msg(MSG.SUPPORT_REPORT_INCIDENT)} reload={resource.reload} initial={{ occurredAt: localDateTime(new Date()), type: types[0], description: '', severity: severities[0], routedTo: 'Veterinarian' }} submit={async f => { const created = await change('/api/care/incidents', { ...f, horseId, occurredAt: scheduledPayload(f.occurredAt) }); setSelected(created); return created; }} fields={[
+    return <>{horseId && can(user, 'incidentReport') && <SupportForm title={msg(MSG.SUPPORT_REPORT_INCIDENT)} reload={resource.reload} initial={{ occurredAt: localDateTime(new Date()), type: types[0], description: '', severity: severities[0], routedTo: 'Veterinarian' }} submit={async f => { const created = await change('/api/care/incidents', { ...f, horseId, occurredAt: scheduledPayload(f.occurredAt) }); setSelected(created); return created; }} fields={[
         { name: 'occurredAt', label: msg(MSG.SUPPORT_OCCURRED), type: 'datetime-local', required: true }, { name: 'type', label: msg(MSG.SUPPORT_TYPE), options: types.map((value, i) => ({ value, label: msg(typeLabels[i]) })), required: true },
         { name: 'severity', label: msg(MSG.SUPPORT_SEVERITY), options: severities.map((value, i) => ({ value, label: msg(severityLabels[i]) })), required: true }, { name: 'routedTo', label: msg(MSG.SUPPORT_ROUTED_TO), options: [{ value: 'Veterinarian', label: msg(MSG.HOME_REFERENCE_VET) }, { value: 'Trainer', label: msg(MSG.HOME_REFERENCE_TRAINER) }], required: true },
         { name: 'description', label: msg(MSG.SUPPORT_DESCRIPTION), multiline: true, required: true, maxLength: 4000, help: msg(MSG.INCIDENT_PHOTO_AFTER_SAVE) },
@@ -40,7 +41,9 @@ function IncidentDetails({ incident, user, reload }) {
         {canUploadIncidentPhoto(incident, user) && <form onSubmit={e => { e.preventDefault(); mutation.run(() => { if (!file || !['image/png', 'image/jpeg'].includes(file.type) || file.size > 10485760) throw Object.assign(new Error(msg(MSG.SUPPORT_PHOTO_INVALID)), { status: 400 }); const data = new FormData(); data.append('file', file); return change(`${base}/photos`, data); }, () => { setFile(null); document.getElementById("incident-photo").value = ""; resource.reload(); }); }}>
             <fieldset disabled={mutation.pending || mutation.uncertain}><label htmlFor="incident-photo" className="form-label">{msg(MSG.SUPPORT_UPLOAD_PHOTO)}</label><input id="incident-photo" className="form-control" type="file" accept="image/png,image/jpeg" required onChange={e => setFile(e.target.files[0] || null)} /><button className="btn btn-primary mt-3" disabled={!file}>{msg(MSG.SUPPORT_UPLOAD_PHOTO)}</button></fieldset>
         </form>}
-        {!incident.resolved && incident.routedTo === user.role && <SupportForm title={msg(MSG.SUPPORT_RESOLVE)} initial={{ resolution: '' }} reload={reload} fields={[{ name: 'resolution', label: msg(MSG.BR_RESOLUTION), help: msg(MSG.BR_RESOLUTION_HELP), required: true, multiline: true, maxLength: 2000 }]} submit={f => change(`${base}/resolve`, { resolution: f.resolution.trim() })} />}
+        {!incident.resolved && <p>{msg(MSG.INCIDENT_ROUTED_NOW)}{': '}{incident.routedTo === 'Trainer' ? msg(MSG.HOME_REFERENCE_TRAINER) : msg(MSG.HOME_REFERENCE_VET)}</p>}
+        {!incident.resolved && can(user, 'incidentReroute') && <SupportForm key={`route-${incident.routedTo}`} title={msg(MSG.INCIDENT_REROUTE)} initial={{ routedTo: incident.routedTo === 'Trainer' ? 'Veterinarian' : 'Trainer' }} reload={reload} fields={[{ name: 'routedTo', label: msg(MSG.SUPPORT_ROUTED_TO), help: msg(MSG.INCIDENT_REROUTE_HELP), options: [{ value: 'Veterinarian', label: msg(MSG.HOME_REFERENCE_VET) }, { value: 'Trainer', label: msg(MSG.HOME_REFERENCE_TRAINER) }], required: true }]} submit={f => change(`${base}/route`, { routedTo: f.routedTo })} />}
+        {canResolveIncident(user, incident) && <SupportForm title={msg(MSG.SUPPORT_RESOLVE)} initial={{ resolution: '' }} reload={reload} fields={[{ name: 'resolution', label: msg(MSG.BR_RESOLUTION), help: msg(MSG.BR_RESOLUTION_HELP), required: true, multiline: true, maxLength: 2000 }]} submit={f => change(`${base}/resolve`, { resolution: f.resolution.trim() })} />}
     </section>;
 }
 function IncidentPhoto({ base, photo }) {

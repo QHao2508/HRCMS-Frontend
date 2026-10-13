@@ -1,25 +1,52 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/useAuth.js';
 import { MSG, msg } from '../../messages/index.js';
 import { Field, PageHeading, ResourceState } from '../../components/WorkflowUI.jsx';
 import { SupportForm, SupportTable } from '../../components/SupportUI.jsx';
 import { choices, supportLabel, useChoices, usePaged, when } from '../../services/supportResources.js';
 import { change, id } from '../../services/supportService.js';
+const movementLabel = row => msg(row.quantity > 0 ? (row.replenishmentRequestId ? MSG.INV_IN_REPLENISH : MSG.INV_IN) : MSG.INV_OUT);
+const amount = (value, unit) => `${Math.abs(Number(value))}${unit ? ' ' + unit : ''}`;
+const fail = key => { throw Object.assign(new Error(msg(key)), { status: 400 }); };
+
+/** Danh sách vật tư; bấm "Lịch sử nhập xuất" chỉ để xem, thao tác xuất nằm ở trang Xuất vật tư riêng. */
 export default function InventoryPage() {
-    const { user } = useAuth(); const manager = user.role === 'ClubManager'; const [low, setLow] = useState(''); const resource = usePaged('/api/inventory', { lowStock: low === 'true' }); const [selected, setSelected] = useState(null);
-    return <><PageHeading title={msg(MSG.SUPPORT_INVENTORY)} /><section className="surface-card"><Field label={msg(MSG.SUPPORT_STOCK_FILTER)} name="lowStock" value={low} options={[{ value: '', label: msg(MSG.TAT_CA) }, { value: 'true', label: msg(MSG.SUPPORT_LOW_STOCK) }]} onChange={e => { setLow(e.target.value); resource.setPage(1); }} /></section>
+    const { user } = useAuth(); const manager = user.role === 'ClubManager'; const [low, setLow] = useState(''); const resource = usePaged('/api/inventory', { lowStock: low === 'true' }); const [selected, setSelected] = useState(null); const [archiving, setArchiving] = useState(null);
+    return <><PageHeading title={msg(MSG.SUPPORT_INVENTORY)} action={<Link className="btn btn-primary" to="/inventory/issue">{msg(MSG.FLOW34_CONSUME)}</Link>} /><section className="surface-card"><Field label={msg(MSG.SUPPORT_STOCK_FILTER)} name="lowStock" value={low} options={[{ value: '', label: msg(MSG.TAT_CA) }, { value: 'true', label: msg(MSG.SUPPORT_LOW_STOCK) }]} onChange={e => { setLow(e.target.value); resource.setPage(1); }} /></section>
         {manager && <SupportForm title={msg(MSG.SUPPORT_NEW_ITEM)} initial={{ name: '', category: '', unit: '', minimumStock: 0 }} reload={resource.reload} submit={f => change('/api/inventory', { ...f, minimumStock: Number(f.minimumStock) })} fields={[
             { name: 'name', label: msg(MSG.SUPPORT_NAME), required: true, maxLength: 100 }, { name: 'category', label: msg(MSG.SUPPORT_CATEGORY), required: true, maxLength: 100 }, { name: 'unit', label: msg(MSG.SUPPORT_UNIT), required: true, maxLength: 100 }, { name: 'minimumStock', label: msg(MSG.SUPPORT_MIN_STOCK), type: 'number', min: 0, max: 1000000, step: '0.001', required: true },
         ]} />}
-        <SupportTable resource={resource} columns={['name', 'category', 'unit', 'stock', 'minimumStock'].map((key, i) => ({ key, label: msg([MSG.SUPPORT_NAME, MSG.SUPPORT_CATEGORY, MSG.SUPPORT_UNIT, MSG.SUPPORT_STOCK, MSG.SUPPORT_MIN_STOCK][i]) }))} actions={row => <button className="btn btn-outline-primary" onClick={() => setSelected(row)}>{msg(MSG.SUPPORT_MOVEMENTS)}</button>} />
-        {selected && <ItemDetails key={selected.id} item={resource.data?.items.find(x => x.id === selected.id) || selected} manager={manager} reload={resource.reload} />}
+        <SupportTable resource={resource} columns={['name', 'category', 'unit', 'stock', 'minimumStock'].map((key, i) => ({ key, label: msg([MSG.SUPPORT_NAME, MSG.SUPPORT_CATEGORY, MSG.SUPPORT_UNIT, MSG.SUPPORT_STOCK, MSG.SUPPORT_MIN_STOCK][i]) }))} actions={row => <div className="inline-actions"><button className="btn btn-outline-primary" onClick={() => { setArchiving(null); setSelected(row); }}>{msg(MSG.SUPPORT_MOVEMENTS)}</button>{manager && !row.archived && <button className="btn btn-outline-secondary" onClick={() => { setSelected(null); setArchiving(row); }}>{msg(MSG.INV_ARCHIVE_ACTION)}</button>}</div>} />
+        {selected && <section className="surface-card" key={selected.id}><h2>{msg(MSG.INV_HISTORY_OF, { name: selected.name })}</h2><p className="form-text">{msg(MSG.INV_HISTORY_ONLY)}</p><ItemHistory item={selected} /></section>}
+        {archiving && <SupportForm key={archiving.id} title={`${msg(MSG.SUPPORT_ARCHIVE_ITEM)} · ${archiving.name}`} initial={{ confirm: '' }} reload={() => { setArchiving(null); resource.reload(); }} fields={[{ name: 'confirm', label: msg(MSG.SUPPORT_CONFIRM_ITEM), required: true, maxLength: 100 }]} submit={f => { if (f.confirm !== archiving.name) fail(MSG.SUPPORT_CONFIRM_ERROR); return change(`/api/inventory/${id(archiving.id)}/archive`); }} />}
     </>;
 }
-function ItemDetails({ item, manager, reload }) {
-    const path = `/api/inventory/${id(item.id)}`; const resource = usePaged(`${path}/movements`);
-    return <><h2>{item.name}</h2>{!item.archived && <SupportForm title={msg(manager ? MSG.SUPPORT_MOVEMENT : MSG.FLOW34_CONSUME)} initial={{ quantity: '', reason: '' }} reload={() => { resource.reload(); reload(); }} submit={f => change(`${path}/movements`, { quantity: Number(f.quantity), reason: f.reason })} fields={[{ name: 'quantity', label: msg(manager ? MSG.SUPPORT_MOVEMENT_QUANTITY : MSG.FLOW34_CONSUME_QUANTITY), help: manager ? undefined : msg(MSG.FLOW34_CONSUME_HELP), type: 'number', min: -1000000, max: manager ? 1000000 : -0.001, step: '0.001', required: true }, { name: 'reason', label: msg(MSG.SUPPORT_REASON), multiline: true, maxLength: 4000, required: true }]} />}
-        <SupportTable resource={resource} columns={[{ key: 'createdAt', label: msg(MSG.THOI_GIAN), render: x => when(x.createdAt) }, { key: 'quantity', label: msg(MSG.SUPPORT_QUANTITY) }, { key: 'reason', label: msg(MSG.SUPPORT_REASON) }]} />
-        {manager && !item.archived && <SupportForm title={msg(MSG.SUPPORT_ARCHIVE_ITEM)} initial={{ confirm: '' }} reload={reload} fields={[{ name: 'confirm', label: msg(MSG.SUPPORT_CONFIRM_ITEM), required: true, maxLength: 100 }]} submit={f => { if (f.confirm !== item.name) throw Object.assign(new Error(msg(MSG.SUPPORT_CONFIRM_ERROR)), { status: 400 }); return change(`${path}/archive`); }} />}
+
+/** Bảng lịch sử nhập/xuất: hiển thị rõ loại phiếu và số lượng dương. */
+function ItemHistory({ item }) {
+    const resource = usePaged(`/api/inventory/${id(item.id)}/movements`);
+    return <SupportTable resource={resource} columns={[{ key: 'createdAt', label: msg(MSG.THOI_GIAN), render: x => when(x.createdAt) }, { key: 'direction', label: msg(MSG.INV_DIRECTION), render: x => <span className={`badge ${x.quantity > 0 ? 'text-bg-success' : 'text-bg-warning'}`}>{movementLabel(x)}</span> }, { key: 'quantity', label: msg(MSG.SUPPORT_QUANTITY), render: x => amount(x.quantity, item.unit) }, { key: 'reason', label: msg(MSG.SUPPORT_REASON) }]} />;
+}
+
+/** Trang xuất vật tư riêng (giống yêu cầu bổ sung): nhập số dương, hệ thống tự ghi âm khi xuất. Manager có thể chọn Nhập để điều chỉnh. */
+export function InventoryIssuePage() {
+    const { user } = useAuth(); const manager = user.role === 'ClubManager'; const items = useChoices('/api/inventory'); const [itemId, setItemId] = useState('');
+    const active = (items.data || []).filter(x => !x.archived); const item = active.find(x => x.id === itemId);
+    return <><PageHeading title={msg(MSG.FLOW34_CONSUME)} action={<Link className="btn btn-outline-primary" to="/inventory">{msg(MSG.SUPPORT_INVENTORY)}</Link>} /><ResourceState resource={items} />
+        <section className="surface-card"><Field label={msg(MSG.SUPPORT_ITEM)} name="itemId" value={itemId} options={choices(active)} required onChange={e => setItemId(e.target.value)} help={item ? msg(MSG.INV_STOCK_AFTER, { stock: item.stock, unit: item.unit }) : undefined} /></section>
+        {item && <SupportForm key={item.id} title={msg(MSG.INV_ISSUE_TITLE)} initial={{ direction: 'Out', quantity: '', reason: '' }} reload={items.reload} submit={f => {
+            const quantity = Number(f.quantity);
+            if (!(quantity > 0)) fail(MSG.INV_QUANTITY_POSITIVE);
+            const outgoing = !manager || f.direction === 'Out';
+            if (outgoing && quantity > Number(item.stock)) fail(MSG.INV_NOT_ENOUGH);
+            return change(`/api/inventory/${id(item.id)}/movements`, { quantity: outgoing ? -quantity : quantity, reason: f.reason.trim() });
+        }} fields={f => [
+            ...(manager ? [{ name: 'direction', label: msg(MSG.INV_DIRECTION), options: [{ value: 'Out', label: msg(MSG.INV_OUT) }, { value: 'In', label: msg(MSG.INV_IN) }], required: true }] : []),
+            { name: 'quantity', label: msg(!manager || f.direction === 'Out' ? MSG.INV_ISSUE_QUANTITY : MSG.INV_RECEIPT_QUANTITY), help: msg(MSG.INV_ISSUE_HELP), type: 'number', min: 0.001, max: !manager || f.direction === 'Out' ? Number(item.stock) || 0.001 : 1000000, step: '0.001', required: true },
+            { name: 'reason', label: msg(MSG.SUPPORT_REASON), multiline: true, maxLength: 4000, required: true, wide: true },
+        ]} />}
+        {item && <section className="surface-card"><h2>{msg(MSG.INV_HISTORY_OF, { name: item.name })}</h2><ItemHistory key={`${item.id}-${item.stock}`} item={item} /></section>}
     </>;
 }
 export function ReplenishmentsPage() {

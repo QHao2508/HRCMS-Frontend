@@ -67,7 +67,7 @@ export function ReviewDetail() {
     /**
      * Đọc dữ liệu cần cho component qua service/API; hook resource quản lý loading, response muộn và lỗi.
      */
-    const load = useCallback(async () => ({record:await getRegistration(id),attachments:await listAttachments(id)}),[id]);
+    const load = useCallback(async () => { const [record,attachments]=await Promise.all([getRegistration(id),listAttachments(id)]); return {record,attachments}; },[id]);
     const resource = useRegistrationResource(load);
     return <section><BackLink to="/reviews">{msg(MSG.DANH_SACH_CHO_DUYET)}</BackLink><ResourceState resource={resource} />{resource.data && <ReviewContent key={id} data={resource.data} reload={resource.reload} />}</section>;
 }

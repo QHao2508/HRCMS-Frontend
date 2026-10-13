@@ -27,6 +27,7 @@ const storedMessages = new Map([
     ["An inventory item reached its minimum stock.", MSG.NOTIFICATION_AN_INVENTORY_ITEM_REACHED_ITS_MINIMUM_STOCK],
     ["A replenishment request needs review.", MSG.NOTIFICATION_AREPLENISHMENT_REQUEST_NEEDS_REVIEW],
     ["Your replenishment request was reviewed.", MSG.NOTIFICATION_YOUR_REPLENISHMENT_REQUEST_WAS_REVIEWED],
+    ["A groom completed a treatment care task. Review the treatment plan status.", MSG.NOTIFICATION_TREATMENT_TASK_COMPLETED],
 ]);
 const typeMessages = Object.freeze({
     RegistrationReview: MSG.NOTIFICATION_AHORSE_REGISTRATION_REQUIRES_REVIEW,
@@ -49,8 +50,9 @@ const typeMessages = Object.freeze({
     InventoryLowStock: MSG.NOTIFICATION_AN_INVENTORY_ITEM_REACHED_ITS_MINIMUM_STOCK,
     InventoryReplenishment: MSG.NOTIFICATION_AREPLENISHMENT_REQUEST_NEEDS_REVIEW,
     InventoryReplenishmentReviewed: MSG.NOTIFICATION_YOUR_REPLENISHMENT_REQUEST_WAS_REVIEWED,
+    TreatmentTaskCompleted: MSG.NOTIFICATION_TREATMENT_TASK_COMPLETED,
 });
-const numericTypes = ["RegistrationReview","RegistrationRevision","RegistrationApproved","HorseAssignment","SessionAssigned","SessionUnassigned","SessionResult","IncidentReported","SessionSkipped","MedicalHealthChanged","MedicalRestrictionCreated","MedicalFollowUp","MedicalPreventiveDue","SessionOverdue","MedicalFollowUpDue","CareAssigned","CareIssue","InventoryLowStock","InventoryReplenishment","InventoryReplenishmentReviewed"];
+const numericTypes = ["RegistrationReview","RegistrationRevision","RegistrationApproved","HorseAssignment","SessionAssigned","SessionUnassigned","SessionResult","IncidentReported","SessionSkipped","MedicalHealthChanged","MedicalRestrictionCreated","MedicalFollowUp","MedicalPreventiveDue","SessionOverdue","MedicalFollowUpDue","CareAssigned","CareIssue","InventoryLowStock","InventoryReplenishment","InventoryReplenishmentReviewed","TreatmentTaskCompleted"];
 
 export function notificationText(notification) {
     const key = storedMessages.get(notification?.message?.trim());

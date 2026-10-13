@@ -1,4 +1,7 @@
-import { currentMedicalRecords } from '../../services/medicalRecordVersions.js';
+import MedicalCaseDetails from '../../components/medical/MedicalCaseDetails.jsx';
+import { medicalCases } from '../../services/medicalCases.js';
+import MedicalChoiceField from '../../components/medical/MedicalChoiceField.jsx';
+import { Link } from 'react-router-dom';
 import MedicalRecordHistory from '../../components/medical/MedicalRecordHistory.jsx';
 import { useMedicalPatientSelection } from '../../services/medicalPatientSelection.js';
 import { allMedicalPages } from '../../services/medicalValidation.js';
@@ -13,6 +16,7 @@ import {
     createMedicalRecord,
     getMedicalRecords,
     getMedicalHorses,
+    getMedicalFollowUps,
 } from "../../services/medicalService";
 
 const emptyForm = {
@@ -96,6 +100,7 @@ function MedicalExamination() {
     const [horses, setHorses] = useState([]);
     const [selectedHorseId, setSelectedHorseId] = useMedicalPatientSelection();
     const [records, setRecords] = useState([]);
+    const [followUps, setFollowUps] = useState([]);
 
     const [loadingHorses, setLoadingHorses] = useState(true);
     const [loadingRecords, setLoadingRecords] = useState(false);
@@ -152,9 +157,12 @@ function MedicalExamination() {
             setLoadingRecords(true);
             setError("");
 
-            const data = await allMedicalPages(params => getMedicalRecords(selectedHorseId, params));
+            const [data, visits] = await Promise.all([
+                allMedicalPages(params => getMedicalRecords(selectedHorseId, params)),
+                allMedicalPages(params => getMedicalFollowUps(selectedHorseId, params)),
+            ]);
 
-            if(version === requestVersion.current) setRecords(listFromResponse(data));
+            if(version === requestVersion.current) { setRecords(listFromResponse(data)); setFollowUps(listFromResponse(visits)); }
         } catch (err) {
             console.error(err);
             if(version === requestVersion.current) setError(getErrorMessage(err, msg(MSG.MEDICAL_TEXT_2)));
@@ -174,10 +182,12 @@ function MedicalExamination() {
         [horses, selectedHorseId]
     );
 
+    const cases = useMemo(() => medicalCases(records, followUps), [records, followUps]);
+    const caseById = useMemo(() => new Map(cases.map(item => [item.id, item])), [cases]);
     const filteredRecords = useMemo(() => {
         const query = search.trim().toLowerCase();
 
-        return currentMedicalRecords(records).filter((record) => {
+        return cases.map(item => item.record).filter((record) => {
             const status = firstDefined(record, ["healthStatus", "HealthStatus"], "");
             const diagnosis = firstDefined(record, ["diagnosis", "Diagnosis"], "");
             const reason = firstDefined(record, ["reason", "Reason"], "");
@@ -193,7 +203,7 @@ function MedicalExamination() {
 
             return matchesStatus && matchesSearch;
         });
-    }, [records, search, healthFilter]);
+    }, [cases, search, healthFilter]);
 
     const openCreate = () => {
         setEditingRecord(null);
@@ -268,6 +278,12 @@ function MedicalExamination() {
 
         if (!payload.reason || !payload.symptoms || !payload.findings || !payload.diagnosis) {
             setError(msg(MSG.MEDICAL_TEXT_5));
+            return;
+        }
+        // Một vấn đề = một hồ sơ: chặn tạo hồ sơ mới khi đã có hồ sơ mở cùng lý do khám.
+        const duplicate = !editingRecord && cases.find(item => !item.resolved && String(item.first.reason || '').trim().toLowerCase() === payload.reason.toLowerCase());
+        if (duplicate) {
+            setError(msg(MSG.MED_CASE_DUPLICATE, { reason: payload.reason, title: msg(MSG.MEDICAL_RECORD_NUMBER, { number: duplicate.number }) }));
             return;
         }
 
@@ -427,6 +443,7 @@ function MedicalExamination() {
                                 "—"
                             );
                             const notes = firstDefined(record, ["notes", "Notes"], "");
+                            const medicalCase = caseById.get(idOf(record));
 
                             return (
                                 <article className="medical-record-item" key={idOf(record)}>
@@ -438,7 +455,8 @@ function MedicalExamination() {
                                         <div className="medical-record-card-header">
                                             <div>
                                                 <span className="medical-section-eyebrow">{msg(MSG.MERGED_UI_337)}</span>
-                                                <h3>{reason}</h3>
+                                                <h3>{medicalCase?.first?.reason || reason}</h3>
+                                                {medicalCase && <small><span className={`badge ${medicalCase.resolved ? "text-bg-success" : "text-bg-warning"}`}>{msg(medicalCase.resolved ? MSG.MED_CASE_RESOLVED : MSG.MED_CASE_OPEN)}</span>{" "}{msg(MSG.MEDICAL_RECORD_NUMBER, { number: medicalCase.number })}{" · "}{msg(MSG.MED_CASE_VISITS, { count: medicalCase.visits.length })}</small>}
                                             </div>
 
                                             <span
@@ -485,6 +503,7 @@ function MedicalExamination() {
                                                 onClick={() => openEdit(record)}
                                             >
                                                 <Pencil size={13} />{msg(MSG.MERGED_UI_343)}</button>
+                                            {medicalCase && !medicalCase.resolved && <Link className="medical-primary-button" to={`/medical/follow-up?horseId=${encodeURIComponent(selectedHorseId)}&recordId=${encodeURIComponent(idOf(record))}`}>{msg(MSG.MED_CASE_FOLLOW_UP)}</Link>}
                                         </div>
                                     </div>
                                 </article>
@@ -528,6 +547,9 @@ function MedicalExamination() {
                             <div className="medical-correction-note">{msg(MSG.MERGED_UI_344)}</div>
                         )}
 
+                        <div className="px-4 pt-3"><p className="form-text mb-2">{msg(MSG.MED_CASE_HELP)}</p>
+                        {error && <div className="medical-alert error">{error}</div>}</div>
+                        {!editingRecord && cases.some(item => !item.resolved && ((form.reason && item.record.reason === form.reason) || (form.diagnosis && item.record.diagnosis === form.diagnosis))) && <div className="medical-alert medical-alert-info"><p>{msg(MSG.MED_EXISTING_CASE_HELP)}</p>{cases.filter(item => !item.resolved && ((form.reason && item.record.reason === form.reason) || (form.diagnosis && item.record.diagnosis === form.diagnosis))).map(item => <p key={item.id}><Link to={`/medical/follow-up?horseId=${encodeURIComponent(selectedHorseId)}&recordId=${encodeURIComponent(item.id)}`}>{msg(MSG.MED_EXISTING_CASE_ACTION)}{msg(MSG.MED_HISTORY_COLON)}{item.record.reason}{msg(MSG.MED_HISTORY_SEPARATOR)}{item.record.diagnosis}</Link></p>)}</div>}
                         <form className="medical-form" onSubmit={submitForm}>
                             <div className="medical-form-grid">
                                 <div className="medical-field">
@@ -562,56 +584,10 @@ function MedicalExamination() {
                                     </select>
                                 </div>
 
-                                <div className="medical-field medical-field-full">
-                                    <label htmlFor="reason">{msg(MSG.MERGED_UI_347)}</label>
-                                    <input
-                                        id="reason"
-                                        value={form.reason}
-                                        onChange={(event) => updateField("reason", event.target.value)}
-                                        placeholder={msg(MSG.MERGED_UI_348)}
-                                        required
-                                    />
-                                </div>
-
-                                <div className="medical-field">
-                                    <label htmlFor="symptoms">{msg(MSG.MERGED_UI_349)}</label>
-                                    <textarea
-                                        id="symptoms"
-                                        value={form.symptoms}
-                                        onChange={(event) =>
-                                            updateField("symptoms", event.target.value)
-                                        }
-                                        rows="4"
-                                        required
-                                    />
-                                </div>
-
-                                <div className="medical-field">
-                                    <label htmlFor="findings">{msg(MSG.MERGED_UI_350)}</label>
-                                    <textarea
-                                        id="findings"
-                                        value={form.findings}
-                                        onChange={(event) =>
-                                            updateField("findings", event.target.value)
-                                        }
-                                        rows="4"
-                                        required
-                                    />
-                                </div>
-
-                                <div className="medical-field medical-field-full">
-                                    <label htmlFor="diagnosis">{msg(MSG.MERGED_UI_351)}</label>
-                                    <textarea
-                                        id="diagnosis"
-                                        value={form.diagnosis}
-                                        onChange={(event) =>
-                                            updateField("diagnosis", event.target.value)
-                                        }
-                                        rows="3"
-                                        required
-                                    />
-                                </div>
-
+                                <MedicalChoiceField field="reason" label={msg(MSG.MERGED_UI_347)} value={form.reason} onChange={value => updateField("reason", value)} disabled={saving} />
+                                <MedicalChoiceField field="symptoms" label={msg(MSG.MERGED_UI_349)} value={form.symptoms} onChange={value => updateField("symptoms", value)} disabled={saving} />
+                                <MedicalChoiceField field="findings" label={msg(MSG.MERGED_UI_350)} value={form.findings} onChange={value => updateField("findings", value)} disabled={saving} />
+                                <MedicalChoiceField field="diagnosis" label={msg(MSG.MERGED_UI_351)} value={form.diagnosis} onChange={value => updateField("diagnosis", value)} disabled={saving} />
                                 <div className="medical-field medical-field-full">
                                     <label htmlFor="notes">{msg(MSG.MERGED_UI_352)}</label>
                                     <textarea
@@ -735,6 +711,7 @@ function MedicalExamination() {
                                 </p>
                             </div>
                         </div>
+                        <MedicalCaseDetails key={viewingRecord.id} horseId={selectedHorseId} recordId={viewingRecord.id} cases={cases} onMerged={() => { setViewingRecord(null); loadRecords(); }} />
                     </div>
                 </div>
             )}

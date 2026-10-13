@@ -23,7 +23,7 @@ export function followUpPayload(form, data, now = new Date()) {
         if (!Array.isArray(ids) || new Set(ids).size !== ids.length || ids.some(id => !items.some(item => item.id === id))) invalid(MSG.MEDICAL_CLEARANCE_INVALID);
         return [key, ids];
     }));
-    if (form.clearance && !Object.values(selected).some(ids => ids.length)) invalid(MSG.MEDICAL_CLEARANCE_REQUIRED);
+    // Kết luận khỏi không cần chọn tay: backend tự đóng các mục gắn với hồ sơ; danh sách ở đây chỉ là mục thêm.
     return {
         previousRecordId: previous.id,
         examination: { examinationAt: instant.toISOString(), ...Object.fromEntries(fields.map(key => [key, form[key].trim()])), healthStatus: form.healthStatus, notes: form.notes?.trim() || '' },

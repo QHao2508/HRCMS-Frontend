@@ -14,7 +14,9 @@ import {
     getMedicalInjuries,
     getMedicalRecords,
     getMedicalTreatments,
+    updateMedicalTreatmentStatus,
 } from "../../services/medicalService";
+import { allPages } from "../../services/supportService.js";
 
 function unwrapList(data) {
     if (Array.isArray(data)) return data;
@@ -48,6 +50,8 @@ function MedicalTreatment() {
     const [records, setRecords] = useState([]);
     const [injuries, setInjuries] = useState([]);
     const [treatments, setTreatments] = useState([]);
+    const [careTasks, setCareTasks] = useState([]);
+    const [updatingId, setUpdatingId] = useState("");
     const [loading, setLoading] = useState(true);
     const [loadingData, setLoadingData] = useState(false);
     const [error, setError] = useState("");
@@ -91,13 +95,14 @@ function MedicalTreatment() {
         (async () => {
             try {
                 setLoadingData(true); setError("");
-                const [r, i, t] = await Promise.all([
+                const [r, i, t, c] = await Promise.all([
                     allMedicalPages(params => getMedicalRecords(selectedHorseId, params)),
                     allMedicalPages(params => getMedicalInjuries(selectedHorseId, params)),
                     allMedicalPages(params => getMedicalTreatments(selectedHorseId, params)),
+                    allPages('/api/care/tasks', { horseId: selectedHorseId }).catch(() => []),
                 ]);
                 if (!active) return;
-                setRecords(unwrapList(r)); setInjuries(unwrapList(i)); setTreatments(unwrapList(t));
+                setRecords(unwrapList(r)); setInjuries(unwrapList(i)); setTreatments(unwrapList(t)); setCareTasks(c);
             } catch (err) {
                 if (active) setError(err?.message || err?.response?.data?.message || msg(MSG.MEDICAL_TEXT_30));
             } finally { if (active) setLoadingData(false); }
@@ -110,6 +115,18 @@ function MedicalTreatment() {
         setError(""); setSuccess("");
         setForm({ ...emptyForm, medicalRecordId: "", injuryId: "", startDate: today, endDate: today, followUpDate: today });
         setShowModal(true);
+    };
+
+    // Groom hoàn thành việc điều trị → vet xem tiến độ và cập nhật trạng thái phác đồ.
+    const progress = (plan) => { const tasks = careTasks.filter(task => task.treatmentPlanId === plan.id && task.type === "Treatment"); return { total: tasks.length, done: tasks.filter(task => task.status === "Completed").length }; };
+    const setPlanStatus = async (plan, completed) => {
+        try {
+            setUpdatingId(plan.id); setError(""); setSuccess("");
+            const updated = await updateMedicalTreatmentStatus(selectedHorseId, plan.id, completed);
+            setTreatments(current => current.map(item => item.id === plan.id ? { ...item, ...updated } : item));
+            setSuccess(msg(MSG.TREAT_STATUS_SAVED));
+        } catch (err) { setError(err?.message || msg(MSG.MEDICAL_TEXT_35)); }
+        finally { setUpdatingId(""); }
     };
 
     const submit = async (event) => {
@@ -155,7 +172,7 @@ function MedicalTreatment() {
         {selectedHorseId && !loadingData && !loading && !error && !records.length && <div className="medical-alert">{msg(MSG.MEDICAL_RECORD_EMPTY)}{' '}<Link to={`/medical/examination?horseId=${encodeURIComponent(selectedHorseId)}`}>{msg(MSG.MEDICAL_RECORD_OPEN_EXAMINATION)}</Link></div>}
         <section className="medical-table-card">
             <div className="medical-section-title-row"><div><div className="medical-section-eyebrow">{msg(MSG.MERGED_UI_502)}</div><h3 className="medical-subheading">{selectedHorse ? horseNameOf(selectedHorse) : msg(MSG.MEDICAL_TEXT_21)}</h3></div><span className="medical-record-count">{loadingData ? msg(MSG.MEDICAL_TEXT_18) : `${filteredTreatments.length} phác đồ`}</span></div>
-            {!filteredTreatments.length ? <div className="medical-empty-state"><ClipboardList size={22}/><strong>{msg(MSG.MERGED_UI_503)}</strong><span>{msg(MSG.MERGED_UI_504)}</span></div> : <div className="medical-table-wrapper"><table className="medical-table"><thead><tr><th>{msg(MSG.MERGED_UI_505)}</th><th>{msg(MSG.MERGED_UI_506)}</th><th>{msg(MSG.MERGED_UI_507)}</th><th>{msg(MSG.MERGED_UI_508)}</th><th>{msg(MSG.MERGED_UI_509)}</th><th>{msg(MSG.MERGED_UI_510)}</th><th>{msg(MSG.MERGED_UI_511)}</th></tr></thead><tbody>{filteredTreatments.map((item) => <tr key={item.id}><td>{formatDate(item.startDate)}{msg(MSG.MERGED_UI_512)}{formatDate(item.endDate)}</td><td>{item.objective || "—"}</td><td>{item.instructions || "—"}</td><td>{item.medication || "—"}</td><td>{item.frequency || "—"}</td><td>{formatDate(item.followUpDate)}</td><td><span className={`medical-treatment-status ${statusOf(item).toLowerCase()}`}>{getMedicalLabel(statusOf(item))}</span></td></tr>)}</tbody></table></div>}
+            {!filteredTreatments.length ? <div className="medical-empty-state"><ClipboardList size={22}/><strong>{msg(MSG.MERGED_UI_503)}</strong><span>{msg(MSG.MERGED_UI_504)}</span></div> : <div className="medical-table-wrapper"><table className="medical-table"><thead><tr><th>{msg(MSG.MERGED_UI_505)}</th><th>{msg(MSG.MERGED_UI_506)}</th><th>{msg(MSG.MERGED_UI_507)}</th><th>{msg(MSG.MERGED_UI_508)}</th><th>{msg(MSG.MERGED_UI_509)}</th><th>{msg(MSG.MERGED_UI_510)}</th><th>{msg(MSG.MERGED_UI_511)}</th><th>{msg(MSG.TREAT_CARE_PROGRESS)}</th><th>{msg(MSG.TREAT_ACTIONS)}</th></tr></thead><tbody>{filteredTreatments.map((item) => <tr key={item.id}><td>{formatDate(item.startDate)}{msg(MSG.MERGED_UI_512)}{formatDate(item.endDate)}</td><td>{item.objective || "—"}</td><td>{item.instructions || "—"}</td><td>{item.medication || "—"}</td><td>{item.frequency || "—"}</td><td>{formatDate(item.followUpDate)}</td><td><span className={`medical-treatment-status ${statusOf(item).toLowerCase()}`}>{getMedicalLabel(statusOf(item))}</span></td><td>{(() => { const p = progress(item); return <>{msg(MSG.TREAT_CARE_DONE, p)}{!item.completed && p.total > 0 && p.done === p.total && <div className="form-text">{msg(MSG.TREAT_READY)}</div>}</>; })()}</td><td><button type="button" className={item.completed ? "medical-secondary-button" : "medical-primary-button"} disabled={updatingId === item.id} onClick={() => setPlanStatus(item, !item.completed)}>{msg(item.completed ? MSG.TREAT_REOPEN : MSG.TREAT_MARK_DONE)}</button></td></tr>)}</tbody></table></div>}
         </section>
         {showModal && <div className="medical-modal-backdrop" onMouseDown={() => !saving && setShowModal(false)}><div className="medical-modal medical-wide-modal" role="dialog" aria-modal="true" aria-label={msg(MSG.MEDICAL_WORKSPACE_TREATMENTS)} onMouseDown={(e) => e.stopPropagation()}><div className="medical-modal-header"><div><span>{msg(MSG.MERGED_UI_513)}</span><h3>{msg(MSG.MERGED_UI_514)}</h3><p className="medical-modal-patient"><span>{msg(MSG.MEDICAL_WORKSPACE_PATIENT_LABEL)}</span><strong>{selectedHorse ? horseNameOf(selectedHorse) : ""}</strong><span>{selectedHorse?.registrationNumber || msg(MSG.MEDICAL_WORKSPACE_NO_CODE)}</span></p><p>{msg(MSG.MERGED_UI_515)}</p></div><button className="medical-icon-button" aria-label={msg(MSG.MEDICAL_WORKSPACE_CLOSE)} onClick={() => !saving && setShowModal(false)}>{msg(MSG.MERGED_UI_516)}</button></div><form className="medical-form" onSubmit={submit}><div className="medical-form-grid"><MedicalRecordPicker records={records} horseId={selectedHorseId} value={form.medicalRecordId} disabled={saving} onChange={(e) => setForm({...form, medicalRecordId:e.target.value, injuryId:""})} /><label className="medical-field"><span>{msg(MSG.MERGED_UI_520)}</span><select name="injuryId" value={form.injuryId} onChange={(e) => setForm({...form, injuryId:e.target.value})}><option value="">{msg(MSG.MERGED_UI_521)}</option>{injuries.filter((i) => !form.medicalRecordId || String(i.medicalRecordId) === String(form.medicalRecordId)).map((i) => <option key={i.id} value={i.id}>{formatDate(i.injuryDate)}{msg(MSG.MERGED_UI_522)}{getMedicalLabel(i.type)}{msg(MSG.MERGED_UI_523)}{i.bodyLocation}</option>)}</select></label><label className="medical-field"><span>{msg(MSG.MERGED_UI_524)}</span><input type="date" value={form.startDate} onChange={(e)=>setForm({...form,startDate:e.target.value})}/></label><label className="medical-field"><span>{msg(MSG.MERGED_UI_525)}</span><input type="date" value={form.endDate} onChange={(e)=>setForm({...form,endDate:e.target.value})}/></label><label className="medical-field"><span>{msg(MSG.MERGED_UI_526)}</span><input type="date" value={form.followUpDate} onChange={(e)=>setForm({...form,followUpDate:e.target.value})}/></label><label className="medical-field"><span>{msg(MSG.MERGED_UI_527)}</span><input value={form.frequency} onChange={(e)=>setForm({...form,frequency:e.target.value})} placeholder={msg(MSG.MERGED_UI_528)}/></label><label className="medical-field medical-field-full"><span>{msg(MSG.MERGED_UI_529)}</span><textarea rows="2" value={form.objective} onChange={(e)=>setForm({...form,objective:e.target.value})}/></label><label className="medical-field medical-field-full"><span>{msg(MSG.MERGED_UI_530)}</span><textarea rows="3" value={form.instructions} onChange={(e)=>setForm({...form,instructions:e.target.value})}/></label><label className="medical-field medical-field-full"><span>{msg(MSG.MERGED_UI_531)}</span><textarea rows="2" value={form.medication} onChange={(e)=>setForm({...form,medication:e.target.value})} placeholder={msg(MSG.MERGED_UI_532)}/></label></div><div className="medical-modal-actions"><button type="button" className="medical-secondary-button" onClick={()=>!saving&&setShowModal(false)}>{msg(MSG.MERGED_UI_533)}</button><button type="submit" className="medical-primary-button" disabled={saving}>{saving ? msg(MSG.MEDICAL_TEXT_10) : msg(MSG.MEDICAL_TEXT_36)}</button></div></form></div></div>}
     </MedicalLayout>;

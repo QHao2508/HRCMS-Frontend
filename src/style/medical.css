@@ -1558,3 +1558,14 @@
 .medical-app .medical-record-history-item { padding: 14px; margin-top: 10px; border-radius: 8px; border: 1px solid var(--hc-border); background: var(--hc-input); }
 .medical-app .medical-record-history-item > div { display: flex; gap: 12px; justify-content: space-between; flex-wrap: wrap; }
 .medical-app .medical-record-history-item p { margin: 10px 0; }
+
+.medical-case-details { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--hc-border); }
+.medical-case-timeline { list-style: none; padding: 0; margin: 16px 0; }
+.medical-case-visit { border-left: 3px solid var(--hc-brown); background: #faf7ef; padding: 16px; margin: 12px 0; border-radius: 0 8px 8px 0; }
+.medical-case-visit h4 { font-size: 16px; margin: 0 0 12px; }
+.medical-case-facts { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px 20px; }
+.medical-case-facts dt { font-size: 13px; color: var(--hc-muted); }
+.medical-case-facts dd { margin: 4px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.medical-case-merge { padding: 16px; border: 1px solid var(--hc-border); border-radius: 8px; }
+.medical-case-merge summary { cursor: pointer; font-weight: 600; }
+@media (max-width: 600px) { .medical-case-facts { grid-template-columns: 1fr; } }

@@ -1,5 +1,8 @@
 import { MSG, msg } from './index.js';
 const ERROR_MESSAGES = Object.freeze({
+    "This medical case is already resolved.": "BR_API_CASE_RESOLVED",
+    "Select the current version of the medical case.": "BR_API_CASE_VERSION",
+    "Enter a reason when the club manager assigns a trainer in place of the head trainer.": "BR_API_MANAGER_TRAINER_REASON",
     "The trainer has an overlapping training session.": "SCHED_ERROR_TRAINER",
     "The trainer does not have the required training specialty.": "SCHED_ERROR_SKILL",
     "The session falls outside staff working hours.": "SCHED_ERROR_HOURS",

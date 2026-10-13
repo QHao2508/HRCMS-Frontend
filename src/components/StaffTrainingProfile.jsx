@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { MSG, msg } from '../messages/index.js';
 import { TRAINING_TYPE } from '../constants/training.js';
 import { ROLES } from '../constants/roles.js';
@@ -11,10 +11,13 @@ import { useMutation } from '../context/useMutation.js';
 import { Field, ResourceState, MutationState } from './WorkflowUI.jsx';
 const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const dayLabels = [MSG.SCHED_SUNDAY, MSG.SCHED_MONDAY, MSG.SCHED_TUESDAY, MSG.SCHED_WEDNESDAY, MSG.SCHED_THURSDAY, MSG.SCHED_FRIDAY, MSG.SCHED_SATURDAY];
-export default function StaffTrainingProfile({ staff }) {
+export default function StaffTrainingProfile({ staff, onClose }) {
     const load = useCallback(() => getTrainingProfile(staff.id), [staff.id]);
     const resource = useRegistrationResource(load); const mutation = useMutation();
-    return <section className="surface-card"><h2>{msg(MSG.SCHED_PROFILE)}{' · '}{[staff.firstName, staff.lastName].filter(Boolean).join(' ')}</h2><p>{msg(MSG.SCHED_PROFILE_HELP)}</p><ResourceState resource={resource}/><MutationState mutation={mutation} reload={resource.reload}/>{resource.data && <ProfileForm staff={staff} data={resource.data} reload={resource.reload} mutation={mutation}/>}</section>;
+    // Form hiện ở đầu trang: cuộn tới để quản lý thấy ngay sau khi bấm nút ở dòng nhân sự.
+    const panel = useRef(null);
+    useEffect(() => { panel.current?.scrollIntoView?.({ behavior: 'smooth', block: 'start' }); }, [staff.id]);
+    return <section ref={panel} className="surface-card"><div className="d-flex justify-content-between align-items-start gap-2"><h2>{msg(MSG.SCHED_PROFILE)}{' · '}{[staff.firstName, staff.lastName].filter(Boolean).join(' ')}</h2>{onClose && <button type="button" className="btn btn-outline-secondary" onClick={onClose}>{msg(MSG.UI_CLOSE)}</button>}</div><p>{msg(MSG.SCHED_PROFILE_HELP)}</p><ResourceState resource={resource}/><MutationState mutation={mutation} reload={resource.reload}/>{resource.data && <ProfileForm staff={staff} data={resource.data} reload={resource.reload} mutation={mutation}/>}</section>;
 }
 function ProfileForm({ staff, data, reload, mutation }) {
     const [levels, setLevels] = useState(Object.fromEntries(data.specialties.map(x => [x.trainingType, x.level])));

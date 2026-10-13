@@ -1,6 +1,8 @@
 import { horseRegistrationCode } from '../../services/careUi.js';
 import { useMedicalPatientSelection } from '../../services/medicalPatientSelection.js';
 import { allMedicalPages } from '../../services/medicalValidation.js';
+import { medicalRecordChoices } from '../../services/medicalRecordChoices.js';
+import { useMedicalFollowUps } from '../../services/useMedicalFollowUps.js';
 import { getMedicalLabel, getInjuryStatusLabel } from '../../constants/medicalLabels.js';
 import { MSG, msg } from "../../messages/index.js";
 import { useEffect, useMemo, useState } from "react";
@@ -63,6 +65,8 @@ function MedicalInjury() {
     const [horses, setHorses] = useState([]);
     const [selectedHorseId, setSelectedHorseId] = useMedicalPatientSelection();
     const [records, setRecords] = useState([]);
+    const followUps = useMedicalFollowUps(selectedHorseId);
+    const caseChoices = medicalRecordChoices(records, followUps, { openOnly: true });
     const [injuries, setInjuries] = useState([]);
     const [loading, setLoading] = useState(true);
     const [loadingInjuries, setLoadingInjuries] = useState(false);
@@ -154,7 +158,7 @@ function MedicalInjury() {
         setError("");
         setSuccess("");
         const today = new Date().toISOString().slice(0, 10);
-        setForm({ ...emptyForm, medicalRecordId: records[0]?.id ?? records[0]?.medicalRecordId ?? "", injuryDate: today, reviewDate: today });
+        setForm({ ...emptyForm, medicalRecordId: caseChoices[0]?.value ?? "", injuryDate: today, reviewDate: today });
         setShowModal(true);
     };
 
@@ -348,10 +352,8 @@ function MedicalInjury() {
                                 <span>{msg(MSG.MERGED_UI_428)}</span>
                                 <select name="medicalRecordId" value={form.medicalRecordId} onChange={handleChange} required>
                                     <option value="">{msg(MSG.MERGED_UI_429)}</option>
-                                    {records.map((record) => (
-                                        <option key={record.id} value={record.id}>
-                                            {formatDate(record.examinationAt)}{msg(MSG.MERGED_UI_430)}{record.reason || record.diagnosis || msg(MSG.MEDICAL_CREATE_EXAMINATION)}
-                                        </option>
+                                    {caseChoices.map((choice) => (
+                                        <option key={choice.value} value={choice.value}>{choice.label}</option>
                                     ))}
                                 </select>
                             </label>

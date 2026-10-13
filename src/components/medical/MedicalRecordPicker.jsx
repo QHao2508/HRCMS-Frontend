@@ -2,10 +2,12 @@ import { useId } from 'react';
 import { Link } from 'react-router-dom';
 import { MSG, msg } from '../../messages/index.js';
 import { medicalRecordChoices } from '../../services/medicalRecordChoices.js';
+import { useMedicalFollowUps } from '../../services/useMedicalFollowUps.js';
 
 export default function MedicalRecordPicker({ records, horseId, value, onChange, disabled }) {
     const selectId = useId();
-    const choices = medicalRecordChoices(records);
+    const followUps = useMedicalFollowUps(horseId);
+    const choices = medicalRecordChoices(records, followUps, { openOnly: true });
     const selected = choices.find(choice => choice.value === value);
     return <div className="medical-field medical-field-full">
         <label htmlFor={selectId}>{msg(MSG.MERGED_UI_517)}</label>

@@ -46,7 +46,7 @@ export function PlanCreate() {
     /**
      * Đọc dữ liệu cần cho component qua service/API; hook resource quản lý loading, response muộn và lỗi.
      */
-    const load = useCallback(async () => ({horses:await collect(listHorses),templates:await collect(listTemplates)}),[]);
+    const load = useCallback(async () => { const [horses,templates]=await Promise.all([collect(listHorses),collect(listTemplates)]); return {horses,templates}; },[]);
     const resource = useRegistrationResource(load); const mutation = useMutation();
     /**
      * Cập nhật form theo name/value và reset lựa chọn phụ thuộc khi cần, không tự sửa dữ liệu server.
