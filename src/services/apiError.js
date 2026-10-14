@@ -27,6 +27,7 @@ export async function normalizeApiError(error) {
     const message = [details.detail, details.message, details.error?.message, details.error, details.title]
         .find((value) => typeof value === "string" && value.trim());
     error.status = error.response?.status ?? null;
+    error.businessCode = typeof details.title === "string" && details.type === `urn:horseclub:error:${details.title}` ? details.title : null;
     error.authCode = Object.values(AUTH_ERROR).includes(details.error) ? details.error : null;
     error.verificationEmail = error.authCode === AUTH_ERROR.VerificationRequired && typeof details.email === "string" ? details.email : null;
     error.traceId = details.traceId ?? null;

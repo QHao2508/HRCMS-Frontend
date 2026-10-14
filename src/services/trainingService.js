@@ -117,3 +117,7 @@ export const submitResult = (id, request) => api.post(`${path("sessions", id)}/r
  * @param request Request đã có hợp đồng; thao tác upload dùng abstraction tách khỏi HTTP.
  */
 export const evaluateSession = (id, request) => api.post(`${path("sessions", id)}/evaluation`, request).then(r => r.data);
+
+export const getDefaultTemplates = () => api.get('/api/training/templates/defaults').then(response => response.data);
+export const templateCandidates = id => api.get('/api/training/templates/' + encodeURIComponent(id) + '/trainer-candidates').then(response => response.data);
+export const assignTemplate = (id, trainerId, assigned) => api.post('/api/training/templates/' + encodeURIComponent(id) + '/assign', { trainerId, assigned }, { retryOnUnauthorized: false }).then(response => response.data);

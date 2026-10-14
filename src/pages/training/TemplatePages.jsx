@@ -1,46 +1,63 @@
-import { getEnumLabel } from "../../constants/enumLabels.js";
-import { MSG, msg } from "../../messages/index.js";
-import { INTENSITY } from "../../constants/training.js";
-import { ROLES } from "../../constants/roles.js";
-import { useMutation } from "../../context/useMutation.js";
-import { useCallback, useState } from "react";
-import { useAuth } from "../../context/useAuth.js";
-import { useRegistrationResource } from "../../context/useRegistrationResource.js";
-import { listTemplates,createTemplate,editTemplate,archiveTemplate } from "../../services/trainingService.js";
-import { PageHeading,ResourceState,Pagination,Field,MutationState } from "../../components/WorkflowUI.jsx";
-const TEMPLATE_DEFAULT = {name:"",goal:"",phase:"",distanceMetres:1000,intensity:INTENSITY.Light,surface:msg(MSG.SURFACE_SAND),frequencyPerWeek:3,notes:""};
-/**
- * Các trường controlled của giáo án mẫu, gồm mục tiêu/cường độ/tần suất và ghi chú.
- * Nhãn/thông báo lấy từ catalog; enum và dữ liệu người dùng giữ nguyên giá trị.
- * @param options0 Đối tượng destructuring: {form,onChange,disabled}. Các props/callback lấy từ caller.
- */
-export function TemplateForm({form,onChange,disabled}) { return <fieldset disabled={disabled}><div className="row g-3"><Field label={msg(MSG.TEN_GIAO_AN)} name="name" value={form.name} onChange={onChange} required maxLength={200} /><Field label={msg(MSG.MUC_TIEU)} name="goal" value={form.goal} onChange={onChange} required /><Field label={msg(MSG.GIAI_DOAN)} name="phase" value={form.phase} onChange={onChange} required /><Field label={msg(MSG.QUANG_DUONG_M)} name="distanceMetres" value={form.distanceMetres} onChange={onChange} required type="number" min={1} max={100000} step="any" /><Field label={msg(MSG.CUONG_DO)} name="intensity" value={form.intensity} onChange={onChange} options={Object.values(INTENSITY)} /><Field label={msg(MSG.MAT_SAN)} name="surface" value={form.surface} onChange={onChange} required /><Field label={msg(MSG.SO_BUOI_MOI_TUAN)} name="frequencyPerWeek" value={form.frequencyPerWeek} onChange={onChange} required type="number" min={1} max={21} /><Field label={msg(MSG.GHI_CHU)} name="notes" value={form.notes} onChange={onChange} multiline /></div></fieldset>; }
-/**
- * Tải/phân trang giáo án, mở form tạo/sửa và xác nhận lưu trữ theo role được phép.
- * Nhãn/thông báo lấy từ catalog; enum và dữ liệu người dùng giữ nguyên giá trị.
- */
+import TrainingPhaseField from '../../components/TrainingPhaseField.jsx';
+import TrainingSurfaceField from '../../components/TrainingSurfaceField.jsx';
+import { useCallback, useState } from 'react';
+import { useAuth } from '../../context/useAuth.js';
+import { useRegistrationResource } from '../../context/useRegistrationResource.js';
+import { useMutation } from '../../context/useMutation.js';
+import { MSG, msg } from '../../messages/index.js';
+import { INTENSITY } from '../../constants/training.js';
+import { ROLES } from '../../constants/roles.js';
+import { getEnumLabel } from '../../constants/enumLabels.js';
+import { listTemplates, getDefaultTemplates, createTemplate, editTemplate, archiveTemplate } from '../../services/trainingService.js';
+import { templateEditorForm, templatePayload, requiredTypes } from '../../services/templateCurriculum.js';
+import { PageHeading, ResourceState, Pagination, Field, MutationState } from '../../components/WorkflowUI.jsx';
+import TemplateCurriculumEditor from '../../components/TemplateCurriculumEditor.jsx';
+import TemplateTrainerAssignment from '../../components/TemplateTrainerAssignment.jsx';
+
+const TEMPLATE_DEFAULT = { name:'',goal:'',phase:'Base',distanceMetres:1000,intensity:INTENSITY.Light,surface:msg(MSG.SURFACE_SAND),frequencyPerWeek:3,notes:'' };
+export function TemplateForm({ form, onChange, disabled }) {
+    return <fieldset disabled={disabled}><div className="row g-3">
+        <Field label={msg(MSG.TEN_GIAO_AN)} name="name" value={form.name} onChange={onChange} required maxLength={200}/>
+        <Field label={msg(MSG.MUC_TIEU)} name="goal" value={form.goal} onChange={onChange} required/>
+        <TrainingPhaseField key={form.id || form.systemKey || "new"} value={form.phase} onChange={onChange}/>
+        <Field label={msg(MSG.QUANG_DUONG_M)} name="distanceMetres" value={form.distanceMetres} onChange={onChange} required type="number" min={1} max={100000}/>
+        <Field label={msg(MSG.CUONG_DO)} name="intensity" value={form.intensity} onChange={onChange} options={Object.values(INTENSITY)}/>
+        <TrainingSurfaceField value={form.surface} onChange={onChange}/>
+        <Field label={msg(MSG.SO_BUOI_MOI_TUAN)} name="frequencyPerWeek" value={form.frequencyPerWeek} onChange={onChange} required type="number" min={1} max={21}/>
+        <Field label={msg(MSG.GHI_CHU)} name="notes" value={form.notes} onChange={onChange} multiline/>
+        <TemplateCurriculumEditor form={templateEditorForm(form)} onChange={onChange}/>
+    </div></fieldset>;
+}
+function TemplateTable({ items, canEdit, open, assign, archive }) {
+    return <div className="table-responsive"><table className="table"><thead><tr><th>{msg(MSG.GIAO_AN)}</th><th>{msg(MSG.MUC_TIEU)}</th><th>{msg(MSG.CURRIC_REQUIREMENTS)}</th><th>{msg(MSG.BUOI_TUAN)}</th>{canEdit && <th>{msg(MSG.SUPPORT_ACTIONS)}</th>}</tr></thead>
+        <tbody>{items.map(template => <tr key={template.id}><td><strong>{template.name}</strong>{template.isSystemDefault && <span className="badge text-bg-success d-block mt-2">{msg(MSG.CURRIC_DEFAULT)}</span>}
+            </td>
+            <td>{template.goal}</td><td>{requiredTypes(template).map(getEnumLabel).join(', ') || msg(MSG.SCHED_NOT_CONFIRMED)}<div className="form-text">{msg(MSG.CURRIC_MIN_LEVEL)}{' '}{msg(MSG['SCHED_LEVEL_' + (template.minimumExpertiseLevel || 1)])}</div></td>
+            <td>{template.frequencyPerWeek}</td>{canEdit && <td><div className="inline-actions">
+                <button className="btn btn-outline-primary" onClick={() => open(template, template.isSystemDefault)}>{msg(template.isSystemDefault ? MSG.CURRIC_COPY : MSG.CHINH_SUA)}</button>
+                <button className="btn btn-primary" disabled={!requiredTypes(template).length} onClick={() => assign(template)}>{msg(MSG.CURRIC_ASSIGN)}</button>
+                {!template.isSystemDefault && <button className="btn btn-outline-danger" onClick={() => archive(template)}>{msg(MSG.LUU_TRU)}</button>}
+            </div></td>}</tr>)}</tbody></table></div>;
+}
 export function TemplateList() {
-    const {user} = useAuth();
-    const [page,setPage] = useState(1);
-    const [editing,setEditing] = useState(null);
-    const [form,setForm] = useState(TEMPLATE_DEFAULT);
-    const [confirmArchive,setConfirmArchive] = useState(null);
-    /**
-     * Đọc dữ liệu cần cho component qua service/API; hook resource quản lý loading, response muộn và lỗi.
-     */
-    const load = useCallback(() => listTemplates({page,pageSize:20}),[page]);
-    const resource = useRegistrationResource(load);
-    const mutation = useMutation();
+    const { user } = useAuth(); const [page,setPage] = useState(1); const [editing,setEditing] = useState(null);
+    const [form,setForm] = useState(() => templateEditorForm(TEMPLATE_DEFAULT)); const [confirmArchive,setConfirmArchive] = useState(null); const [assignedTemplate,setAssignedTemplate] = useState(null);
     const canEdit = user.role === ROLES.HeadTrainer;
-    /**
-     * Mở form tạo hoặc sửa bằng dữ liệu bản ghi/default, đồng thời reset trạng thái mutation trước lượt mới.
-     * @param record Bản ghi/payload do server trả hoặc giá trị dùng dựng form; không tự phát minh ID/trạng thái.
-     */
-    function open(record) { mutation.reset();setEditing(record?.id || "new");setForm(record ? Object.fromEntries(Object.keys(TEMPLATE_DEFAULT).map(k => [k,record[k] ?? TEMPLATE_DEFAULT[k]])) : TEMPLATE_DEFAULT); }
-    /**
-     * Kiểm điều kiện form rồi gọi thao tác nghiệp vụ tương ứng; hook/lock ngăn request lặp và điều hướng chỉ sau thành công.
-     * @param e Event UI/exception theo kiểu của hàm; xem nhánh xử lý trong thân hàm.
-     */
-    async function submit(e) { e.preventDefault(); const payload = {...form,distanceMetres:Number(form.distanceMetres),frequencyPerWeek:Number(form.frequencyPerWeek)}; await mutation.run(() => editing === "new" ? createTemplate(payload) : editTemplate(editing,payload),() => { setEditing(null);resource.reload(); }); }
-    return <section className="training-page"><PageHeading title={msg(MSG.GIAO_AN_HUAN_LUYEN_TIEU_CHUAN)} description={msg(MSG.KHUNG_THAM_KHAO_DE_TRAINER_XAY_DUNG_KE_HOACH_CA_NHAN_HOA)} action={canEdit && <button className="btn btn-primary" onClick={() => open(null)} disabled={mutation.pending}>{msg(MSG.TAO_GIAO_AN)}</button>} /><MutationState mutation={mutation} reload={resource.reload} />{editing && <section className="surface-card"><h2>{editing === "new" ? msg(MSG.TAO_GIAO_AN) : msg(MSG.CHINH_SUA_GIAO_AN)}</h2><form onSubmit={submit}><TemplateForm form={form} onChange={e => setForm({...form,[e.target.name]:e.target.value})} disabled={mutation.pending || mutation.uncertain} /><div className="wizard-actions"><button type="button" className="btn btn-outline-primary" disabled={mutation.pending} onClick={() => setEditing(null)}>{msg(MSG.HUY)}</button><button className="btn btn-success" disabled={mutation.pending || mutation.uncertain}>{msg(MSG.LUU_GIAO_AN)}</button></div></form></section>}<section className="surface-card"><ResourceState resource={resource} />{resource.data && <><div className="table-responsive"><table className="table"><thead><tr><th>{msg(MSG.GIAO_AN)}</th><th>{msg(MSG.MUC_TIEU)}</th><th>{msg(MSG.QUANG_DUONG)}</th><th>{msg(MSG.CUONG_DO)}</th><th>{msg(MSG.BUOI_TUAN)}</th>{canEdit && <th />}</tr></thead><tbody>{resource.data.items.map(t => <tr key={t.id}><td>{t.name}</td><td>{t.goal}</td><td>{t.distanceMetres}{' '}{msg(MSG.M)}</td><td>{getEnumLabel(t.intensity)}</td><td>{t.frequencyPerWeek}</td>{canEdit && <td><div className="inline-actions"><button className="btn btn-outline-primary" disabled={mutation.pending} onClick={() => open(t)}>{msg(MSG.CHINH_SUA)}</button><button className="btn btn-outline-danger" disabled={mutation.pending || mutation.uncertain} onClick={() => setConfirmArchive(t)}>{msg(MSG.LUU_TRU)}</button></div></td>}</tr>)}</tbody></table>{!resource.data.items.length && <p className="empty-state">{msg(MSG.CHUA_CO_GIAO_AN_TIEU_CHUAN)}</p>}</div><Pagination data={resource.data} onChange={setPage} /></>}</section>{confirmArchive && <div className="surface-card"><p>{msg(MSG.LUU_TRU_GIAO_AN)}{confirmArchive.name}{msg(MSG.CAC_PLAN_DA_TAO_VAN_DUOC_GIU_LAI)}</p><div className="inline-actions"><button className="btn btn-outline-primary" disabled={mutation.pending} onClick={() => setConfirmArchive(null)}>{msg(MSG.GIU_GIAO_AN)}</button><button className="btn btn-primary" disabled={mutation.pending || mutation.uncertain} onClick={() => mutation.run(() => archiveTemplate(confirmArchive.id),() => {setConfirmArchive(null);resource.reload();})}>{msg(MSG.XAC_NHAN_LUU_TRU)}</button></div></div>}</section>;
+    const showDefaults = [ROLES.HeadTrainer,ROLES.ClubManager].includes(user.role);
+    const load = useCallback(() => listTemplates({page,pageSize:20}),[page]);
+    const defaultLoad = useCallback(() => showDefaults ? getDefaultTemplates() : Promise.resolve([]),[showDefaults]);
+    const resource = useRegistrationResource(load, {realtime:true}); const defaults = useRegistrationResource(defaultLoad, {realtime:true}); const mutation = useMutation();
+    function open(record, copy=false) { mutation.reset();setEditing(!record || copy ? 'new' : record.id);setForm(templateEditorForm({...TEMPLATE_DEFAULT,...record})); }
+    async function submit(e) { e.preventDefault(); const payload = templatePayload(form); await mutation.run(() => editing === 'new' ? createTemplate(payload) : editTemplate(editing,payload),() => {setEditing(null);resource.reload();}); }
+    const personal = resource.data?.items.filter(template => !showDefaults || !template.isSystemDefault) || [];
+    return <section className="training-page"><PageHeading title={msg(MSG.GIAO_AN_HUAN_LUYEN_TIEU_CHUAN)} description={msg(MSG.CURRIC_PAGE_HELP)} action={canEdit && <button className="btn btn-primary" onClick={() => open(null)} disabled={mutation.pending}>{msg(MSG.TAO_GIAO_AN)}</button>}/>
+        <MutationState mutation={mutation} reload={resource.reload}/>
+        {editing && <section className="surface-card"><h2>{msg(editing === 'new' ? MSG.TAO_GIAO_AN : MSG.CHINH_SUA_GIAO_AN)}</h2><form onSubmit={submit}><TemplateForm form={form} onChange={e => setForm({...form,[e.target.name]:e.target.value})} disabled={mutation.pending || mutation.uncertain}/>
+            <div className="wizard-actions"><button type="button" className="btn btn-outline-primary" onClick={() => setEditing(null)}>{msg(MSG.HUY)}</button><button className="btn btn-success" disabled={mutation.pending || mutation.uncertain || !form.requiredTrainingTypes.length}>{msg(MSG.LUU_GIAO_AN)}</button></div></form></section>}
+        {assignedTemplate && <TemplateTrainerAssignment key={assignedTemplate.id} template={assignedTemplate} onClose={() => setAssignedTemplate(null)}/>}
+        {showDefaults && <section className="surface-card"><h2>{msg(MSG.CURRIC_DEFAULT_TITLE)}</h2><p>{msg(MSG.CURRIC_ILLUSTRATIVE)}</p><ResourceState resource={defaults}/>{defaults.data && <TemplateTable items={defaults.data} canEdit={canEdit} open={open} assign={setAssignedTemplate} archive={setConfirmArchive}/>}</section>}
+        <section className="surface-card"><h2>{msg(showDefaults ? MSG.CURRIC_CUSTOM_TITLE : MSG.CURRIC_ASSIGNED_TITLE)}</h2><ResourceState resource={resource}/>{resource.data && <><TemplateTable items={personal} canEdit={canEdit} open={open} assign={setAssignedTemplate} archive={setConfirmArchive}/>
+            {!personal.length && <p className="empty-state">{msg(MSG.CURRIC_NO_ASSIGNED)}</p>}<Pagination data={resource.data} onChange={setPage}/></>}</section>
+        {confirmArchive && <section className="surface-card"><p>{msg(MSG.LUU_TRU_GIAO_AN)}{confirmArchive.name}{msg(MSG.CAC_PLAN_DA_TAO_VAN_DUOC_GIU_LAI)}</p><div className="inline-actions"><button className="btn btn-outline-primary" onClick={() => setConfirmArchive(null)}>{msg(MSG.GIU_GIAO_AN)}</button><button className="btn btn-primary" disabled={mutation.pending || mutation.uncertain} onClick={() => mutation.run(() => archiveTemplate(confirmArchive.id),() => {setConfirmArchive(null);resource.reload();})}>{msg(MSG.XAC_NHAN_LUU_TRU)}</button></div></section>}
+    </section>;
 }

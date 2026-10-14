@@ -1,5 +1,10 @@
 import { MSG, msg } from './index.js';
 const ERROR_MESSAGES = Object.freeze({
+    "Default templates are shared reference curricula. Create a copy to customize.": "CURRIC_ERROR_READONLY",
+    "Define valid plan choices, exercise choices and required trainer specialties.": "CURRIC_ERROR_SETTINGS",
+    "Select a plan option from the template or explicitly choose Other.": "CURRIC_ERROR_PLAN",
+    "Select an exercise option from the template or explicitly choose Other.": "CURRIC_ERROR_SESSION",
+    "The template must be assigned to a trainer with all required specialties at the required level.": "CURRIC_ERROR_TRAINER",
     "This medical case is already resolved.": "BR_API_CASE_RESOLVED",
     "Select the current version of the medical case.": "BR_API_CASE_VERSION",
     "Enter a reason when the club manager assigns a trainer in place of the head trainer.": "BR_API_MANAGER_TRAINER_REASON",
