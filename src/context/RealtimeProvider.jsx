@@ -14,6 +14,7 @@ export function RealtimeProvider({ children }) {
         const generation = getSession().generation;
         const connection = new HubConnectionBuilder()
             .withUrl((import.meta.env.VITE_API_BASE_URL?.trim() || '') + '/hubs/club', {
+                withCredentials: false,
                 accessTokenFactory: async () => {
                     if (disposed || getSession().generation !== generation) throw new Error('Session changed');
                     if (getSession().expiresAt <= Date.now() + 30000) await refreshSession();

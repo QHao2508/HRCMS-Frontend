@@ -1,5 +1,7 @@
 # HRCMS-Frontend
 
+Deploy FE lên Azure Static Web Apps Free, BE Docker trên Azure Container Apps Consumption: [hướng dẫn từng bước](docs/DEPLOY_AZURE.md).
+
 **Cập nhật 07/10/2026:** đã cấu hình kết nối API local qua Vite proxy và kiểm service với SQL Server thật. Danh sách màn hình, cách chạy và phạm vi kiểm chứng ở [docs/API_INTEGRATION.md](docs/API_INTEGRATION.md). Các phần Phase bên dưới là ghi nhận triển khai theo thời điểm; kết quả live hiện tại thay thế trạng thái environment-blocked trước đây.
 
 

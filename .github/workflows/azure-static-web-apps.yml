@@ -1,0 +1,51 @@
+name: Deploy frontend to Azure
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: azure-frontend-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
+      VITE_REALTIME_ENABLED: ${{ vars.VITE_REALTIME_ENABLED || 'false' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Validate production variables
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          const origin = process.env.VITE_API_BASE_URL;
+          let url;
+          try { url = new URL(origin); } catch { throw new Error('Set repository variable VITE_API_BASE_URL to the backend HTTPS origin.'); }
+          if (url.protocol !== 'https:' || origin !== url.origin) throw new Error('VITE_API_BASE_URL must be an HTTPS origin without /api or a trailing slash.');
+          if (!['true', 'false'].includes(process.env.VITE_REALTIME_ENABLED)) throw new Error('VITE_REALTIME_ENABLED must be true or false.');
+          NODE
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - name: Deploy built frontend
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          action: upload
+          production_branch: main
+          app_location: dist
+          api_location: ''
+          output_location: ''
+          skip_app_build: true
+          skip_api_build: true

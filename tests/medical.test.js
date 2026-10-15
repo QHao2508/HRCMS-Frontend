@@ -40,8 +40,8 @@ test('separate forms with the same field name keep distinct label targets', () =
     for (const id of ids) assert.ok(html.includes(`for="${id}"`));
 });
 const supportingRoutes = [
-    ['/care/tasks', ['HorseOwner','ClubManager','Groom','Veterinarian'], 'Công việc chăm sóc'],
-    ['/care/incidents', ['ClubManager','Groom','Trainer','Veterinarian','WorkRider'], 'Sự cố'],
+    ['/care/tasks', ['HorseOwner','ClubManager','HeadTrainer','Trainer','Groom','Veterinarian'], 'Công việc chăm sóc'],
+    ['/care/incidents', ['HorseOwner','ClubManager','HeadTrainer','Groom','Trainer','Veterinarian','WorkRider'], 'Sự cố'],
     ['/care/stables', ['ClubManager','Groom'], 'Chuồng trại'],
     ['/inventory', ['ClubManager','Groom'], 'Kho vật tư'],
     ['/inventory/replenishments', ['ClubManager','Groom'], 'Yêu cầu bổ sung vật tư'],
@@ -52,7 +52,7 @@ for (const [path, allowed, title] of supportingRoutes) test(`supporting route ac
     for (const role of [...ALL_ROLES, 'Unknown']) {
         const user = { id: 'test-id', role, active: true, emailVerified: true };
         const html = renderToStaticMarkup(h(MemoryRouter, {initialEntries:[path]}, h(AuthContext.Provider, {value:{user,isAuthenticated:true,loading:false}},h(AppRoutes))));
-        assert.equal(html.includes(`<h1>${title}</h1>`), allowed.includes(role));
+        assert.equal(html.includes(`<h1>${title}</h1>`), allowed.includes(role), `${role}: ${path}`);
     }
 });
 for(const [name,suffix] of [['getMedicalRecords','records'],['getMedicalInjuries','injuries'],['getMedicalTreatments','treatments'],['getMedicalRestrictions','restrictions'],['getMedicalFollowUps','follow-ups']])test(`${name} preserves scoped paging and encodes horse ID`,async()=>{
