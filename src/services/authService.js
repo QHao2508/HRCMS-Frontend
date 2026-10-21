@@ -1,5 +1,6 @@
 import { MSG, msg } from "../messages/index.js";
 import api from "./api.js";
+import { isTransientApiError } from "./apiError.js";
 import { clearSession, getSession, setCurrentUser, setTokens } from "./sessionStore.js";
 
 /**
@@ -32,8 +33,28 @@ export async function login(credentials) {
 
 let restorationPromise = null;
 
+// Waits between /me retries on transient failures (~23 s in total), long enough for a cold backend and a resuming SQL database.
+const RESTORE_RETRY_DELAYS_MS = [500, 1500, 3000, 6000, 12000];
+const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+
 /**
- * Khôi phục phiên từ token bằng /me và dùng chung promise khi StrictMode gọi lặp; lỗi thì xóa session.
+ * Lấy /me khi khởi động; thử lại khi lỗi tạm thời (429/5xx/mạng) thay vì đăng xuất, dừng nếu phiên đã đổi.
+ * @param generation Số thế hệ phiên cần khôi phục.
+ */
+async function fetchCurrentUserWithRetry(generation) {
+    for (let attempt = 0; ; attempt++) {
+        try {
+            return await fetchCurrentUser(generation);
+        } catch (error) {
+            if (!isTransientApiError(error) || attempt >= RESTORE_RETRY_DELAYS_MS.length || getSession().generation !== generation) throw error;
+            await wait(RESTORE_RETRY_DELAYS_MS[attempt]);
+        }
+    }
+}
+
+/**
+ * Khôi phục phiên từ token bằng /me và dùng chung promise khi StrictMode gọi lặp.
+ * Lỗi tạm thời được thử lại; chỉ lỗi xác thực (hoặc hết lượt thử) mới xóa session.
  */
 export function restoreSession() {
     if (restorationPromise) return restorationPromise;
@@ -42,7 +63,7 @@ export function restoreSession() {
     // Share startup work across React StrictMode's repeated effect setup.
     restorationPromise = (async () => {
         try {
-            if (accessToken) await fetchCurrentUser(generation);
+            if (accessToken) await fetchCurrentUserWithRetry(generation);
             else clearSession(generation);
         } catch {
             clearSession(generation);

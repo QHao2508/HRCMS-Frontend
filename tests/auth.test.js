@@ -284,3 +284,33 @@ scenario("errors normalize detail/message/title/error, blobs, and empty bodies",
     assert.equal(error.traceId, 'trace'); assert.equal(error.referenceId, 'record');
     assert.deepEqual(error.validationErrors, { name: ['Thông tin nhập không hợp lệ. Vui lòng kiểm tra lại.'] });
 `);
+
+scenario("startup retries /me after a transient 429 instead of signing out", `
+    const calls = []; let attempts = 0;
+    api.defaults.adapter = async config => { calls.push(config.url); return attempts++ === 0 ? reject(config, 429) : reply(config, user); };
+    await auth.restoreSession();
+    assert.deepEqual(calls, ['/api/auth/me', '/api/auth/me']);
+    assert.equal(store.getSession().status, 'authenticated');
+`, savedSession);
+
+scenario("startup keeps the session when refresh hits a transient 503 and recovers", `
+    const calls = []; let refreshes = 0;
+    api.defaults.adapter = async config => {
+        calls.push(config.url);
+        if (config.url.endsWith('/refresh')) return refreshes++ === 0 ? reject(config, 503) : reply(config, renewed);
+        if (config.headers.get('Authorization') === 'Bearer opaque-access') return reject(config, 401);
+        return reply(config, user);
+    };
+    await auth.restoreSession();
+    assert.deepEqual(calls, ['/api/auth/me', '/api/auth/refresh', '/api/auth/me', '/api/auth/refresh', '/api/auth/me']);
+    assert.equal(store.getSession().status, 'authenticated');
+    assert.equal(store.getSession().refreshToken, renewed.refreshToken);
+`, savedSession);
+
+scenario("startup forbidden /me signs out without retrying", `
+    const calls = [];
+    api.defaults.adapter = async config => { calls.push(config.url); return reject(config, 403); };
+    await auth.restoreSession();
+    assert.deepEqual(calls, ['/api/auth/me']);
+    assert.equal(store.getSession().status, 'anonymous');
+`, savedSession);

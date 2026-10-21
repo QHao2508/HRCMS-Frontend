@@ -1,6 +1,6 @@
 import { MSG, msg } from "../messages/index.js";
 import axios from "axios";
-import { normalizeApiError } from "./apiError.js";
+import { isTransientApiError, normalizeApiError } from "./apiError.js";
 import { assertCurrentSession, clearSession, getSession, setTokens } from "./sessionStore.js";
 
 const api = axios.create({
@@ -57,7 +57,8 @@ export function refreshSession() {
             setTokens(data, generation);
             return getSession().accessToken;
         } catch (error) {
-            clearSession(generation);
+            // Keep the session on 429/5xx/network failures; only a rejected refresh token ends it.
+            if (!isTransientApiError(error)) clearSession(generation);
             throw error;
         } finally {
             if (refreshPromise === pending) refreshPromise = null;

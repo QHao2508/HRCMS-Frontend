@@ -12,6 +12,17 @@ const statusMessages = {
 };
 
 /**
+ * Lỗi tạm thời (408/429/5xx, timeout, mất mạng, backend/SQL đang khởi động) có thể thử lại và không có nghĩa phiên đăng nhập hết hiệu lực.
+ * @param error Lỗi HTTP/network, đã hoặc chưa qua normalizeApiError.
+ */
+export function isTransientApiError(error) {
+    const status = error?.status ?? error?.response?.status ?? null;
+    if (status != null) return status === 408 || status === 429 || status >= 500;
+    // No HTTP status: only axios transport failures (timeout, offline, cold start) are transient.
+    return Boolean(error?.isAxiosError);
+}
+
+/**
  * Chuẩn hóa JSON/blob/lỗi mạng thành thông báo tiếng Việt, giữ status/trace/reference và mã auth có cấu trúc cho điều hướng.
  * Nhãn/thông báo lấy từ catalog; enum và dữ liệu người dùng giữ nguyên giá trị.
  * @param error Lỗi từ HTTP/network/ghi dữ liệu cần chuẩn hóa hoặc trình bày an toàn.
