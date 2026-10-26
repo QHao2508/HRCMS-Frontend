@@ -14,7 +14,12 @@ function fixture(records = [item('one'), item('two')]) {
             const list = rows.filter(row => !params.unread || !row.read);
             return response(list.slice((params.page - 1) * params.pageSize, params.page * params.pageSize).map(row => ({ ...row })), list.length);
         },
-        async post(url) { requests.push({ method: 'post', url }); rows.find(row => row.id === decodeURIComponent(url.split('/')[3])).read = true; return { status: 204 }; },
+        async post(url) {
+            requests.push({ method: 'post', url });
+            if (url === '/api/notifications/read-all') rows.forEach(row => { row.read = true; });
+            else rows.find(row => row.id === decodeURIComponent(url.split('/')[3])).read = true;
+            return { status: 204 };
+        },
     };
     return { client, requests, rows };
 }
@@ -134,4 +139,61 @@ test('S5 missing/invalid presentation data has safe catalog fallbacks', () => {
 test('S5 time uses Vietnam timezone and missing/invalid values never become fabricated dates', () => {
     const time = notificationTime('2026-10-21T08:30:00Z'); assert.ok(time.includes('15:30')); assert.ok(time.includes('21/10/2026'));
     for (const value of [null, undefined, '', ' ', 'not-a-date', 0]) assert.equal(notificationTime(value), null);
+});
+
+test('read-all covers unseen pages, waits for acknowledgement and blocks overlapping mutations', async () => {
+    const f = fixture(Array.from({ length: 25 }, (_, i) => item('bulk-' + i)));
+    const wait = deferred(), post = f.client.post;
+    f.client.post = async url => { await wait.promise; return post(url); };
+    const feed = createNotificationFeed(f.client); await feed.start(); await feed.goToPage(2);
+    const operation = feed.readAll();
+    assert.equal(feed.getSnapshot().markAllPending, true);
+    assert.equal(feed.getSnapshot().unreadTotal, 25);
+    assert.equal(await feed.readAll(), false); assert.equal(await feed.read('bulk-10'), false);
+    wait.resolve(); assert.equal(await operation, true);
+    assert.equal(feed.getSnapshot().page, 1); assert.equal(feed.getSnapshot().unreadTotal, 0);
+    assert.deepEqual(feed.getSnapshot().items, []); assert.equal(feed.getSnapshot().markAllPending, false);
+    assert.equal(f.requests.filter(r => r.method === 'post').length, 1);
+    assert.equal(await feed.readAll(), false);
+});
+
+test('read-all preserves All view and refetches notifications arriving after commit', async () => {
+    const f = fixture([item('old'), item('seen', true)]), post = f.client.post;
+    f.client.post = async url => { const result = await post(url); f.rows.push(item('arrived-later')); return result; };
+    const feed = createNotificationFeed(f.client); await feed.start(); await feed.changeView('all');
+    await feed.readAll();
+    assert.equal(feed.getSnapshot().view, 'all'); assert.equal(feed.getSnapshot().total, 3);
+    assert.equal(feed.getSnapshot().items.find(r => r.id === 'old').read, true);
+    assert.equal(feed.getSnapshot().unreadTotal, 1);
+});
+
+test('failed read-all keeps data unchanged and can be retried explicitly', async () => {
+    const f = fixture(), post = f.client.post;
+    f.client.post = async () => { throw new Error('network failure'); };
+    const feed = createNotificationFeed(f.client); await feed.start();
+    assert.equal(await feed.readAll(), false);
+    assert.equal(feed.getSnapshot().markAllError, true); assert.equal(feed.getSnapshot().markAllPending, false);
+    assert.equal(feed.getSnapshot().unreadTotal, 2); assert.equal(feed.getSnapshot().items[0].read, false);
+    assert.equal(feed.getSnapshot().notice, false);
+    f.client.post = post; assert.equal(await feed.readAll(), true);
+    assert.equal(feed.getSnapshot().markAllError, false);
+});
+
+test('late bulk response after a user-scope disposal cannot affect the next session', async () => {
+    const f = fixture(), wait = deferred(); let signals = 0;
+    f.client.post = () => wait.promise;
+    const feed = createNotificationFeed(f.client, () => signals++); await feed.start();
+    const operation = feed.readAll(); feed.stop(); wait.resolve({ status: 204 });
+    assert.equal(await operation, false); assert.equal(signals, 0);
+    assert.equal(feed.getSnapshot().markAllPending, false); assert.equal(feed.getSnapshot().unreadTotal, null);
+});
+
+test('refresh reconciles a bulk timeout when the server actually completed the update', async () => {
+    const f = fixture(), post = f.client.post;
+    f.client.post = async url => { await post(url); throw new Error('acknowledgement lost'); };
+    const feed = createNotificationFeed(f.client); await feed.start();
+    assert.equal(await feed.readAll(), false); assert.equal(feed.getSnapshot().markAllError, true);
+    await feed.refresh();
+    assert.equal(feed.getSnapshot().unreadTotal, 0); assert.equal(feed.getSnapshot().markAllError, false);
+    assert.equal(f.requests.filter(r => r.method === 'post').length, 1);
 });

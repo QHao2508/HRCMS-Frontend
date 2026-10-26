@@ -1,7 +1,8 @@
 // Per-mounted-user feed. No cached notification data is shared between sessions.
 export function createNotificationFeed(client, onRead = () => {}) {
     const initial = () => ({ view: 'unread', page: 1, items: [], total: 0, unreadTotal: null,
-        loading: true, error: false, pendingIds: [], errors: {}, blockedIds: [], notice: false });
+        loading: true, error: false, pendingIds: [], errors: {}, blockedIds: [], notice: false,
+        markAllPending: false, markAllError: false });
     let state = initial();
     let alive = false, sequence = 0, lifetime = 0;
     const listeners = new Set(), pending = new Set(), blocked = new Set();
@@ -24,7 +25,8 @@ export function createNotificationFeed(client, onRead = () => {}) {
                 if (typeof item.read === 'boolean' && (blocked.has(item.id) || item.read)) { blocked.delete(item.id); delete errors[item.id]; }
             }
             publish({ items: data.items, total: data.total, unreadTotal: unread.data.total,
-                loading: false, error: false, errors, blockedIds: [...blocked] });
+                loading: false, error: false, errors, blockedIds: [...blocked],
+                markAllError: unread.data.total === 0 ? false : state.markAllError });
             return true;
         } catch {
             if (alive && request === sequence) publish({ loading: false, error: true, unreadTotal: null });
@@ -32,7 +34,7 @@ export function createNotificationFeed(client, onRead = () => {}) {
         }
     }
     async function read(id) {
-        if (!alive || pending.has(id) || blocked.has(id) || !state.items.some(item => item.id === id && item.read === false)) return false;
+        if (!alive || state.markAllPending || pending.has(id) || blocked.has(id) || !state.items.some(item => item.id === id && item.read === false)) return false;
         const operation = lifetime;
         pending.add(id);
         const errors = { ...state.errors }; delete errors[id];
@@ -55,12 +57,33 @@ export function createNotificationFeed(client, onRead = () => {}) {
             if (operation === lifetime) { pending.delete(id); if (alive) publish({ pendingIds: [...pending] }); }
         }
     }
+    async function readAll() {
+        if (!alive || state.markAllPending || state.loading || state.error || !(state.unreadTotal > 0) || pending.size) return false;
+        const operation = lifetime;
+        publish({ markAllPending: true, markAllError: false, notice: false });
+        try {
+            await client.post('/api/notifications/read-all');
+            if (!alive || operation !== lifetime) return false;
+            blocked.clear();
+            publish({ page: 1, errors: {}, blockedIds: [] });
+            // Refetch rather than inventing zero: new notifications can arrive after the server commits.
+            await refresh();
+            if (!alive || operation !== lifetime) return false;
+            publish({ notice: true }); onRead();
+            return true;
+        } catch {
+            if (alive && operation === lifetime) publish({ markAllError: true });
+            return false;
+        } finally {
+            if (alive && operation === lifetime) publish({ markAllPending: false });
+        }
+    }
     return {
         subscribe(listener) { listeners.add(listener); return () => listeners.delete(listener); },
         getSnapshot: () => state,
         start() { alive = true; lifetime++; return refresh(); },
         stop() { alive = false; lifetime++; sequence++; pending.clear(); blocked.clear(); publish(initial()); },
-        refresh, read,
+        refresh, read, readAll,
         changeView(view) {
             if (!['unread', 'all'].includes(view) || view === state.view) return;
             publish({ view, page: 1, total: 0, notice: false }); return refresh();

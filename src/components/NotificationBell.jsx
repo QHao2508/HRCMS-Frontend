@@ -11,7 +11,7 @@ const PAGE_SIZE = 10;
 
 /**
  * Chuông thông báo. Bấm vào một thông báo sẽ ghi nhận đã xem (chờ server xác nhận) rồi mở màn hình liên quan,
- * nên không có nút hay chữ "đã đọc" riêng; thông báo mới chỉ được đánh dấu bằng chấm màu.
+ * thông báo mới được đánh dấu bằng chấm màu, có thể đánh dấu tất cả bằng thao tác chung.
  */
 export default function NotificationBell() {
     const { state, feed } = useNotifications();
@@ -71,7 +71,10 @@ export function NotificationPanel({ state, feed, onClose, onOpenItem = () => {} 
         <div className="notification-toolbar"><div className="notification-filters" role="group" aria-label={msg(MSG.NOTIF_FILTER)}>
             <button type="button" className={'btn btn-sm ' + (state.view === 'unread' ? 'btn-primary' : 'btn-outline-primary')} aria-pressed={state.view === 'unread'} onClick={() => void feed.changeView('unread')}>{msg(MSG.NOTIF_FILTER_NEW)}</button>
             <button type="button" className={'btn btn-sm ' + (state.view === 'all' ? 'btn-primary' : 'btn-outline-primary')} aria-pressed={state.view === 'all'} onClick={() => void feed.changeView('all')}>{msg(MSG.TAT_CA)}</button>
-        </div><button type="button" className="btn btn-sm btn-outline-secondary" disabled={state.loading} onClick={() => void feed.refresh()}>{msg(MSG.TAI_LAI)}</button></div>
+        </div><button type="button" className="btn btn-sm btn-outline-secondary" disabled={state.loading} onClick={() => void feed.refresh()}>{msg(MSG.TAI_LAI)}</button>
+            <button type="button" className="btn btn-sm btn-outline-primary notification-mark-all" disabled={state.loading || state.error || state.markAllPending || !(state.unreadTotal > 0) || state.pendingIds.length > 0} aria-busy={Boolean(state.markAllPending)} onClick={() => void act(() => feed.readAll())}>{msg(state.markAllPending ? MSG.NOTIF_MARK_ALL_PENDING : MSG.NOTIF_MARK_ALL)}</button>
+        </div>
+        {state.markAllError && <p role="alert" className="notification-bulk-error">{msg(MSG.NOTIF_MARK_ALL_FAILED)}</p>}
         <div className="notification-scroll" aria-busy={state.loading}>
             {state.loading && <p role="status" className="notification-state">{msg(MSG.NOTIF_LOADING)}</p>}
             {state.error && <p role="alert" className="notification-state">{msg(MSG.NOTIFICATION_LOAD_FAILED)}</p>}
@@ -82,7 +85,7 @@ export function NotificationPanel({ state, feed, onClose, onOpenItem = () => {} 
                 const subject = notificationSubject(item);
                 const exact = notificationTime(item.createdAt);
                 return <li key={item.id}>
-                    <button type="button" className={'notification-item' + (isNew ? ' is-new' : '')} disabled={pending} aria-busy={pending} onClick={() => void onOpenItem(item)}>
+                    <button type="button" className={'notification-item' + (isNew ? ' is-new' : '')} disabled={pending || state.markAllPending} aria-busy={pending} onClick={() => void onOpenItem(item)}>
                         <span className="notification-dot" aria-hidden="true"/>
                         <span className="notification-body">
                             {isNew && <span className="visually-hidden">{msg(MSG.NOTIFICATION_NEW_MARK)}</span>}

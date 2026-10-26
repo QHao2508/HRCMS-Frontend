@@ -1,5 +1,8 @@
 // Message key enum, independent of displayed content.
 export const MSG = Object.freeze({
+    "NOTIF_MARK_ALL": "NOTIF_MARK_ALL",
+    "NOTIF_MARK_ALL_PENDING": "NOTIF_MARK_ALL_PENDING",
+    "NOTIF_MARK_ALL_FAILED": "NOTIF_MARK_ALL_FAILED",
     "NOTIF_EMPTY_NEW": "NOTIF_EMPTY_NEW",
     "NOTIF_FILTER_NEW": "NOTIF_FILTER_NEW",
     "NOTIF_FILTER": "NOTIF_FILTER",

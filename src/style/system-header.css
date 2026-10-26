@@ -1,17 +1,17 @@
-.system-header { background: #faf7ef; color: #30281f; border-bottom: 1px solid #d4c6b3; font-family: 'HRCMS Manrope', Arial, sans-serif; font-size: 14px; }
+.system-header { background: #faf7ef; color: #30281f; border-bottom: 1px solid #d4c6b3; font-family: var(--hc-font-body); font-size: var(--hc-font-size-1); }
 .system-header-inner { width: min(1600px, calc(100% - 48px)); min-height: 90px; margin-inline: auto; display: flex; align-items: center; gap: 24px; }
-.system-header .system-brand { display: inline-flex; align-items: center; gap: 12px; flex-shrink: 0; font: 700 24px/1.2 'HRCMS Lora', Georgia, serif; color: #301c15; text-decoration: none; }
+.system-header .system-brand { display: inline-flex; align-items: center; gap: 12px; flex-shrink: 0; font: 700 var(--hc-font-size-4)/1.2 var(--hc-font-heading); color: #301c15; text-decoration: none; }
 .system-header .brand-crest { width: 52px; height: 50px; }
-.system-portal-title { margin-left: auto; color: #794629; font-size: 12px; font-weight: 700; letter-spacing: .06em; }
+.system-portal-title { margin-left: auto; color: #794629; font-size: var(--hc-font-size-1); font-weight: 700; letter-spacing: .06em; }
 .system-account-controls { margin-left: auto; display: flex; align-items: center; gap: 16px; min-width: 0; }
 .system-account { display: grid; max-width: 240px; overflow-wrap: anywhere; font-weight: 600; }
-.system-account small { font-size: 12px; color: #655a4e; font-weight: 400; }
+.system-account small { font-size: var(--hc-font-size-1); color: #655a4e; font-weight: 400; }
 .system-header .system-dashboard-link { color: #794629; text-decoration: none; font-weight: 600; }
-.system-header .btn { font-family: inherit; font-size: 14px; }
+.system-header .btn { font-family: inherit; font-size: var(--hc-font-size-1); }
 @media (max-width: 1100px) { .system-header:has(.system-account-controls) .system-portal-title { display: none; } }
 @media (max-width: 600px) {
     .system-header-inner { width: calc(100% - 32px); min-height: 78px; flex-wrap: wrap; gap: 12px; padding-block: 14px; }
-    .system-portal-title { font-size: 10px; max-width: 150px; text-align: right; }
+    .system-portal-title { font-size: var(--hc-font-size-1); max-width: 150px; text-align: right; }
     .system-account-controls { width: 100%; justify-content: flex-end; gap: 12px; }
     .system-account { margin-right: auto; max-width: 45%; }
     .system-dashboard-link { display: none; }

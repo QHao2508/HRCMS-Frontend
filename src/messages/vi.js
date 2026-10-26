@@ -1,5 +1,8 @@
 // Vietnamese display text only. API values belong in constants/.
 export const VI = Object.freeze({
+    "NOTIF_MARK_ALL": "Đánh dấu tất cả đã đọc",
+    "NOTIF_MARK_ALL_PENDING": "Đang đánh dấu tất cả…",
+    "NOTIF_MARK_ALL_FAILED": "Chưa thể đánh dấu tất cả đã đọc. Hãy tải lại để kiểm tra và thử lại.",
     "NOTIF_EMPTY_NEW": "Không có thông báo mới.",
     "NOTIF_FILTER_NEW": "Mới",
     "NOTIF_FILTER": "Lọc thông báo",

@@ -16,7 +16,7 @@ before(async () => {
         transform(code, id) { if (id.replaceAll('\\', '/').includes('/src/')) return code.replaceAll('"react/jsx-dev-runtime"', '"virtual:s5-jsx"'); },
         resolveId(source) { if (source === 'virtual:s5-jsx') return '\0' + source; },
         load(id) {
-            if (id.replaceAll('\\', '/').endsWith('/src/context/useNotifications.js')) return `export function useNotifications(){return {state:globalThis.__notifUI.state,feed:{refresh(){globalThis.__notifUI.calls.push('refresh')},read(id){globalThis.__notifUI.calls.push(['read',id])},changeView(view){globalThis.__notifUI.calls.push(['view',view])},goToPage(page){globalThis.__notifUI.calls.push(['page',page])}}}}`;
+            if (id.replaceAll('\\', '/').endsWith('/src/context/useNotifications.js')) return `export function useNotifications(){return {state:globalThis.__notifUI.state,feed:{readAll(){globalThis.__notifUI.calls.push('readAll')},refresh(){globalThis.__notifUI.calls.push('refresh')},read(id){globalThis.__notifUI.calls.push(['read',id])},changeView(view){globalThis.__notifUI.calls.push(['view',view])},goToPage(page){globalThis.__notifUI.calls.push(['page',page])}}}}`;
             if (id === '\0virtual:s5-jsx') return `import {jsxDEV as original} from 'react/jsx-dev-runtime';export {Fragment} from 'react/jsx-dev-runtime';export function jsxDEV(type,props,...rest){if(type==='button')globalThis.__notifUI.buttons.push(props);return original(type,props,...rest)}`;
         },
     }, react()], server: { middlewareMode: true, hmr: false, ws: false }, appType: 'custom', logLevel: 'error' });
@@ -24,15 +24,30 @@ before(async () => {
 });
 beforeEach(() => { globalThis.__notifUI = { state: { ...ready }, calls: [], buttons: [] }; });
 after(async () => { await server?.close(); delete globalThis.__notifUI; });
-function render(state = {}) { globalThis.__notifUI.state = { ...ready, ...state }; return renderToStaticMarkup(h(Panel, { state: globalThis.__notifUI.state, feed: { read(id) { globalThis.__notifUI.calls.push(['read', id]); }, refresh() { globalThis.__notifUI.calls.push('refresh'); }, changeView(view) { globalThis.__notifUI.calls.push(['view', view]); }, goToPage(page) { globalThis.__notifUI.calls.push(['page', page]); } }, onClose() {}, onOpenItem(item) { globalThis.__notifUI.calls.push(['open', item.id]); } })); }
+function render(state = {}) { globalThis.__notifUI.state = { ...ready, ...state }; return renderToStaticMarkup(h(Panel, { state: globalThis.__notifUI.state, feed: { readAll() { globalThis.__notifUI.calls.push('readAll'); }, read(id) { globalThis.__notifUI.calls.push(['read', id]); }, refresh() { globalThis.__notifUI.calls.push('refresh'); }, changeView(view) { globalThis.__notifUI.calls.push(['view', view]); }, goToPage(page) { globalThis.__notifUI.calls.push(['page', page]); } }, onClose() {}, onOpenItem(item) { globalThis.__notifUI.calls.push(['open', item.id]); } })); }
 const itemButton = () => globalThis.__notifUI.buttons.find(b => String(b.className).startsWith('notification-item'));
 const button = label => globalThis.__notifUI.buttons.find(b => b.children === label);
+
+test('bulk-read button invokes the feed and disables for loading, empty, error or pending states', async () => {
+    render(); assert.equal(button(msg(MSG.NOTIF_MARK_ALL)).disabled, false);
+    await button(msg(MSG.NOTIF_MARK_ALL)).onClick();
+    assert.deepEqual(globalThis.__notifUI.calls, ['readAll']);
+    for (const state of [{ loading: true }, { unreadTotal: null }, { unreadTotal: 0 }, { error: true }, { pendingIds: ['fixture'] }]) {
+        globalThis.__notifUI.buttons = []; render(state);
+        assert.equal(button(msg(MSG.NOTIF_MARK_ALL)).disabled, true);
+    }
+    globalThis.__notifUI.buttons = []; render({ markAllPending: true });
+    assert.equal(button(msg(MSG.NOTIF_MARK_ALL_PENDING)).disabled, true);
+    assert.equal(itemButton().disabled, true);
+    assert.ok(render({ markAllError: true }).includes(msg(MSG.NOTIF_MARK_ALL_FAILED)));
+});
 test('S5 bell has real loading, never empty or a fabricated zero while GET is pending', () => {
     const html = render({ items: [], unreadTotal: null, total: 0, loading: true });
     assert.ok(html.includes(msg(MSG.NOTIF_LOADING))); assert.doesNotMatch(html, /Không có thông báo mới|Chưa có thông báo nào/);
     assert.match(html, /aria-busy="true"/);
     const bell = renderToStaticMarkup(h(MemoryRouter, null, h(Bell)));
-    assert.ok(bell.includes(msg(MSG.SYMBOL_ELLIPSIS)));
+    assert.ok(bell.includes(`<span class="notification-count is-unknown" aria-hidden="true">${msg(MSG.SYMBOL_ELLIPSIS)}</span>`));
+    assert.doesNotMatch(bell, /<span class="notification-count[^"]*"[^>]*>0<\/span>/);
 });
 test('S5 bell keeps accessible native summary and shows the unread total from the server', () => {
     globalThis.__notifUI.state = { ...ready, unreadTotal: 51 };
@@ -41,9 +56,10 @@ test('S5 bell keeps accessible native summary and shows the unread total from th
     assert.ok(bell.includes('>51</span>')); assert.doesNotMatch(bell, /notification-panel/);
     assert.ok(render({ unreadTotal: 51 }).includes(msg(MSG.NOTIFICATION_NEW_COUNT, { count: 51 })));
 });
-test('S5 panel never shows a separate read action or read/unread wording; clicking a row opens it', () => {
+test('S5 only the bulk action uses read wording; clicking a row opens it', () => {
     const html = render({ view: 'all', items: [{ ...row, id: 'seen', read: true }, row], total: 2, unreadTotal: 1 });
-    assert.doesNotMatch(html, /đã đọc|chưa đọc|Đã đọc|Chưa đọc/);
+    assert.equal(html.split(msg(MSG.NOTIF_MARK_ALL)).length - 1, 1);
+    assert.doesNotMatch(html.replace(msg(MSG.NOTIF_MARK_ALL), ''), /đã đọc|chưa đọc|Đã đọc|Chưa đọc/);
     assert.match(html, /notification-item is-new/); assert.equal((html.match(/class="notification-item"/g) || []).length, 1);
     assert.ok(html.includes('Thần Phong')); assert.ok(html.includes(msg(MSG.NOTIFICATION_NEW_MARK)));
     assert.match(html, /datetime="2026-10-21T08:30:00Z"/i); assert.ok(html.includes('15:30'));
