@@ -51,7 +51,7 @@ export default function NotificationBell() {
     }}>
         <summary ref={trigger} className="notification-trigger" aria-label={unread == null ? msg(MSG.NOTIF_TITLE) : msg(MSG.NOTIFICATION_BELL_LABEL, { count: unread })}>
             <Bell size={20} aria-hidden="true"/>
-            {unread == null ? <span className="notification-count is-unknown" aria-hidden="true">…</span>
+            {unread == null ? <span className="notification-count is-unknown" aria-hidden="true">{msg(MSG.SYMBOL_ELLIPSIS)}</span>
                 : unread > 0 && <span className="notification-count" aria-hidden="true">{unread > 99 ? '99+' : unread}</span>}
         </summary>
         {open && <NotificationPanel state={state} feed={feed} onClose={close} onOpenItem={openItem}/>}
