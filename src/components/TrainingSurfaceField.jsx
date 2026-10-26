@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Field } from './WorkflowUI.jsx';
 import { MSG, msg } from '../messages/index.js';
-const surfaces = ['Cát', 'Cỏ', 'Đất', 'Đường đua tổng hợp'];
+import { TRAINING_SURFACE } from '../constants/training.js';
+const surfaces = Object.values(TRAINING_SURFACE);
 export default function TrainingSurfaceField({ value, onChange, name = 'surface' }) {
     const [custom, setCustom] = useState(false);
     const isOther = custom || (!!value && !surfaces.includes(value));

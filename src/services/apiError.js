@@ -1,5 +1,5 @@
 import { AUTH_ERROR } from "../constants/auth.js";
-import { backendErrorMessage } from "../messages/backendErrors.js";
+import { serverMessage } from "../messages/serverMessages.js";
 import { MSG, msg } from "../messages/index.js";
 const statusMessages = {
     400: msg(MSG.PLEASE_CHECK_THE_SUBMITTED_INFORMATION),
@@ -23,7 +23,7 @@ export function isTransientApiError(error) {
 }
 
 /**
- * Chuẩn hóa JSON/blob/lỗi mạng thành thông báo tiếng Việt, giữ status/trace/reference và mã auth có cấu trúc cho điều hướng.
+ * Chuẩn hóa JSON/blob/lỗi mạng thành thông báo tiếng Việt theo messageKey/args của Backend, giữ status/trace/reference và mã auth có cấu trúc cho điều hướng.
  * Nhãn/thông báo lấy từ catalog; enum và dữ liệu người dùng giữ nguyên giá trị.
  * @param error Lỗi từ HTTP/network/ghi dữ liệu cần chuẩn hóa hoặc trình bày an toàn.
  */
@@ -44,14 +44,17 @@ export async function normalizeApiError(error) {
     error.traceId = details.traceId ?? null;
     error.referenceId = details.referenceId ?? null;
     error.serverMessage = message ?? null;
+    error.messageKey = typeof details.messageKey === "string" ? details.messageKey : null;
+    error.messageArgs = Array.isArray(details.args) ? details.args : [];
+    // Lỗi theo trường (nếu có) luôn hiển thị câu chung; không đưa câu tiếng Anh của server lên giao diện.
     error.validationErrors = details.errors && typeof details.errors === "object" ? Object.fromEntries(
-        Object.entries(details.errors).map(([field, messages]) => [field, (Array.isArray(messages) ? messages : [messages]).map(value => backendErrorMessage(value, msg(MSG.API_INVALID_FIELD)))])
+        Object.entries(details.errors).map(([field, messages]) => [field, (Array.isArray(messages) ? messages : [messages]).map(() => msg(MSG.API_INVALID_FIELD))])
     ) : null;
     error.message = details.error === AUTH_ERROR.InvalidCredentials
         ? msg(MSG.TEN_DANG_NHAP_EMAIL_HOAC_MAT_KHAU_KHONG_DUNG)
         : error.authCode === AUTH_ERROR.VerificationRequired ? msg(MSG.ACCOUNT_VERIFICATION_REQUIRED)
         : error.authCode === AUTH_ERROR.RegistrationExpired ? msg(MSG.ACCOUNT_REGISTRATION_EXPIRED)
-        : backendErrorMessage(message, null) || statusMessages[error.status]
+        : serverMessage(error.messageKey, error.messageArgs, null) || statusMessages[error.status]
             || (error.status ? msg(MSG.THE_SERVER_COULD_NOT_COMPLETE_THE_REQUEST_PLEASE_TRY_AGAIN)
                 : error.code === "ECONNABORTED" ? msg(MSG.THE_REQUEST_TIMED_OUT_PLEASE_TRY_AGAIN)
                     : msg(MSG.UNABLE_TO_REACH_THE_SERVER_CHECK_YOUR_CONNECTION_AND_TRY_AGAIN));

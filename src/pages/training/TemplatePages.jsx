@@ -5,7 +5,7 @@ import { useAuth } from '../../context/useAuth.js';
 import { useRegistrationResource } from '../../context/useRegistrationResource.js';
 import { useMutation } from '../../context/useMutation.js';
 import { MSG, msg } from '../../messages/index.js';
-import { INTENSITY } from '../../constants/training.js';
+import { INTENSITY, TRAINING_SURFACE } from '../../constants/training.js';
 import { ROLES } from '../../constants/roles.js';
 import { getEnumLabel } from '../../constants/enumLabels.js';
 import { listTemplates, getDefaultTemplates, createTemplate, editTemplate, archiveTemplate } from '../../services/trainingService.js';
@@ -14,7 +14,7 @@ import { PageHeading, ResourceState, Pagination, Field, MutationState } from '..
 import TemplateCurriculumEditor from '../../components/TemplateCurriculumEditor.jsx';
 import TemplateTrainerAssignment from '../../components/TemplateTrainerAssignment.jsx';
 
-const TEMPLATE_DEFAULT = { name:'',goal:'',phase:'Base',distanceMetres:1000,intensity:INTENSITY.Light,surface:msg(MSG.SURFACE_SAND),frequencyPerWeek:3,notes:'' };
+const TEMPLATE_DEFAULT = { name:'',goal:'',phase:'Base',distanceMetres:1000,intensity:INTENSITY.Light,surface:TRAINING_SURFACE.Sand,frequencyPerWeek:3,notes:'' };
 export function TemplateForm({ form, onChange, disabled }) {
     return <fieldset disabled={disabled}><div className="row g-3">
         <Field label={msg(MSG.TEN_GIAO_AN)} name="name" value={form.name} onChange={onChange} required maxLength={200}/>

@@ -75,7 +75,7 @@ export default function RegistrationAttachments({ registrationId, attachments, e
         {!attachments.length ? <p>{msg(MSG.CHUA_CO_FILE_DINH_KEM)}</p> : <ul className="list-group mb-3">
             {attachments.map((item) => <li className="list-group-item" key={item.id}>
                 <div className="d-flex flex-wrap justify-content-between gap-2">
-                    <div><strong>{item.fileName}</strong> <span className="text-body-secondary">{msg(MSG.SYMBOL)}{Object.hasOwn(ATTACHMENT_LABELS, item.type) ? ATTACHMENT_LABELS[item.type] : msg(MSG.ATTACHMENT)}{msg(MSG.SYMBOL_2)}{' '}{Math.ceil(item.length / 1024)}{' '}{msg(MSG.KIB)}</span>
+                    <div><strong>{item.fileName}</strong> <span className="text-body-secondary">{msg(MSG.SYMBOL)}{Object.hasOwn(ATTACHMENT_LABELS, item.type) ? ATTACHMENT_LABELS[item.type] : msg(MSG.ATTACHMENT)}{msg(MSG.SYMBOL_COMMA)}{' '}{Math.ceil(item.length / 1024)}{' '}{msg(MSG.KIB)}</span>
                         {item.certificateNumber && <div>{msg(MSG.SO_CHUNG_NHAN)}{' '}{item.certificateNumber}</div>}
                         {item.issueDate && <div>{msg(MSG.NGAY_CAP)}{' '}{item.issueDate}</div>}
                         {item.expiryDate && <div>{msg(MSG.NGAY_HET_HAN)}{' '}{item.expiryDate}</div>}

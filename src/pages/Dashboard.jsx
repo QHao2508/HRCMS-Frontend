@@ -8,7 +8,7 @@ import { getRoleLabel,isKnownRole } from "../constants/roles.js";
 import { getUserDisplayName } from "../utils/userDisplay.js";
 import { getNavigationForRole } from "../routes/navigation.js";
 import { PageHeading,ResourceState } from "../components/WorkflowUI.jsx";
-const cards=[['horseCount',msg(MSG.NGUA_TRONG_PHAM_VI)],['activePlans',msg(MSG.KE_HOACH_DANG_HOAT_DONG)],['sessionsToday',msg(MSG.BUOI_TAP_HOM_NAY)],['overdueSessions',msg(MSG.BUOI_TAP_QUA_HAN)],['restrictedHorses',msg(MSG.NGUA_CO_HAN_CHE)],['unreadNotifications',msg(MSG.THONG_BAO_CHUA_DOC)]];
+const cards=[['horseCount',msg(MSG.NGUA_TRONG_PHAM_VI)],['activePlans',msg(MSG.KE_HOACH_DANG_HOAT_DONG)],['sessionsToday',msg(MSG.BUOI_TAP_HOM_NAY)],['overdueSessions',msg(MSG.BUOI_TAP_QUA_HAN)],['restrictedHorses',msg(MSG.NGUA_CO_HAN_CHE)],['unreadNotifications',msg(MSG.DASHBOARD_NEW_NOTIFICATIONS)]];
 /**
  * Hiển thị aggregate từ một endpoint và menu theo role; role lạ chỉ nhận cảnh báo/phạm vi an toàn.
  * Nhãn/thông báo lấy từ catalog; enum và dữ liệu người dùng giữ nguyên giá trị.

@@ -46,7 +46,7 @@ export default function RegistrationList() {
             <RegistrationListContent data={resource.data} />
             <nav aria-label={msg(MSG.REGISTRATION_PAGES)} className="d-flex flex-wrap align-items-center gap-3">
                 <button className="btn btn-outline-secondary" disabled={resource.data.page <= 1} onClick={() => setFilter({ ...filter, page: resource.data.page - 1 })}>{msg(MSG.TRUOC)}</button>
-                <span>{msg(MSG.TRANG)}{' '}{resource.data.page}{' '}{msg(MSG.SYMBOL_4)}{' '}{Math.max(1, Math.ceil(resource.data.total / resource.data.pageSize))}{' '}{msg(MSG.SYMBOL_5)}{' '}{resource.data.total}{' '}{msg(MSG.HO_SO)}</span>
+                <span>{msg(MSG.TRANG)}{' '}{resource.data.page}{' '}{msg(MSG.SYMBOL_SLASH)}{' '}{Math.max(1, Math.ceil(resource.data.total / resource.data.pageSize))}{' '}{msg(MSG.SYMBOL_SEPARATOR_DOT)}{' '}{resource.data.total}{' '}{msg(MSG.HO_SO)}</span>
                 <button className="btn btn-outline-secondary" disabled={resource.data.page * resource.data.pageSize >= resource.data.total} onClick={() => setFilter({ ...filter, page: resource.data.page + 1 })}>{msg(MSG.SAU)}</button>
             </nav>
         </>}

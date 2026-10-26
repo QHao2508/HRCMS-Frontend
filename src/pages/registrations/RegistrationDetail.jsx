@@ -117,7 +117,7 @@ export function RegistrationDetailContent({ initialRecord, initialAttachments, r
         {!canEditRegistration(record.status) && <p>{msg(MSG.HO_SO_NAY_CHI_DUOC_XEM)}</p>}
         <RegistrationError error={error} />
         {notice && <p className="alert alert-success" role="status">{notice}</p>}
-        {pending && <p role="status">{pending}{msg(MSG.SYMBOL_7)}</p>}
+        {pending && <p role="status">{pending}{msg(MSG.SYMBOL_ELLIPSIS)}</p>}
         {stale && <div className="alert alert-warning">{msg(MSG.HAY_TAI_LAI_HO_SO_TRUOC_THAO_TAC_TIEP_THEO_THAY_DOI_CHUA_LUU_SE_BI_BO)}{' '}<button className="btn btn-outline-primary" onClick={reload}>{msg(MSG.TAI_LAI_HO_SO)}</button></div>}
         {editable && <WizardSteps step={step} onChange={setStep} disabled={!!pending} />}
         {!canEditRegistration(record.status) && <><section className="surface-card"><h2>{record.status === REGISTRATION_STATUS.PendingReview ? msg(MSG.YEU_CAU_DA_DUOC_GUI) : msg(MSG.THEO_DOI_YEU_CAU)}</h2><RegistrationStatus status={record.status} /><p className="mt-3">{record.status === REGISTRATION_STATUS.PendingReview ? msg(MSG.HO_SO_DANG_CHO_BAN_QUAN_LY_KIEM_TRA_THONG_TIN_VA_FILE_DINH_KEM_DA_DUOC_G) : record.status === REGISTRATION_STATUS.Approved ? msg(MSG.HO_SO_DA_DUOC_PHE_DUYET_NGUA_DA_XUAT_HIEN_TRONG_MUC_NGUA_CUA_TOI) : msg(MSG.BAN_CO_THE_XEM_LAI_THONG_TIN_HO_SO_BEN_DUOI)}</p></section><RegistrationSummary record={record} /></>}

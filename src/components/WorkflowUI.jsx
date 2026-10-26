@@ -28,7 +28,7 @@ export function Pagination({ data, onChange }) { return data && <nav aria-label=
  * Nhãn/thông báo lấy từ catalog; enum và dữ liệu người dùng giữ nguyên giá trị.
  * @param options0 Đối tượng destructuring: { to, children = msg(MSG.QUAY_LAI) }. Các props/callback lấy từ caller.
  */
-export function BackLink({ to, children = msg(MSG.QUAY_LAI) }) { return <Link className="page-back" to={to}>{msg(MSG.SYMBOL_6)}{' '}{children}</Link>; }
+export function BackLink({ to, children = msg(MSG.QUAY_LAI) }) { return <Link className="page-back" to={to}>{msg(MSG.SYMBOL_ARROW_BACK)}{' '}{children}</Link>; }
 /**
  * Render input/select/textarea controlled; giữ option value enum API và chỉ dịch label.
  * @param options0 Đối tượng destructuring: { label, name, value, onChange, options, multiline, ...props }. Các props/callback lấy từ caller.

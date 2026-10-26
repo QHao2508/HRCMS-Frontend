@@ -10,9 +10,9 @@ export default function MedicalRecordPicker({ records, horseId, value, onChange,
     const choices = medicalRecordChoices(records, followUps, { openOnly: true });
     const selected = choices.find(choice => choice.value === value);
     return <div className="medical-field medical-field-full">
-        <label htmlFor={selectId}>{msg(MSG.MERGED_UI_517)}</label>
+        <label htmlFor={selectId}>{msg(MSG.MEDICAL_RECORD_PICKER_HO_SO_KHAM)}</label>
         <select id={selectId} name="medicalRecordId" value={value} onChange={onChange} required disabled={disabled} aria-describedby={selectId + '-help'}>
-            <option value="">{msg(MSG.MERGED_UI_518)}</option>
+            <option value="">{msg(MSG.MEDICAL_RECORD_PICKER_CHON_HO_SO)}</option>
             {choices.map(choice => <option key={choice.value} value={choice.value}>{choice.label}</option>)}
         </select>
         <p id={selectId + '-help'} className="medical-record-source">{msg(MSG.MEDICAL_RECORD_SOURCE)}{' '}

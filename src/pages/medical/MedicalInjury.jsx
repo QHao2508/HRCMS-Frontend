@@ -39,7 +39,7 @@ function horseIdOf(horse) {
 }
 
 function horseNameOf(horse) {
-    return horse?.name ?? horse?.horseName ?? horse?.Name ?? msg(MSG.MEDICAL_TEXT_17);
+    return horse?.name ?? horse?.horseName ?? horse?.Name ?? msg(MSG.MEDICAL_NGUA_CHUA_CO_TEN);
 }
 
 function horseCodeOf(horse) {
@@ -111,7 +111,7 @@ function MedicalInjury() {
                 setHorses(list);
                 if (list.length > 0) setSelectedHorseId(current => list.some(horse => String(horseIdOf(horse)) === current) ? current : String(horseIdOf(list[0])));
             } catch (err) {
-                if (active) setError(err?.message || err?.response?.data?.message || msg(MSG.MEDICAL_TEXT_1));
+                if (active) setError(err?.message || err?.response?.data?.message || msg(MSG.MEDICAL_KHONG_TAI_DUOC_DANH_SACH));
             } finally {
                 if (active) setLoading(false);
             }
@@ -142,7 +142,7 @@ function MedicalInjury() {
                 setRecords(unwrapList(recordsData));
                 setInjuries(unwrapList(injuriesData));
             } catch (err) {
-                if (active) setError(err?.message || err?.response?.data?.message || msg(MSG.MEDICAL_TEXT_23));
+                if (active) setError(err?.message || err?.response?.data?.message || msg(MSG.INJURY_KHONG_TAI_DUOC_HO_SO));
             } finally {
                 if (active) setLoadingInjuries(false);
             }
@@ -177,14 +177,14 @@ function MedicalInjury() {
         setSuccess("");
 
         if (!selectedHorseId) { let active=true; queueMicrotask(()=>{if(active){
-            setError(msg(MSG.MEDICAL_TEXT_24));
+            setError(msg(MSG.INJURY_HAY_CHON_NGUA_TRUOC));
             }}); return ()=>{active=false;}; }
         if (!form.medicalRecordId) {
-            setError(msg(MSG.MEDICAL_TEXT_25));
+            setError(msg(MSG.INJURY_CAN_CO_HO_SO_KHAM));
             return;
         }
         if (!form.injuryDate || !form.reviewDate) {
-            setError(msg(MSG.MEDICAL_TEXT_26));
+            setError(msg(MSG.INJURY_HAY_NHAP_NGAY_CHAN_THUONG));
             return;
         }
         if (form.reviewDate < form.injuryDate) {
@@ -206,9 +206,9 @@ function MedicalInjury() {
 
             setInjuries((current) => [created, ...current]);
             setShowModal(false);
-            setSuccess(msg(MSG.MEDICAL_TEXT_27));
+            setSuccess(msg(MSG.INJURY_DA_GHI_NHAN_CHAN_THUONG));
         } catch (err) {
-            setError(err?.message || err?.response?.data?.message || msg(MSG.MEDICAL_TEXT_28));
+            setError(err?.message || err?.response?.data?.message || msg(MSG.INJURY_KHONG_GHI_NHAN_DUOC_CHAN));
         } finally {
             setSaving(false);
         }
@@ -218,12 +218,12 @@ function MedicalInjury() {
         <MedicalLayout>
             <div className="medical-page-heading-row">
                 <div>
-                    <div className="medical-page-intro">{msg(MSG.MERGED_UI_398)}</div>
-                    <h2 className="medical-page-title">{msg(MSG.MERGED_UI_399)}</h2>
-                    <p className="medical-page-subtitle">{msg(MSG.MERGED_UI_400)}</p>
+                    <div className="medical-page-intro">{msg(MSG.INJURY_THEO_DOI_CHAN_THUONG)}</div>
+                    <h2 className="medical-page-title">{msg(MSG.INJURY_GHI_NHAN_CHAN_THUONG)}</h2>
+                    <p className="medical-page-subtitle">{msg(MSG.INJURY_GHI_NHAN_CHAN_THUONG_CUA)}</p>
                 </div>
                 <button className="medical-primary-button" onClick={openCreate} disabled={!selectedHorseId || records.length === 0}>
-                    <Plus size={15} />{msg(MSG.MERGED_UI_401)}</button>
+                    <Plus size={15} />{msg(MSG.INJURY_GHI_NHAN_CHAN_THUONG_2)}</button>
             </div>
 
             {error && <div className="medical-alert medical-alert-error">{error}</div>}
@@ -232,9 +232,9 @@ function MedicalInjury() {
             <section className="medical-table-card medical-injury-toolbar-card">
                 <div className="medical-toolbar-grid">
                     <label className="medical-field">
-                        <span>{msg(MSG.MERGED_UI_402)}</span>
+                        <span>{msg(MSG.INJURY_NGUA)}</span>
                         <select value={selectedHorseId} onChange={(event) => setSelectedHorseId(event.target.value)} disabled={loading || saving}>
-                            <option value="">{msg(MSG.MERGED_UI_403)}</option>
+                            <option value="">{msg(MSG.INJURY_CHON_NGUA)}</option>
                             {horses.map((horse) => (
                                 <option key={horseIdOf(horse)} value={horseIdOf(horse)}>
                                     {horseNameOf(horse)}{horseCodeOf(horse) ? ` · ${horseCodeOf(horse)}` : ""}
@@ -244,15 +244,15 @@ function MedicalInjury() {
                     </label>
 
                     <label className="medical-field">
-                        <span>{msg(MSG.MERGED_UI_405)}</span>
+                        <span>{msg(MSG.INJURY_TIM_KIEM)}</span>
                         <div className="medical-search medical-search-wide">
                             <Search size={14} />
-                            <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={msg(MSG.MERGED_UI_406)} />
+                            <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={msg(MSG.INJURY_LOAI_VI_TRI_MUC_DO)} />
                         </div>
                     </label>
 
                     <label className="medical-field">
-                        <span>{msg(MSG.MERGED_UI_407)}</span>
+                        <span>{msg(MSG.INJURY_TRANG_THAI)}</span>
                         <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
                             {statuses.map((status) => <option key={status} value={status}>{getInjuryStatusLabel(status)}</option>)}
                         </select>
@@ -263,19 +263,19 @@ function MedicalInjury() {
             {selectedHorse && (
                 <section className="medical-horse-context">
                     <div>
-                        <span>{msg(MSG.MERGED_UI_408)}</span>
+                        <span>{msg(MSG.INJURY_NGUA_DANG_CHON)}</span>
                         <strong>{horseNameOf(selectedHorse)}</strong>
                         <small>{horseCodeOf(selectedHorse) || msg(MSG.MEDICAL_WORKSPACE_NO_CODE)}</small>
                     </div>
                     <div>
-                        <span>{msg(MSG.MERGED_UI_409)}</span>
+                        <span>{msg(MSG.INJURY_HO_SO_KHAM)}</span>
                         <strong>{records.length}</strong>
-                        <small>{msg(MSG.MERGED_UI_410)}</small>
+                        <small>{msg(MSG.INJURY_CO_THE_LIEN_KET_VOI)}</small>
                     </div>
                     <div>
-                        <span>{msg(MSG.MERGED_UI_411)}</span>
+                        <span>{msg(MSG.INJURY_CHAN_THUONG_CHUA_HOI_PHUC)}</span>
                         <strong>{injuries.filter((item) => statusLabel(item.status) === "ACTIVE").length}</strong>
-                        <small>{msg(MSG.MERGED_UI_412)}</small>
+                        <small>{msg(MSG.INJURY_HO_SO_CHAN_THUONG_HIEN)}</small>
                     </div>
                 </section>
             )}
@@ -284,8 +284,8 @@ function MedicalInjury() {
                 <div className="medical-empty-warning">
                     <AlertTriangle size={18} />
                     <div>
-                        <strong>{msg(MSG.MERGED_UI_413)}</strong>
-                        <span>{msg(MSG.MERGED_UI_414)}</span>
+                        <strong>{msg(MSG.INJURY_CHUA_CO_HO_SO_KHAM)}</strong>
+                        <span>{msg(MSG.INJURY_HAY_GHI_NHAN_THAM_KHAM)}</span>
                     </div>
                 </div>
             )}
@@ -293,8 +293,8 @@ function MedicalInjury() {
             <section className="medical-table-card">
                 <div className="medical-section-header">
                     <div>
-                        <h3>{msg(MSG.MERGED_UI_415)}</h3>
-                        <span>{filteredInjuries.length}{msg(MSG.MERGED_UI_416)}</span>
+                        <h3>{msg(MSG.INJURY_LICH_SU_CHAN_THUONG)}</h3>
+                        <span>{filteredInjuries.length}{msg(MSG.INJURY_HO_SO)}</span>
                     </div>
                     {selectedHorse && <span className="medical-section-context">{horseNameOf(selectedHorse)}</span>}
                 </div>
@@ -303,20 +303,20 @@ function MedicalInjury() {
                     <table className="medical-table medical-injury-table">
                         <thead>
                             <tr>
-                                <th>{msg(MSG.MERGED_UI_417)}</th>
-                                <th>{msg(MSG.MERGED_UI_418)}</th>
-                                <th>{msg(MSG.MERGED_UI_419)}</th>
-                                <th>{msg(MSG.MERGED_UI_420)}</th>
-                                <th>{msg(MSG.MERGED_UI_421)}</th>
-                                <th>{msg(MSG.MERGED_UI_422)}</th>
-                                <th>{msg(MSG.MERGED_UI_423)}</th>
+                                <th>{msg(MSG.INJURY_NGAY_CHAN_THUONG)}</th>
+                                <th>{msg(MSG.INJURY_LOAI)}</th>
+                                <th>{msg(MSG.INJURY_VI_TRI_TREN_CO_THE)}</th>
+                                <th>{msg(MSG.INJURY_MUC_DO)}</th>
+                                <th>{msg(MSG.INJURY_NGUYEN_NHAN)}</th>
+                                <th>{msg(MSG.INJURY_TRANG_THAI_2)}</th>
+                                <th>{msg(MSG.INJURY_DU_KIEN_TAI_KIEM_TRA)}</th>
                             </tr>
                         </thead>
                         <tbody>
                             {loadingInjuries ? (
-                                <tr><td colSpan="7" className="medical-empty-cell">{msg(MSG.MERGED_UI_424)}</td></tr>
+                                <tr><td colSpan="7" className="medical-empty-cell">{msg(MSG.INJURY_DANG_TAI_HO_SO_CHAN)}</td></tr>
                             ) : filteredInjuries.length === 0 ? (
-                                <tr><td colSpan="7" className="medical-empty-cell">{msg(MSG.MERGED_UI_425)}</td></tr>
+                                <tr><td colSpan="7" className="medical-empty-cell">{msg(MSG.INJURY_KHONG_CO_HO_SO_CHAN)}</td></tr>
                             ) : (
                                 filteredInjuries.map((injury) => (
                                     <tr key={injury.id}>
@@ -341,7 +341,7 @@ function MedicalInjury() {
                         <div className="medical-modal-header">
                             <div>
                                 <span>{msg(MSG.MEDICAL_WORKSPACE_INJURIES)}</span>
-                                <h3>{msg(MSG.MERGED_UI_427)}</h3><p className="medical-modal-patient"><span>{msg(MSG.MEDICAL_WORKSPACE_PATIENT_LABEL)}</span><strong>{selectedHorse ? horseNameOf(selectedHorse) : ""}</strong><span>{selectedHorse?.registrationNumber || msg(MSG.MEDICAL_WORKSPACE_NO_CODE)}</span></p>
+                                <h3>{msg(MSG.INJURY_GHI_NHAN_CHAN_THUONG_3)}</h3><p className="medical-modal-patient"><span>{msg(MSG.MEDICAL_WORKSPACE_PATIENT_LABEL)}</span><strong>{selectedHorse ? horseNameOf(selectedHorse) : ""}</strong><span>{selectedHorse?.registrationNumber || msg(MSG.MEDICAL_WORKSPACE_NO_CODE)}</span></p>
 
                             </div>
                             <button className="medical-icon-button" aria-label={msg(MSG.MEDICAL_WORKSPACE_CLOSE)} onClick={closeModal} disabled={saving}><X size={18} /></button>
@@ -349,9 +349,9 @@ function MedicalInjury() {
 
                         <form onSubmit={handleSubmit} className="medical-form-grid">
                             <label className="medical-field medical-field-full">
-                                <span>{msg(MSG.MERGED_UI_428)}</span>
+                                <span>{msg(MSG.INJURY_HO_SO_KHAM_2)}</span>
                                 <select name="medicalRecordId" value={form.medicalRecordId} onChange={handleChange} required>
-                                    <option value="">{msg(MSG.MERGED_UI_429)}</option>
+                                    <option value="">{msg(MSG.INJURY_CHON_HO_SO_KHAM)}</option>
                                     {caseChoices.map((choice) => (
                                         <option key={choice.value} value={choice.value}>{choice.label}</option>
                                     ))}
@@ -359,50 +359,50 @@ function MedicalInjury() {
                             </label>
 
                             <label className="medical-field">
-                                <span>{msg(MSG.MERGED_UI_431)}</span>
+                                <span>{msg(MSG.INJURY_NGAY_CHAN_THUONG_2)}</span>
                                 <input type="date" name="injuryDate" value={form.injuryDate} onChange={handleChange} max={new Date().toISOString().slice(0, 10)} required />
                             </label>
 
                             <label className="medical-field">
-                                <span>{msg(MSG.MERGED_UI_432)}</span>
+                                <span>{msg(MSG.INJURY_NGAY_DU_KIEN_TAI_KIEM)}</span>
                                 <input type="date" name="reviewDate" value={form.reviewDate} onChange={handleChange} min={form.injuryDate || undefined} required />
                             </label>
 
                             <label className="medical-field">
-                                <span>{msg(MSG.MERGED_UI_433)}</span>
+                                <span>{msg(MSG.INJURY_LOAI_CHAN_THUONG)}</span>
                                 <select name="type" value={form.type} onChange={handleChange} required>
                                     {injuryTypes.map((type) => <option key={type} value={type}>{getMedicalLabel(type)}</option>)}
                                 </select>
                             </label>
 
                             <label className="medical-field">
-                                <span>{msg(MSG.MERGED_UI_434)}</span>
+                                <span>{msg(MSG.INJURY_MUC_DO_2)}</span>
                                 <select name="severity" value={form.severity} onChange={handleChange} required>
                                     {severities.map((severity) => <option key={severity} value={severity}>{getMedicalLabel(severity)}</option>)}
                                 </select>
                             </label>
 
                             <label className="medical-field">
-                                <span>{msg(MSG.MERGED_UI_435)}</span>
-                                <input name="bodyLocation" value={form.bodyLocation} onChange={handleChange} placeholder={msg(MSG.MERGED_UI_436)} required />
+                                <span>{msg(MSG.INJURY_VI_TRI_TREN_CO_THE_2)}</span>
+                                <input name="bodyLocation" value={form.bodyLocation} onChange={handleChange} placeholder={msg(MSG.INJURY_VI_DU_GAN_CHAN_TRUOC)} required />
                             </label>
 
                             <label className="medical-field">
-                                <span>{msg(MSG.MERGED_UI_437)}</span>
-                                <input name="cause" value={form.cause} onChange={handleChange} placeholder={msg(MSG.MERGED_UI_438)} required />
+                                <span>{msg(MSG.INJURY_NGUYEN_NHAN_2)}</span>
+                                <input name="cause" value={form.cause} onChange={handleChange} placeholder={msg(MSG.INJURY_VI_DU_QUA_TAI_KHI)} required />
                             </label>
 
                             <div className="medical-form-note medical-field-full">
                                 <AlertTriangle size={15} />
-                                <span>{msg(MSG.MERGED_UI_439)}<strong>{msg(MSG.MERGED_UI_440)}</strong>{msg(MSG.MERGED_UI_441)}<strong>{msg(MSG.MERGED_UI_442)}</strong>{msg(MSG.MERGED_UI_443)}</span>
+                                <span>{msg(MSG.INJURY_CHAN_THUONG_MOI_CO_TRANG)}<strong>{msg(MSG.INJURY_CHUA_HOI_PHUC)}</strong>{msg(MSG.INJURY_TINH_TRANG_SUC_KHOE_CUA)}<strong>{msg(MSG.INJURY_CHAN_THUONG)}</strong>{msg(MSG.INJURY_GHI_NHAN_HOI_PHUC_QUA)}</span>
                             </div>
 
                             {error && <div className="medical-alert medical-alert-error medical-field-full">{error}</div>}
 
                             <div className="medical-modal-actions medical-field-full">
-                                <button type="button" className="medical-secondary-button" onClick={closeModal} disabled={saving}>{msg(MSG.MERGED_UI_444)}</button>
+                                <button type="button" className="medical-secondary-button" onClick={closeModal} disabled={saving}>{msg(MSG.INJURY_HUY)}</button>
                                 <button type="submit" className="medical-primary-button" disabled={saving}>
-                                    {saving ? msg(MSG.MEDICAL_TEXT_10) : msg(MSG.MEDICAL_TEXT_29)}
+                                    {saving ? msg(MSG.MEDICAL_DANG_LUU) : msg(MSG.INJURY_LUU_CHAN_THUONG)}
                                 </button>
                             </div>
                         </form>

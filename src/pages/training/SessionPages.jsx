@@ -4,7 +4,7 @@ import TemplateExerciseChoice from '../../components/TemplateExerciseChoice.jsx'
 import { sessionPlanLimits, planDateText } from '../../services/trainingSchedulingHelpers.js';
 import { getEnumLabel } from "../../constants/enumLabels.js";
 import { MSG, msg, UI_LOCALE } from "../../messages/index.js";
-import { PLAN_STATUS, SESSION_STATUS, INTENSITY, TRAINING_TYPE } from "../../constants/training.js";
+import { PLAN_STATUS, SESSION_STATUS, INTENSITY, TRAINING_TYPE, TRAINING_SURFACE } from "../../constants/training.js";
 import { ROLES } from "../../constants/roles.js";
 import { sessionPayload } from "../../services/trainingPayload.js";
 import { isAssigned,localDateTime } from "../../services/workflowHelpers.js";
@@ -51,7 +51,7 @@ function SessionFields({form,change,riders,disabled,min,max,template}) {
  */
 export function SessionCreate() {
     const {id}=useParams();const navigate=useNavigate();const {user}=useAuth();
-    const [form,setForm]=useState({scheduledAt:"",trainingType:TRAINING_TYPE.Trot,durationMinutes:"",distanceMetres:1000,intensity:INTENSITY.Light,surface:msg(MSG.SURFACE_SAND),target:"",notes:"",riderId:""});
+    const [form,setForm]=useState({scheduledAt:"",trainingType:TRAINING_TYPE.Trot,durationMinutes:"",distanceMetres:1000,intensity:INTENSITY.Light,surface:TRAINING_SURFACE.Sand,target:"",notes:"",riderId:""});
     /**
      * Đọc dữ liệu cần cho component qua service/API; hook resource quản lý loading, response muộn và lỗi.
      */
