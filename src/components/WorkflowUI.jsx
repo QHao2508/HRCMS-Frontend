@@ -4,7 +4,7 @@ import { getEnumLabel } from "../constants/enumLabels.js";
 import { MSG, msg } from "../messages/index.js";
 import { Link } from "react-router-dom";
 import RegistrationError from "./registrations/RegistrationError.jsx";
-import { useId } from 'react';
+import { Children, isValidElement, useId } from 'react';
 
 /**
  * Dựng tiêu đề, mô tả và action của màn hình theo cùng bố cục.
@@ -28,15 +28,20 @@ export function Pagination({ data, onChange }) { return data && <nav aria-label=
  * Nhãn/thông báo lấy từ catalog; enum và dữ liệu người dùng giữ nguyên giá trị.
  * @param options0 Đối tượng destructuring: { to, children = msg(MSG.QUAY_LAI) }. Các props/callback lấy từ caller.
  */
-export function BackLink({ to, children = msg(MSG.QUAY_LAI) }) { return <Link className="page-back" to={to}>{msg(MSG.SYMBOL_6)}{' '}{children}</Link>; }
+export function BackLink({ to, children = msg(MSG.QUAY_LAI) }) { return <Link className="page-back" to={to}>{msg(MSG.SYMBOL_ARROW_BACK)}{' '}{children}</Link>; }
 /**
  * Render input/select/textarea controlled; giữ option value enum API và chỉ dịch label.
  * @param options0 Đối tượng destructuring: { label, name, value, onChange, options, multiline, ...props }. Các props/callback lấy từ caller.
  */
+function hasRequiredMarker(label) {
+    return Children.toArray(label).some(part => typeof part === 'string'
+        ? part.includes('*')
+        : isValidElement(part) && hasRequiredMarker(part.props.children));
+}
 export function Field({ label, name, value, onChange, options, multiline, help, error, ...props }) {
     const uniqueId = useId(); const id = `field-${name}-${uniqueId}`;
     const shared = { id, name, value: value ?? '', onChange, required: props.required, disabled: props.disabled, 'aria-invalid': !!error, 'aria-describedby': [help && id+'-help', error && id+'-error'].filter(Boolean).join(' ') || undefined };
-    return <div className={props.wide ? 'col-12' : 'col-md-6'}><label className="form-label" htmlFor={id}>{label}</label>{options ? <select {...shared} className={`form-select${error ? ' is-invalid' : ''}`}>{options.map(option => { const o = typeof option === 'string' ? { value: option, label: getEnumLabel(option) } : option; return <option key={o.value} value={o.value} disabled={o.disabled}>{o.label}</option>; })}</select> : multiline ? <textarea {...shared} rows={3} className={`form-control${error ? ' is-invalid' : ''}`} maxLength={props.maxLength}/> : <input {...shared} className={`form-control${error ? ' is-invalid' : ''}`} type={props.type || 'text'} onInput={props.type?.startsWith('date') ? onChange : undefined} min={props.min} max={props.max} step={props.step} minLength={props.minLength} pattern={props.pattern} maxLength={props.maxLength} autoComplete={props.autoComplete}/>}{help && <div id={id+'-help'} className="form-text">{help}</div>}{error && <div id={id+'-error'} className="invalid-feedback">{error}</div>}</div>;
+    return <div className={props.wide ? 'col-12' : 'col-md-6'}><label className="form-label" htmlFor={id}>{label}{props.required && !hasRequiredMarker(label) && <span aria-hidden="true">{msg(MSG.FIELD_REQUIRED_MARKER)}</span>}</label>{options ? <select {...shared} className={`form-select${error ? ' is-invalid' : ''}`}>{options.map(option => { const o = typeof option === 'string' ? { value: option, label: getEnumLabel(option) } : option; return <option key={o.value} value={o.value} disabled={o.disabled}>{o.label}</option>; })}</select> : multiline ? <textarea {...shared} rows={3} className={`form-control${error ? ' is-invalid' : ''}`} maxLength={props.maxLength}/> : <input {...shared} className={`form-control${error ? ' is-invalid' : ''}`} type={props.type || 'text'} onInput={props.type?.startsWith('date') ? onChange : undefined} min={props.min} max={props.max} step={props.step} minLength={props.minLength} pattern={props.pattern} maxLength={props.maxLength} autoComplete={props.autoComplete}/>}{help && <div id={id+'-help'} className="form-text">{help}</div>}{error && <div id={id+'-error'} className="invalid-feedback">{error}</div>}</div>;
 }
 
 /**

@@ -12,6 +12,6 @@ export function medicalRecordChoices(records = [], followUps = [], { openOnly = 
             hour: '2-digit', minute: '2-digit', second: '2-digit',
         });
         const title = msg(MSG.MEDICAL_RECORD_NUMBER, { number: item.number });
-        return { value: record.id, record, medicalCase: item, examinedAt, title, label: [title, item.first.reason || record.reason, record.diagnosis, examinedAt].filter(Boolean).join(' · ') || msg(MSG.MEDICAL_TEXT_22) };
+        return { value: record.id, record, medicalCase: item, examinedAt, title, label: [title, item.first.reason || record.reason, record.diagnosis, examinedAt].filter(Boolean).join(' · ') || msg(MSG.MEDICAL_RECORD_CHOICES_HO_SO_KHAM) };
     });
 }

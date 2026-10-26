@@ -1,0 +1,47 @@
+.ops-page { min-width: 0; }
+.ops-page .ops-filter { display: flex; flex-wrap: wrap; align-items: end; gap: 16px; }
+.ops-page .ops-filter > div { flex: 0 1 420px; min-width: 0; }
+.ops-page .ops-filter p { flex: 1 1 280px; margin: 0; color: var(--hc-muted); font-size: 14px; }
+.ops-page .ops-table-card > h2 { font-size: 22px; }
+.ops-page .ops-scroll { border: 1px solid var(--hc-border); border-radius: 8px; max-width: 100%; }
+.ops-page .ops-scroll:focus-visible { outline: 3px solid var(--hc-primary, #77482b); outline-offset: 3px; }
+.ops-page .ops-table { width: 100%; table-layout: fixed; min-width: 820px; margin: 0; font-size: 14px; line-height: 1.6; }
+.ops-page .ops-table th, .ops-page .ops-table td { padding: 14px 12px; vertical-align: middle; overflow-wrap: anywhere; }
+.ops-page .ops-table th { background: #f8f5ed; color: #59412d; font-weight: 600; }
+.ops-page .ops-table th:first-child { width: 27%; }
+.ops-page .ops-table th:last-child { width: 17%; }
+.ops-page .ops-table .ops-name { font-weight: 600; color: #453324; }
+.ops-page .ops-table .ops-number { text-align: right; font-variant-numeric: tabular-nums; }
+.ops-page .ops-actions .inline-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.ops-page .ops-actions .btn { white-space: normal; font-size: 14px; max-width: 100%; }
+.ops-page .ops-badge { display: inline-block; padding: 4px 9px; border: 1px solid transparent; border-radius: 6px; font-size: 12px; font-weight: 600; line-height: 1.5; }
+.ops-page .ops-warning { color: #794b18; background: #fff1d9; border-color: #ebcd98; }
+.ops-page .ops-success { color: #285741; background: #edf5ef; border-color: #c5dccb; }
+.ops-page .ops-neutral { color: #5d605c; background: #f2f2ee; border-color: #deded5; }
+.ops-page .ops-occupied { color: #684126; background: #f7ece0; border-color: #e2cdb8; }
+.ops-page .ops-empty { padding: 24px; margin: 0; background: #faf8f1; border-radius: 8px; color: var(--hc-muted); }
+.ops-page .ops-section-heading { display: flex; justify-content: space-between; align-items: start; gap: 16px; margin-bottom: 16px; }
+.ops-page .ops-section-heading h2 { margin: 0; min-width: 0; overflow-wrap: anywhere; scroll-margin-top: 120px; }
+.ops-page .ops-section-heading .btn { flex-shrink: 0; }
+.ops-page .ops-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 16px; margin-bottom: 24px; padding: 16px; border: 1px solid var(--hc-border); border-radius: 8px; background: #faf8f1; }
+.ops-page .ops-facts dt { color: var(--hc-muted); font-size: 12px; font-weight: 500; margin-bottom: 6px; }
+.ops-page .ops-facts dd { margin: 0; overflow-wrap: anywhere; font-size: 14px; }
+.ops-page .ops-detail .ops-table-card { padding: 0; border: 0; box-shadow: none; margin-bottom: 0; }
+.ops-page .ops-movements .ops-table th:first-child { width: 18%; }
+.ops-page .ops-movements .ops-table th:nth-child(2) { width: 15%; }
+.ops-page .ops-movements .ops-table th:nth-child(3) { width: 12%; }
+.ops-page .ops-movements .ops-table th:nth-child(4) { width: 9%; }
+.ops-page .ops-movements .ops-table th:nth-child(5) { width: 28%; }
+.ops-page .ops-movements .ops-table th:last-child { width: 18%; }
+.ops-page .ops-table-card:has(th:nth-child(7)) .ops-table { min-width: 900px; }
+.ops-page .ops-table-card:has(th:nth-child(7)) .ops-table th:first-child { width: 23%; }
+.ops-page .ops-table-card:has(th:nth-child(7)) .ops-table th:last-child { width: 17%; }
+.ops-page .ops-table-card:has(th:nth-child(7)) .ops-table th:nth-child(2) { width: 13%; }
+.ops-page .ops-table-card:has(th:nth-child(7)) .ops-table th:nth-child(3) { width: 9%; }
+.ops-page .ops-table-card:has(th:nth-child(7)) .ops-table th:nth-child(4), .ops-page .ops-table-card:has(th:nth-child(7)) .ops-table th:nth-child(5) { width: 10%; }
+.ops-page .ops-table-card:has(th:nth-child(7)) .ops-table th:nth-child(6) { width: 18%; }
+.ops-page .ops-stalls .ops-table th:first-child { width: 21%; }
+.ops-page .ops-stalls .ops-table th:nth-child(2) { width: 21%; }
+.ops-page .ops-stalls .ops-table th:nth-child(5) { width: 22%; }
+.ops-page .ops-stalls .ops-table th:last-child { width: 13%; }
+@media (max-width: 767px) { .ops-page .ops-section-heading { flex-wrap: wrap; } }

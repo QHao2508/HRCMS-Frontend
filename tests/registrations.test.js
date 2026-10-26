@@ -347,7 +347,7 @@ test("chỉ được xem detail rejects even a directly invoked save handler", a
     assert.equal(calls, 0);
 });
 test("download JSON errors in Blob responses remain normalized", async () => {
-    api.defaults.adapter = async (config) => reject(config, 404, new Blob([JSON.stringify({ detail: "Stored attachment is unavailable." })], { type: "application/json" }));
+    api.defaults.adapter = async (config) => reject(config, 404, new Blob([JSON.stringify({ detail: "Stored attachment is unavailable.", messageKey: "StoredAttachmentIsUnavailable", args: [] })], { type: "application/json" }));
     await assert.rejects(files.fetchAttachment(draft.id, "missing"), { status: 404, message: "Tệp đã lưu hiện không có sẵn." });
 });
 test("server diagnostics and restricted-resource details are not rendered", () => {

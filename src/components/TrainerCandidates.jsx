@@ -1,5 +1,20 @@
 import { MSG, msg } from '../messages/index.js';
 import { getEnumLabel } from '../constants/enumLabels.js';
+import '../style/training.css';
+export function TrainerSpecialties({ specialties = [], required, minimum }) {
+    const types = required?.length ? required : specialties.map(skill => skill.trainingType);
+    const comparing = required?.length > 0 && [1, 2, 3].includes(minimum);
+    if (!types.length) return <span className="muted-caption">{msg(MSG.SCHED_NOT_CONFIRMED)}</span>;
+    return <div className="trainer-specialties">{types.map(type => {
+        const skill = specialties.find(item => item.trainingType === type);
+        const valid = [1, 2, 3].includes(skill?.level);
+        const qualified = valid && skill.level >= minimum;
+        return <span key={type} className={'badge border ' + (comparing ? qualified ? 'bg-success-subtle text-success-emphasis' : 'bg-warning-subtle text-warning-emphasis' : 'bg-light text-dark')}>
+            {getEnumLabel(type)}{' · '}{valid ? msg(MSG['SCHED_LEVEL_' + skill.level]) : msg(MSG.CURRIC_SKILL_MISSING)}
+            {comparing && valid && !qualified && <span className="d-block">{msg(MSG.CURRIC_REQUIRED_LEVEL, { level: msg(MSG['SCHED_LEVEL_' + minimum]) })}</span>}
+        </span>;
+    })}</div>;
+}
 export default function TrainerCandidates({ candidates, selectedId }) {
-    return <section className="trainer-candidates"><h3>{msg(MSG.SCHED_CANDIDATES)}</h3><p>{msg(MSG.SCHED_CANDIDATES_HELP)}</p><div className="table-responsive"><table className="table"><thead><tr><th>{msg(MSG.NHAN_SU)}</th><th>{msg(MSG.SCHED_SKILLS)}</th><th>{msg(MSG.SCHED_LOAD)}</th><th>{msg(MSG.TRANG_THAI)}</th></tr></thead><tbody>{candidates.map(x => <tr key={x.id} className={x.id === selectedId ? 'table-success' : ''}><td>{x.name}</td><td>{x.specialties.length ? x.specialties.map(s => getEnumLabel(s.trainingType) + ' · ' + msg(MSG['SCHED_LEVEL_' + s.level])).join('; ') : msg(MSG.SCHED_NOT_CONFIRMED)}</td><td>{x.assignedHorses}</td><td><span className={x.matches ? 'availability-match' : 'muted-caption'}>{msg(x.matches ? MSG.SCHED_MATCH : MSG.SCHED_NO_MATCH)}</span></td></tr>)}</tbody></table></div>{!candidates.some(x => x.matches) && <p className="alert alert-info">{msg(MSG.SCHED_NO_CANDIDATES)}</p>}</section>;
+    return <section className="trainer-candidates"><h3>{msg(MSG.SCHED_CANDIDATES)}</h3><p>{msg(MSG.SCHED_CANDIDATES_HELP)}</p><div className="table-responsive"><table className="table"><thead><tr><th>{msg(MSG.NHAN_SU)}</th><th>{msg(MSG.SCHED_SKILLS)}</th><th>{msg(MSG.SCHED_LOAD)}</th><th>{msg(MSG.TRANG_THAI)}</th></tr></thead><tbody>{candidates.map(x => <tr key={x.id} className={x.id === selectedId ? 'table-success' : ''}><td>{x.name}</td><td><TrainerSpecialties specialties={x.specialties}/></td><td>{x.assignedHorses}</td><td><span className={x.matches ? 'availability-match' : 'muted-caption'}>{msg(x.matches ? MSG.SCHED_MATCH : MSG.SCHED_NO_MATCH)}</span></td></tr>)}</tbody></table></div>{!candidates.some(x => x.matches) && <p className="alert alert-info">{msg(MSG.SCHED_NO_CANDIDATES)}</p>}</section>;
 }

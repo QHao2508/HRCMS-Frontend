@@ -1,21 +1,30 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { notificationText } from '../src/messages/notifications.js';
+import { notificationText, notificationSubject, notificationTarget } from '../src/messages/notifications.js';
 
-test('stored English registration notifications render in Vietnamese', () => {
-    assert.equal(notificationText({ type: 'RegistrationReview', message: 'A horse registration requires review.' }), 'Có hồ sơ đăng ký ngựa cần xét duyệt.');
-});
-test('specific medical notification retains its meaning instead of the type summary', () => {
-    assert.equal(notificationText({ type: 'MedicalRestrictionCreated', message: 'A medical restriction changed during your session. Stop incompatible activity and contact the Veterinarian.' }), 'Hạn chế y tế đã thay đổi trong buổi tập. Hãy dừng hoạt động không phù hợp và liên hệ bác sĩ thú y.');
-});
-test('all current notification types and unknown future events have Vietnamese fallbacks', () => {
-    for (const type of ["RegistrationReview","RegistrationRevision","RegistrationApproved","HorseAssignment","SessionAssigned","SessionUnassigned","SessionResult","IncidentReported","SessionSkipped","MedicalHealthChanged","MedicalRestrictionCreated","MedicalFollowUp","MedicalPreventiveDue","SessionOverdue","MedicalFollowUpDue","CareAssigned","CareIssue","InventoryLowStock","InventoryReplenishment","InventoryReplenishmentReviewed"]) assert.notEqual(notificationText({ type }), 'Bạn có thông báo mới.');
-    assert.equal(notificationText({ type: 0 }), 'Có hồ sơ đăng ký ngựa cần xét duyệt.');
-    assert.equal(notificationText({ type: 'FutureType', message: 'Future server message' }), 'Bạn có thông báo mới.');
+test('notifications are translated by messageCode, never by stored server text', () => {
+    assert.match(notificationText({ messageCode: 'AHorseRegistrationRequiresReview', message: 'anything' }), /hồ sơ ngựa mới chờ duyệt/);
+    assert.match(notificationText({ messageCode: 'AMedicalRestrictionChangedDuringYourSessionStopIncompatible' }), /liên hệ bác sĩ thú y/);
+    // Câu tiếng Anh cũ không còn được dùng để nhận diện.
+    assert.equal(notificationText({ message: 'A horse registration requires review.' }), 'Bạn có thông báo mới.');
+    assert.equal(notificationText({ messageCode: 'FutureCode' }), 'Bạn có thông báo mới.');
     assert.equal(notificationText(null), 'Bạn có thông báo mới.');
 });
 
-test('archived horse notification is not mislabelled as a new assignment or care issue', () => {
-    assert.equal(notificationText({ type: 'HorseAssignment', message: 'Horse is archived.' }), 'Ngựa đã được lưu trữ. Các công việc chưa bắt đầu đã được đóng.');
-    assert.equal(notificationText({ type: 'CareIssue', message: 'Horse is archived.' }), 'Ngựa đã được lưu trữ. Các công việc chưa bắt đầu đã được đóng.');
+test('notification subject shows the related horse, registration or item', () => {
+    assert.equal(notificationSubject({ horseName: 'Thần Phong', subject: 'Hồ sơ' }), 'Thần Phong');
+    assert.equal(notificationSubject({ subject: 'Cỏ khô Timothy' }), 'Cỏ khô Timothy');
+    assert.equal(notificationSubject({}), null);
+});
+
+test('notification target opens the related screen', () => {
+    const horse = 'h-1';
+    assert.equal(notificationTarget({ type: 'HorseAssignment', referenceId: horse, horseId: horse }), '/horses/h-1');
+    assert.equal(notificationTarget({ type: 'MedicalHealthChanged', referenceId: horse, horseId: horse }), '/horses/h-1');
+    assert.equal(notificationTarget({ type: 'SessionAssigned', referenceId: 's-1', horseId: horse }), '/training/sessions/s-1');
+    assert.equal(notificationTarget({ type: 'RegistrationReview', referenceId: 'r-1' }), '/reviews/r-1');
+    assert.equal(notificationTarget({ type: 'CareAssigned', referenceId: 'c-1', horseId: horse }), '/care/tasks');
+    assert.equal(notificationTarget({ type: 'InventoryLowStock', referenceId: 'i-1' }), '/inventory');
+    assert.equal(notificationTarget({ type: 'FutureType', referenceId: 'x' }), null);
+    assert.equal(notificationTarget(null), null);
 });

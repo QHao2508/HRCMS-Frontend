@@ -6,7 +6,7 @@ import { sessionPlanLimits } from '../src/services/trainingSchedulingHelpers.js'
 test('shift rejection preserves its canonical code and permits correction', async () => {
     const error = await normalizeApiError({ response: { status: 409, data: {
         type: 'urn:horseclub:error:outside_working_hours', title: 'outside_working_hours',
-        detail: 'The session falls outside staff working hours.',
+        detail: 'The session falls outside staff working hours.', messageKey: 'StaffOutsideWorkingHours', args: [],
     } } });
     assert.equal(error.businessCode, 'outside_working_hours');
     assert.equal(isUncertainMutationError(error), false);

@@ -7,7 +7,7 @@ import { MSG, msg } from '../src/messages/index.js';
 import { VI } from '../src/messages/vi.js';
 import { ENUMS, getEnumLabel } from '../src/constants/enumLabels.js';
 import { normalizeApiError } from '../src/services/apiError.js';
-import { backendErrorMessage } from '../src/messages/backendErrors.js';
+import { serverMessage } from '../src/messages/serverMessages.js';
 import { getMedicalLabel, getInjuryStatusLabel } from '../src/constants/medicalLabels.js';
 function files(dir) { return fs.readdirSync(dir, { withFileTypes: true }).flatMap(entry => entry.isDirectory() ? files(path.join(dir,entry.name)) : /\.(js|jsx)$/.test(entry.name) ? [path.join(dir,entry.name)] : []); }
 test('medical labels and actionable care/inventory errors are Vietnamese', async () => {
@@ -16,12 +16,14 @@ test('medical labels and actionable care/inventory errors are Vietnamese', async
         assert.notEqual(getMedicalLabel(value), msg(MSG.CHUA_XAC_DINH));
     }
     assert.equal(getInjuryStatusLabel('Active'), 'Chưa hồi phục');
-    for (const [detail, expected] of [
-        ['Consume/adjust remaining stock before archiving.', /tồn kho/],
-        ['A correction already exists. Edit the latest revision.', /bản mới nhất/],
-        ['Task is not assigned to you.', /không được giao/],
-        ['Injury does not belong to this medical record.', /không thuộc/],
-    ]) assert.match((await normalizeApiError({ response: { status: 400, data: { detail } } })).message, expected);
+    for (const [messageKey, expected] of [
+        ['ConsumeAdjustRemainingStockBeforeArchiving', /tồn kho/],
+        ['ACorrectionAlreadyExistsEditTheLatestRevision', /bản mới nhất/],
+        ['TaskIsNotAssignedToYou', /không được giao/],
+        ['InjuryDoesNotBelongToThisMedicalRecord', /không thuộc/],
+    ]) assert.match((await normalizeApiError({ response: { status: 400, data: { detail: 'English detail', messageKey, args: [] } } })).message, expected);
+    // Câu tiếng Anh không kèm mã không còn được dịch bằng cách so khớp.
+    assert.doesNotMatch((await normalizeApiError({ response: { status: 400, data: { detail: 'Task is not assigned to you.' } } })).message, /không được giao/);
 });
 test('all referenced message keys exist; catalog and key enum are frozen and complete', () => {
     assert.ok(Object.isFrozen(MSG)); assert.ok(Object.isFrozen(VI));
@@ -53,9 +55,11 @@ test('every shared domain enum has a Vietnamese display label without changing i
     for (const value of ['__proto__','constructor','new-value',null]) assert.equal(getEnumLabel(value),msg(MSG.CHUA_XAC_DINH));
 });
 test('business API errors, dynamic password policy, blob errors and validation messages are translated', async () => {
-    assert.match(backendErrorMessage('Password needs 12–128 characters including uppercase, lowercase and a digit.'), /12–128/);
-    assert.match(backendErrorMessage('Email or username is already registered.'), /đã được đăng ký/);
-    const error=await normalizeApiError({response:{status:409,data:new Blob([JSON.stringify({detail:'Record changed. Reload and retry.',traceId:'trace-1',errors:{name:['Invalid name.']}})])}});
+    assert.match(serverMessage('PasswordNeedsCharactersIncludingUppercaseLowercaseAndADigit', ['12', '128']), /12–128/);
+    assert.match(serverMessage('EmailOrUsernameIsAlreadyRegistered'), /đã được đăng ký/);
+    assert.match(serverMessage('StaffMustBeAnActive', ['Trainer']), /Huấn luyện viên/);
+    assert.equal(serverMessage('UnknownFutureKey', [], 'fallback'), 'fallback');
+    const error=await normalizeApiError({response:{status:409,data:new Blob([JSON.stringify({detail:'Record changed. Reload and retry.',messageKey:'RecordChangedReloadAndRetry',args:[],traceId:'trace-1',errors:{name:['Invalid name.']}})])}});
     assert.equal(error.status,409);assert.equal(error.traceId,'trace-1');
     assert.match(error.message,/Dữ liệu đã thay đổi/);
     assert.match(error.validationErrors.name[0],/không hợp lệ/);
