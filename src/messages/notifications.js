@@ -1,4 +1,5 @@
-import { MSG, msg } from './index.js';
+import { MSG, msg, UI_LOCALE } from './index.js';
+import { CLUB_TIME_ZONE } from '../constants/registration.js';
 import { serverMessage } from './serverMessages.js';
 
 /**
@@ -48,4 +49,16 @@ export function notificationTarget(notification) {
     const { type, referenceId, horseId } = notification;
     if (horseId && (referenceId === horseId || !Object.hasOwn(typeRoutes, type))) return `/horses/${encodeURIComponent(horseId)}`;
     return Object.hasOwn(typeRoutes, type) ? typeRoutes[type](referenceId) || null : null;
+}
+
+const absoluteTime = new Intl.DateTimeFormat(UI_LOCALE, { timeZone: CLUB_TIME_ZONE, day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+
+/**
+ * Thời điểm đầy đủ theo giờ câu lạc bộ (UTC+7); null khi dữ liệu thời gian không hợp lệ, không tự tạo ngày.
+ * @param value Chuỗi ISO createdAt từ API.
+ */
+export function notificationTime(value) {
+    if (typeof value !== 'string' || !value.trim()) return null;
+    const date = new Date(value);
+    return Number.isFinite(date.getTime()) ? absoluteTime.format(date) : null;
 }

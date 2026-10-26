@@ -42,6 +42,8 @@ export const PREFERENCES = Object.freeze([
 // Checked-in ClubOptions.cs/appsettings.json baseline; server overrides remain authoritative.
 export const INTAKE_LIMITS = Object.freeze({ maxFileBytes: 10485760, maxAttachments: 20,
     minHeight: 1, maxHeight: 300, minWeight: 1, maxWeight: 2000, timeZone: "Asia/Ho_Chi_Minh" });
+/** Múi giờ câu lạc bộ dùng để hiển thị thời gian (UTC+7). */
+export const CLUB_TIME_ZONE = INTAKE_LIMITS.timeZone;
 
 // Stable internal section identifiers, separate from display labels.
 export const REGISTRATION_SECTION = Object.freeze({ Identity: "Horse information", Pedigree: "Pedigree", Physical: "Physical information", Health: "Initial health declaration", Boarding: "Boarding period" });

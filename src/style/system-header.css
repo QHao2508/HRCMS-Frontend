@@ -1,9 +1,9 @@
 .system-header { background: #faf7ef; color: #30281f; border-bottom: 1px solid #d4c6b3; font-family: 'HRCMS Manrope', Arial, sans-serif; font-size: 14px; }
-.system-header-inner { width: min(1280px, calc(100% - 48px)); min-height: 90px; margin-inline: auto; display: flex; align-items: center; gap: 24px; }
+.system-header-inner { width: min(1600px, calc(100% - 48px)); min-height: 90px; margin-inline: auto; display: flex; align-items: center; gap: 24px; }
 .system-header .system-brand { display: inline-flex; align-items: center; gap: 12px; flex-shrink: 0; font: 700 24px/1.2 'HRCMS Lora', Georgia, serif; color: #301c15; text-decoration: none; }
 .system-header .brand-crest { width: 52px; height: 50px; }
 .system-portal-title { margin-left: auto; color: #794629; font-size: 12px; font-weight: 700; letter-spacing: .06em; }
-.system-account-controls { margin-left: auto; display: flex; align-items: center; gap: 18px; }
+.system-account-controls { margin-left: auto; display: flex; align-items: center; gap: 16px; min-width: 0; }
 .system-account { display: grid; max-width: 240px; overflow-wrap: anywhere; font-weight: 600; }
 .system-account small { font-size: 12px; color: #655a4e; font-weight: 400; }
 .system-header .system-dashboard-link { color: #794629; text-decoration: none; font-weight: 600; }
@@ -17,27 +17,3 @@
     .system-dashboard-link { display: none; }
 }
 
-/* Chuông thông báo: dùng font chung của header, không style inline. */
-.notification-bell { position: relative; }
-.notification-bell > summary { list-style: none; }
-.notification-bell > summary::-webkit-details-marker { display: none; }
-.notification-trigger { position: relative; display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid #d4c6b3; border-radius: 50%; background: #fff; color: #4b3426; cursor: pointer; }
-.notification-trigger:hover, .notification-bell[open] .notification-trigger { border-color: #794629; color: #794629; }
-.notification-count { position: absolute; top: -4px; right: -6px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 10px; background: #a43d2a; color: #fff; font-size: 11px; font-weight: 700; line-height: 20px; text-align: center; }
-.notification-panel { position: absolute; right: 0; top: calc(100% + 10px); z-index: 1050; width: min(380px, 90vw); max-height: min(520px, 75vh); display: flex; flex-direction: column; background: #fff; border: 1px solid #d4c6b3; border-radius: 10px; box-shadow: 0 12px 32px #301c1524; overflow: hidden; }
-.notification-panel-header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 16px 18px 12px; border-bottom: 1px solid #eee7dc; }
-.notification-panel-header h2 { margin: 0; font: 700 18px/1.3 'HRCMS Lora', Georgia, serif; color: #301c15; }
-.notification-panel-header span { font-size: 13px; color: #794629; font-weight: 600; }
-.notification-state { margin: 0; padding: 20px 18px; color: #655a4e; font-size: 14px; }
-.notification-list { list-style: none; margin: 0; padding: 0; overflow-y: auto; }
-.notification-list li + li { border-top: 1px solid #f1ebe1; }
-.notification-item { width: 100%; display: flex; gap: 12px; align-items: flex-start; padding: 14px 18px; border: 0; background: transparent; text-align: left; font: inherit; color: inherit; cursor: pointer; }
-.notification-item:hover, .notification-item:focus-visible { background: #faf7f0; }
-.notification-item.is-new { background: #fdf8ee; }
-.notification-dot { flex: 0 0 8px; height: 8px; margin-top: 7px; border-radius: 50%; background: transparent; }
-.notification-item.is-new .notification-dot { background: #a43d2a; }
-.notification-body { display: grid; gap: 3px; min-width: 0; }
-.notification-subject { font-size: 14px; font-weight: 700; color: #301c15; overflow-wrap: anywhere; }
-.notification-text { font-size: 14px; line-height: 1.5; color: #30281f; }
-.notification-item:not(.is-new) .notification-text { color: #655a4e; }
-.notification-time { font-size: 12px; color: #8a7d6e; }

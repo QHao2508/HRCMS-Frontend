@@ -14,10 +14,10 @@ export function SupportForm({ title, fields, initial = {}, submit, reload, disab
             </div><button className="btn btn-primary mt-3" type="submit" disabled={typeof submitDisabled === 'function' ? submitDisabled(form) : submitDisabled}>{msg(MSG.SUPPORT_SAVE)}</button></fieldset>
         </form></section>;
 }
-export function SupportTable({ resource, columns, actions }) {
+export function SupportTable({ resource, columns, actions, tableClassName = 'table' }) {
     return <section className="surface-card"><ResourceState resource={resource} />{resource.data && <>
         {!resource.data.items.length && <p>{msg(MSG.SUPPORT_EMPTY)}</p>}
-        <div className="table-responsive"><table className="table"><thead><tr>{columns.map(c => <th key={c.key}>{c.label}</th>)}{actions && <th>{msg(MSG.SUPPORT_ACTIONS)}</th>}</tr></thead>
+        <div className="table-responsive"><table className={tableClassName}><thead><tr>{columns.map(c => <th key={c.key}>{c.label}</th>)}{actions && <th>{msg(MSG.SUPPORT_ACTIONS)}</th>}</tr></thead>
             <tbody>{resource.data.items.map(row => <tr key={row.id}>{columns.map(c => <td key={c.key}>{c.render ? c.render(row) : row[c.key] ?? '—'}</td>)}{actions && <td>{actions(row)}</td>}</tr>)}</tbody></table></div>
         <Pagination data={resource.data} onChange={resource.setPage} /></>}</section>;
 }
