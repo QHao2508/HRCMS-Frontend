@@ -32,7 +32,7 @@ test('S5 bell has real loading, never empty or a fabricated zero while GET is pe
     assert.ok(html.includes(msg(MSG.NOTIF_LOADING))); assert.doesNotMatch(html, /Không có thông báo mới|Chưa có thông báo nào/);
     assert.match(html, /aria-busy="true"/);
     const bell = renderToStaticMarkup(h(MemoryRouter, null, h(Bell)));
-    assert.ok(bell.includes('…'));
+    assert.ok(bell.includes(msg(MSG.SYMBOL_ELLIPSIS)));
 });
 test('S5 bell keeps accessible native summary and shows the unread total from the server', () => {
     globalThis.__notifUI.state = { ...ready, unreadTotal: 51 };
