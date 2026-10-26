@@ -1,0 +1,44 @@
+name: Frontend CI
+
+# Chạy lint và test trên mọi pull request, để lỗi lộ ra trước khi merge vào main
+# (workflow deploy chỉ chạy sau khi push lên main).
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: frontend-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Test
+        shell: bash
+        run: |
+          set -o pipefail
+          npm test 2>&1 | tee test-output.log
+      - name: Summarize failing tests
+        if: failure()
+        shell: bash
+        run: |
+          # Trang tóm tắt của lần chạy xem được mà không cần quyền đọc log.
+          {
+            echo '## Test thất bại'
+            echo '```'
+            grep -n -A25 '^\s*not ok' test-output.log | head -400 || echo 'Không tìm thấy dòng "not ok"; xem log bước Lint/Test.'
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
