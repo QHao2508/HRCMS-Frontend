@@ -1,8 +1,10 @@
 name: Frontend CI
 
-# Chạy lint và test trên mọi pull request, để lỗi lộ ra trước khi merge vào main
-# (workflow deploy chỉ chạy sau khi push lên main).
+# Chạy lint và test trên mọi nhánh và pull request, để lỗi lộ ra trước khi merge vào main
+# (main đã có workflow deploy chạy test trước khi deploy).
 on:
+  push:
+    branches-ignore: [main]
   pull_request:
   workflow_dispatch:
 
