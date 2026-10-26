@@ -1,5 +1,18 @@
 import { TRAINING_TYPE, INTENSITY } from '../constants/training.js';
 export const OTHER_OPTION = '__other';
+export function trainerEligibility(template, candidate) {
+    const required = requiredTypes(template);
+    if (!required.length || ![1, 2, 3].includes(template.minimumExpertiseLevel)) return 'RequirementsMissing';
+    if (candidate.eligibility) return ['Eligible', 'MissingSpecialty', 'BelowMinimumLevel', 'RequirementsMissing'].includes(candidate.eligibility) ? candidate.eligibility : 'Unverified';
+    // Compatibility with older responses: never infer permission from matches alone.
+    const skills = candidate.specialties || [];
+    if (required.some(type => !skills.some(skill => skill.trainingType === type))) return 'MissingSpecialty';
+    if (required.some(type => !skills.some(skill => skill.trainingType === type && skill.level >= template.minimumExpertiseLevel))) return 'BelowMinimumLevel';
+    return candidate.matches === true ? 'Eligible' : 'Unverified';
+}
+export function canAssignTrainer(template, candidate) {
+    return !!candidate && candidate.matches === true && !candidate.assigned && trainerEligibility(template, candidate) === 'Eligible';
+}
 export function curriculumOf(template) {
     if (!template?.curriculumJson) return null;
     try { const value = JSON.parse(template.curriculumJson); return Array.isArray(value.planOptions) && Array.isArray(value.sessionOptions) ? value : null; }

@@ -1,3 +1,4 @@
+import { useMedicalDialog } from '../../services/useMedicalDialog.js';
 import { horseRegistrationCode } from '../../services/careUi.js';
 import { useMedicalPatientSelection } from '../../services/medicalPatientSelection.js';
 import { allMedicalPages } from '../../services/medicalValidation.js';
@@ -78,6 +79,7 @@ function MedicalInjury() {
     const [form, setForm] = useState(emptyForm);
     const [saving, setSaving] = useState(false);
 
+    const dialogRef = useMedicalDialog(showModal, saving, () => setShowModal(false));
     const selectedHorse = useMemo(
         () => horses.find((horse) => String(horseIdOf(horse)) === String(selectedHorseId)),
         [horses, selectedHorseId]
@@ -337,7 +339,7 @@ function MedicalInjury() {
 
             {showModal && (
                 <div className="medical-modal-backdrop" onMouseDown={closeModal}>
-                    <div className="medical-modal medical-injury-modal" role="dialog" aria-modal="true" aria-label={msg(MSG.MEDICAL_WORKSPACE_INJURIES)} onMouseDown={(event) => event.stopPropagation()}>
+                    <div className="medical-modal medical-injury-modal" ref={dialogRef} role="dialog" aria-modal="true" aria-label={msg(MSG.MEDICAL_WORKSPACE_INJURIES)} onMouseDown={(event) => event.stopPropagation()}>
                         <div className="medical-modal-header">
                             <div>
                                 <span>{msg(MSG.MEDICAL_WORKSPACE_INJURIES)}</span>

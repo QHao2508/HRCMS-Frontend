@@ -1,3 +1,4 @@
+import { useMedicalDialog } from '../../services/useMedicalDialog.js';
 import MedicalCaseDetails from '../../components/medical/MedicalCaseDetails.jsx';
 import { medicalCases } from '../../services/medicalCases.js';
 import MedicalChoiceField from '../../components/medical/MedicalChoiceField.jsx';
@@ -112,6 +113,7 @@ function MedicalExamination() {
     const [success, setSuccess] = useState("");
 
     const [showModal, setShowModal] = useState(false);
+    const dialogRef = useMedicalDialog(showModal, saving, () => setShowModal(false));
     const [editingRecord, setEditingRecord] = useState(null);
     const [viewingRecord, setViewingRecord] = useState(null);
     const [form, setForm] = useState(emptyForm);
@@ -516,7 +518,7 @@ function MedicalExamination() {
             {showModal && (
                 <div className="medical-modal-backdrop" onMouseDown={() => !saving && setShowModal(false)}>
                     <div
-                        className="medical-modal" role="dialog" aria-modal="true" aria-label={editingRecord ? msg(MSG.MEDICAL_TEXT_15) : msg(MSG.MEDICAL_CREATE_EXAMINATION)}
+                        className="medical-modal" ref={dialogRef} role="dialog" aria-modal="true" aria-label={editingRecord ? msg(MSG.MEDICAL_TEXT_15) : msg(MSG.MEDICAL_CREATE_EXAMINATION)}
                         onMouseDown={(event) => event.stopPropagation()}
                     >
                         <div className="medical-modal-header">

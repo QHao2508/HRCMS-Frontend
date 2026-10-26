@@ -1,9 +1,9 @@
 .system-header { background: #faf7ef; color: #30281f; border-bottom: 1px solid #d4c6b3; font-family: 'HRCMS Manrope', Arial, sans-serif; font-size: 14px; }
-.system-header-inner { width: min(1280px, calc(100% - 48px)); min-height: 90px; margin-inline: auto; display: flex; align-items: center; gap: 24px; }
+.system-header-inner { width: min(1600px, calc(100% - 48px)); min-height: 90px; margin-inline: auto; display: flex; align-items: center; gap: 24px; }
 .system-header .system-brand { display: inline-flex; align-items: center; gap: 12px; flex-shrink: 0; font: 700 24px/1.2 'HRCMS Lora', Georgia, serif; color: #301c15; text-decoration: none; }
 .system-header .brand-crest { width: 52px; height: 50px; }
 .system-portal-title { margin-left: auto; color: #794629; font-size: 12px; font-weight: 700; letter-spacing: .06em; }
-.system-account-controls { margin-left: auto; display: flex; align-items: center; gap: 18px; }
+.system-account-controls { margin-left: auto; display: flex; align-items: center; gap: 16px; min-width: 0; }
 .system-account { display: grid; max-width: 240px; overflow-wrap: anywhere; font-weight: 600; }
 .system-account small { font-size: 12px; color: #655a4e; font-weight: 400; }
 .system-header .system-dashboard-link { color: #794629; text-decoration: none; font-weight: 600; }

@@ -208,7 +208,12 @@ test("shell displays the current user, readable role, navigation and nested Outl
     assert.match(html, /aria-current="page"/);
     assert.match(html, /Nested page content/);
     assert.match(html, /Đăng xuất/);
-    assert.equal(globalThis.__hrcmsRoutingTest.buttons.length, 1);
+    assert.equal(globalThis.__hrcmsRoutingTest.buttons.length, 2);
+    const toggle = globalThis.__hrcmsRoutingTest.buttons.find(button => button['aria-controls'] === 'workflow-navigation');
+    assert.ok(toggle);
+    assert.equal(toggle['aria-expanded'], false);
+    assert.match(html, /id="workflow-navigation"/);
+    assert.equal(globalThis.__hrcmsRoutingTest.buttons.filter(button => button.children === 'Đăng xuất').length, 1);
 });
 
 test("shell user display falls back to username without showing a token or email", () => {
@@ -230,7 +235,7 @@ test("shell sign-out invokes the existing logout service, sends Bearer and clear
         return { config, data: "", status: 204, statusText: "", headers: {} };
     };
     render(h(AppLayout));
-    await globalThis.__hrcmsRoutingTest.buttons[0].onClick();
+    await globalThis.__hrcmsRoutingTest.buttons.find(button => button.children === 'Đăng xuất').onClick();
     assert.equal(calls, 1);
     assert.equal(store.getSession().status, "anonymous");
     assert.equal(storage.has("hrcms.session"), false);
@@ -241,7 +246,7 @@ test("shell sign-out failure still clears locally and preserves the existing log
     seedSession();
     api.defaults.adapter = async () => { throw new Error("Offline"); };
     render(h(AppLayout));
-    await globalThis.__hrcmsRoutingTest.buttons[0].onClick();
+    await globalThis.__hrcmsRoutingTest.buttons.find(button => button.children === 'Đăng xuất').onClick();
     assert.equal(store.getSession().status, "anonymous");
     const [destination, options] = globalThis.__hrcmsRoutingTest.navigations[0];
     assert.equal(destination, "/login");

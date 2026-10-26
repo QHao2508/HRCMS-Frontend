@@ -3,3 +3,11 @@ import { MSG, msg } from "../messages/index.js";
 export const WIZARD_STEPS = [msg(MSG.NHAN_DIEN), msg(MSG.GIAY_TO_THE_CHAT), msg(MSG.SUC_KHOE), msg(MSG.NHAN_SU_THOI_GIAN), msg(MSG.KIEM_TRA_GUI)];
 export const FIELD_LABELS = { name: msg(MSG.TEN_NGUA), dateOfBirth: msg(MSG.NGAY_SINH), gender: msg(MSG.GIOI_TINH), breed: msg(MSG.GIONG_NGUA), registrationNumber: msg(MSG.MA_DANG_KY_BEN_NGOAI_NEU_CO), sire: msg(MSG.SIRE_BO), dam: msg(MSG.DAM_ME), heightCm: msg(MSG.CHIEU_CAO_CM), weightKg: msg(MSG.CAN_NANG_KG), measurementDate: msg(MSG.NGAY_DO), declaredHealth: msg(MSG.KHAI_BAO_SUC_KHOE), healthNotes: msg(MSG.GHI_CHU_SUC_KHOE), boardingStart: msg(MSG.NGAY_BAT_DAU_LUU_TRU), boardingEnd: msg(MSG.NGAY_KET_THUC_LUU_TRU), preferredHeadTrainerId: msg(MSG.HEADTRAINER_DE_XUAT), preferredGroomId: msg(MSG.GROOM_DE_XUAT), preferredVeterinarianId: msg(MSG.PREFERRED_VETERINARIAN) };
 export const SECTION_STEPS = { [REGISTRATION_SECTION.Identity]: 0, [REGISTRATION_SECTION.Pedigree]: 0, [REGISTRATION_SECTION.Physical]: 1, [REGISTRATION_SECTION.Health]: 2, [REGISTRATION_SECTION.Boarding]: 3 };
+// Summary sections describe their own fields, independently of wizard navigation.
+export const SECTION_TITLES = Object.freeze({
+    [REGISTRATION_SECTION.Identity]: msg(MSG.NHAN_DIEN),
+    [REGISTRATION_SECTION.Pedigree]: msg(MSG.PHA_HE),
+    [REGISTRATION_SECTION.Physical]: msg(MSG.THONG_TIN_THE_CHAT),
+    [REGISTRATION_SECTION.Health]: msg(MSG.KHAI_BAO_SUC_KHOE_BAN_DAU),
+    [REGISTRATION_SECTION.Boarding]: msg(MSG.THOI_GIAN_LUU_TRU),
+});

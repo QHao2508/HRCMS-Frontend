@@ -1,0 +1,25 @@
+.notification-bell { position: relative; flex-shrink: 0; }
+.notification-trigger { display: flex; align-items: center; gap: 8px; list-style: none; }
+.notification-trigger::-webkit-details-marker { display: none; }
+.notification-panel { position: absolute; right: 0; top: var(--notification-panel-top, calc(100% + 24px)); width: min(460px, calc(100vw - 32px)); max-height: var(--notification-panel-height, calc(100dvh - var(--hc-header-height, 90px) - 40px)); z-index: 1050; margin: 0; padding: 20px; display: flex; flex-direction: column; color: #30281f; }
+.notification-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.notification-heading h2 { font-size: 20px; margin: 0 0 4px; }
+.notification-heading p { margin: 0; color: #655a4e; font-size: 14px; }
+.notification-toolbar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding: 16px 0; border-bottom: 1px solid var(--hc-border); }
+.notification-filters { display: flex; gap: 8px; }
+.notification-scroll { min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; }
+.notification-list { list-style: none; padding: 0; margin: 0; }
+.notification-item { padding: 16px 12px; border-bottom: 1px solid var(--hc-border); overflow-wrap: anywhere; }
+.notification-unread { background: #f7f2e9; border-left: 3px solid #794629; }
+.notification-read { border-left: 3px solid transparent; }
+.notification-meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; color: #655a4e; font-size: 12px; margin-bottom: 8px; }
+.notification-status { font-weight: 700; }
+.notification-unread .notification-status::before { content: '•'; margin-right: 6px; }
+.notification-message { font-size: 14px; line-height: 1.65; white-space: pre-wrap; margin: 0 0 12px; }
+.notification-read .notification-message { color: #51483d; }
+.notification-state { padding: 24px 4px; margin: 0; font-size: 14px; line-height: 1.6; }
+.notification-notice { margin: 12px 0; color: #246347; font-size: 14px; }
+.notification-item-error { color: #873a2c; font-size: 14px; line-height: 1.5; }
+.notification-pagination { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 16px; font-size: 14px; }
+.notification-heading, .notification-toolbar, .notification-pagination { flex-shrink: 0; }
+.notification-bell :focus-visible { outline: 3px solid #47725b; outline-offset: 3px; }
