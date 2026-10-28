@@ -9,7 +9,7 @@ export const FORM_SECTIONS = [
         { name: "dateOfBirth", label: msg(MSG.NGAY_SINH), type: "date" },
         { name: "gender", label: msg(MSG.GENDER), options: HORSE_GENDERS },
         { name: "breed", label: msg(MSG.BREED), maxLength: 100 },
-        { name: "registrationNumber", label: msg(MSG.MA_DANG_KY_BEN_NGOAI_NEU_CO), maxLength: 100 },
+        { name: "externalRegistrationNumber", label: msg(MSG.HORSE_EXTERNAL_CODE), maxLength: 100 },
     ] },
     { title: REGISTRATION_SECTION.Pedigree, fields: [
         { name: "sire", label: msg(MSG.SIRE), maxLength: 200 }, { name: "dam", label: msg(MSG.DAM), maxLength: 200 },
@@ -36,6 +36,7 @@ export const EDITABLE_FIELDS = Object.freeze([...fields.map(({ name }) => name),
  * @param record Bản ghi/payload do server trả hoặc giá trị dùng dựng form; không tự phát minh ID/trạng thái.
  */
 export function registrationForm(record = {}) {
+    record = { ...record, externalRegistrationNumber: Object.hasOwn(record, 'externalRegistrationNumber') ? record.externalRegistrationNumber : record.registrationNumber };
     return Object.fromEntries(EDITABLE_FIELDS.map((name) => [name, record[name] == null ? "" : String(record[name])]));
 }
 /**
@@ -43,6 +44,7 @@ export function registrationForm(record = {}) {
  * @param form Giá trị form controlled, chưa được coi là dữ liệu đã lưu ở server.
  */
 export function registrationPayload(form) {
+    form = registrationForm(form);
     // Owner PUT is a replacement. Every editable key is always present.
     return Object.fromEntries(EDITABLE_FIELDS.map((name) => {
         const value = String(form[name] ?? "").trim();

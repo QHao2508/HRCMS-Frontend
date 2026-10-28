@@ -12,7 +12,7 @@ import { WIZARD_STEPS, SECTION_STEPS } from '../src/constants/registrationWizard
 
 // Test-only records. No request reaches a real Backend.
 const record = { id: 'review-fixture', ownerId: 'private-owner-id', ownerName: 'Nguyễn Chủ Hồ Sơ', name: 'Ngựa kiểm thử',
-    status: 'PendingReview', createdAt: '2026-10-21T15:30:00Z', registrationNumber: 'S4-TEST',
+    status: 'PendingReview', createdAt: '2026-10-21T15:30:00Z', externalRegistrationNumber: 'S4-TEST',
     dateOfBirth: '2020-02-01', gender: 'Female', breed: 'Thoroughbred', sire: 'Ngựa bố kiểm thử', dam: 'Ngựa mẹ kiểm thử',
     heightCm: 162, weightKg: 480, measurementDate: '2026-10-20', declaredHealth: 'Khai báo sức khỏe kiểm thử',
     healthNotes: 'Ghi chú sức khỏe kiểm thử', boardingStart: '2026-11-01', boardingEnd: '2027-01-31' };
@@ -57,8 +57,8 @@ test('S4 list renders ownerName between horse and registration columns without r
     const html = list();
     assert.ok(html.includes(record.ownerName));
     assert.ok(html.indexOf(msg(MSG.HORSE_OWNER)) > html.indexOf(msg(MSG.TEN_NGUA)));
-    assert.ok(html.indexOf(msg(MSG.HORSE_OWNER)) < html.indexOf(msg(MSG.MA_DANG_KY)));
-    for (const value of [record.name, record.registrationNumber, '2026-10-21', msg(MSG.CHO_DUYET), 'href="/reviews/review-fixture"']) assert.ok(html.includes(value), value);
+    assert.ok(html.indexOf(msg(MSG.HORSE_OWNER)) < html.indexOf(msg(MSG.HORSE_EXTERNAL_CODE)));
+    for (const value of [record.name, record.externalRegistrationNumber, '2026-10-21', msg(MSG.CHO_DUYET), 'href="/reviews/review-fixture"']) assert.ok(html.includes(value), value);
     assert.doesNotMatch(html, /private-owner-id|Tên tài khoản khác/);
 });
 test('S4 list uses explicit missing-owner fallback for null, empty, whitespace and absent names', () => {
@@ -95,7 +95,7 @@ test('S4 detail uses explicit missing-owner fallback without inventing a name', 
 test('S4 detail retains all summary fields, attachment metadata and administrative fields', () => {
     const html = detail();
     for (const value of [record.sire, record.dam, record.breed, record.declaredHealth, record.healthNotes, record.boardingStart, record.boardingEnd, attachments[0].fileName]) assert.ok(html.includes(value), value);
-    for (const name of ['name', 'registrationNumber', 'boardingStart', 'boardingEnd']) assert.ok(globalThis.__s4.controls.some(x => x.type === 'input' && x.props.name === name));
+    for (const name of ['name', 'externalRegistrationNumber', 'boardingStart', 'boardingEnd']) assert.ok(globalThis.__s4.controls.some(x => x.type === 'input' && x.props.name === name));
     assert.ok(button(msg(MSG.TAI_XUONG)));
 });
 test('S4 pending review retains approve action and guards revision without a reason', async () => {

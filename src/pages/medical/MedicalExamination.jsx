@@ -1,3 +1,4 @@
+import { systemRegistrationCode } from "../../services/horseIdentifiers.js";
 import { useMedicalDialog } from '../../services/useMedicalDialog.js';
 import MedicalCaseDetails from '../../components/medical/MedicalCaseDetails.jsx';
 import { medicalCases } from '../../services/medicalCases.js';
@@ -54,13 +55,7 @@ function horseName(horse) {
     return firstDefined(horse, ["name", "Name", "horseName", "HorseName"], msg(MSG.MEDICAL_NGUA_CHUA_CO_TEN));
 }
 
-function horseRegistration(horse) {
-    return firstDefined(
-        horse,
-        ["registrationNumber", "RegistrationNumber", "identifier", "Identifier"],
-        ""
-    );
-}
+function horseRegistration(horse) { return systemRegistrationCode(horse); }
 
 function formatDateTime(value) {
     if (!value) return "—";

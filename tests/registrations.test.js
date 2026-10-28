@@ -17,7 +17,7 @@ let server, api, store, services, files, AuthContext, AppRoutes, ListContent, De
 const storage = new Map();
 const owner = { id: "owner", role: ROLES.HorseOwner, active: true, emailVerified: true, firstName: "Test" };
 const draft = { id: "record-1", ownerId: "owner", status: "Draft", createdAt: "2026-01-02T12:00:00Z", name: "Comet",
-    sire: "Sire", dam: "Dam", dateOfBirth: "2020-01-01", gender: "Gelding", breed: "Thoroughbred", registrationNumber: "REG-7",
+    sire: "Sire", dam: "Dam", dateOfBirth: "2020-01-01", gender: "Gelding", breed: "Thoroughbred", externalRegistrationNumber: "REG-7",
     heightCm: 165.5, weightKg: 480, measurementDate: "2026-01-01", declaredHealth: "Owner declaration", healthNotes: "Keep this note",
     boardingStart: "2026-02-01", boardingEnd: "2026-12-31", preferredHeadTrainerId: "head-id", preferredGroomId: "groom-id", preferredVeterinarianId: "vet-id" };
 const attachments = [
@@ -154,7 +154,7 @@ test("Owner PUT replaces all editable fields, preserving untouched values when o
     assert.equal((await services.updateRegistration(draft.id, form)).healthNotes, "Keep this note");
 });
 test("intentionally cleared text, dates, numbers and preference ids become null, never zero or omitted", () => {
-    const cleared = ["healthNotes", "boardingEnd", "heightCm", "preferredGroomId", "registrationNumber"];
+    const cleared = ["healthNotes", "boardingEnd", "heightCm", "preferredGroomId", "externalRegistrationNumber"];
     const form = registrationForm(draft);
     for (const field of cleared) form[field] = "  ";
     const body = registrationPayload(form);
@@ -257,7 +257,7 @@ test("submit completeness requires exactly the verified fields plus HorsePhoto a
     assert.equal(submissionMissing({}, []).length, 13);
     assert.deepEqual(submissionMissing(draft, [attachments[0]]), ["Tệp chứng nhận"]);
     assert.deepEqual(submissionMissing(draft, [attachments[1]]), ["Tệp ảnh ngựa"]);
-    const optionalEmpty = { ...draft, registrationNumber: null, healthNotes: null, boardingEnd: null, preferredHeadTrainerId: null, preferredGroomId: null, preferredVeterinarianId: null };
+    const optionalEmpty = { ...draft, externalRegistrationNumber: null, healthNotes: null, boardingEnd: null, preferredHeadTrainerId: null, preferredGroomId: null, preferredVeterinarianId: null };
     assert.deepEqual(submissionMissing(optionalEmpty, attachments), []);
 });
 test("incomplete saved draft cannot invoke submit from the rendered detail", async () => {

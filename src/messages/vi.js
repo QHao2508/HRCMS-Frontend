@@ -1,5 +1,9 @@
 // Vietnamese display text only. API values belong in constants/.
 export const VI = Object.freeze({
+    "HORSE_EXTERNAL_HELP": "Nhập đúng mã trên giấy tờ của ngựa. Mã ngựa trong hệ thống sẽ được cấp khi hồ sơ được duyệt.",
+    "HORSE_EXTERNAL_MISSING": "Chưa cung cấp",
+    "HORSE_EXTERNAL_CODE": "Mã đăng ký trên giấy tờ",
+    "HORSE_SYSTEM_CODE": "Mã ngựa trong hệ thống",
     "SCHED_PICK_TRAINER": "Chọn người này",
     "HEAD_TRAINER_CHANGE_REASON": "Lý do đổi huấn luyện viên trưởng",
     "HEAD_TRAINER_CHANGE_HELP": "Mỗi ngựa chỉ có một huấn luyện viên trưởng. Muốn đổi, chọn người mới và ghi rõ lý do; chủ ngựa, huấn luyện viên trưởng cũ và mới đều nhận được thông báo.",
@@ -438,7 +442,7 @@ export const VI = Object.freeze({
     "NGAY_SINH": "Ngày sinh",
     "GIOI_TINH": "Giới tính",
     "GIONG_NGUA": "Giống ngựa",
-    "MA_DANG_KY_BEN_NGOAI_NEU_CO": "Mã đăng ký bên ngoài (nếu có)",
+    "MA_DANG_KY_BEN_NGOAI_NEU_CO": "Mã đăng ký trên giấy tờ (nếu có)",
     "SIRE_BO": "Ngựa bố",
     "DAM_ME": "Ngựa mẹ",
     "CHIEU_CAO_CM": "Chiều cao (cm)",
@@ -527,7 +531,7 @@ export const VI = Object.freeze({
     "YOUR_ACCOUNT_ROLE_IS_NOT_RECOGNIZED_CONTACT_CLUB_MANAGEMENT_FOR_ASSISTAN": "Vai trò tài khoản chưa được nhận diện. Vui lòng liên hệ ban quản lý để được hỗ trợ.",
     "TRUY_CAP_NHANH": "Truy cập nhanh",
     "HO_SO_NGUA_TRONG_PHAM_VI_SO_HUU_HOAC_PHAN_CONG_CUA_BAN": "Hồ sơ ngựa trong phạm vi sở hữu hoặc phân công của bạn.",
-    "TIM_THEO_TEN_HOAC_MA_DANG_KY": "Tìm theo tên hoặc mã đăng ký",
+    "TIM_THEO_TEN_HOAC_MA_DANG_KY": "Tìm theo tên, mã hệ thống hoặc mã trên giấy tờ",
     "MA_DANG_KY": "Mã đăng ký",
     "GIONG": "Giống",
     "XEM_HO_SO": "Xem hồ sơ",

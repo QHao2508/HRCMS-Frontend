@@ -1,3 +1,4 @@
+import { externalRegistrationNumber } from "../../services/horseIdentifiers.js";
 import { MSG, msg } from "../../messages/index.js";
 import { useCallback, useState } from "react";
 import { Link } from "react-router-dom";
@@ -15,10 +16,10 @@ import RegistrationError from "../../components/registrations/RegistrationError.
 export function RegistrationListContent({ data }) {
     if (!data.items.length) return <p>{msg(MSG.CHUA_CO_HO_SO_PHU_HOP_TAO_BAN_NHAP_DE_BAT_DAU)}</p>;
     return <div className="table-responsive"><table className="table align-middle">
-        <thead><tr><th>{msg(MSG.TEN_NGUA)}</th><th>{msg(MSG.TRANG_THAI)}</th><th>{msg(MSG.MA_DANG_KY)}</th><th>{msg(MSG.NGAY_TAO)}</th><th>{msg(MSG.THAO_TAC)}</th></tr></thead>
+        <thead><tr><th>{msg(MSG.TEN_NGUA)}</th><th>{msg(MSG.TRANG_THAI)}</th><th>{msg(MSG.HORSE_EXTERNAL_CODE)}</th><th>{msg(MSG.NGAY_TAO)}</th><th>{msg(MSG.THAO_TAC)}</th></tr></thead>
         <tbody>{data.items.map((item) => <tr key={item.id}>
             <td>{item.name || msg(MSG.BAN_NHAP_CHUA_CO_TEN)}</td><td><RegistrationStatus status={item.status} /></td>
-            <td>{item.registrationNumber || "—"}</td><td>{item.createdAt ? item.createdAt.slice(0, 10) : "—"}</td>
+            <td>{externalRegistrationNumber(item) || "—"}</td><td>{item.createdAt ? item.createdAt.slice(0, 10) : "—"}</td>
             <td><Link to={`/registrations/${encodeURIComponent(item.id)}`}>{canEditRegistration(item.status) ? msg(MSG.XEM_CHINH_SUA) : msg(MSG.VIEW)}</Link></td>
         </tr>)}</tbody>
     </table></div>;

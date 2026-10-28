@@ -1,3 +1,4 @@
+import { systemRegistrationCode } from "../../services/horseIdentifiers.js";
 import { useMedicalDialog } from '../../services/useMedicalDialog.js';
 import { horseRegistrationCode } from '../../services/careUi.js';
 import { useMedicalPatientSelection } from '../../services/medicalPatientSelection.js';
@@ -343,7 +344,7 @@ function MedicalInjury() {
                         <div className="medical-modal-header">
                             <div>
                                 <span>{msg(MSG.MEDICAL_WORKSPACE_INJURIES)}</span>
-                                <h3>{msg(MSG.INJURY_GHI_NHAN_CHAN_THUONG_3)}</h3><p className="medical-modal-patient"><span>{msg(MSG.MEDICAL_WORKSPACE_PATIENT_LABEL)}</span><strong>{selectedHorse ? horseNameOf(selectedHorse) : ""}</strong><span>{selectedHorse?.registrationNumber || msg(MSG.MEDICAL_WORKSPACE_NO_CODE)}</span></p>
+                                <h3>{msg(MSG.INJURY_GHI_NHAN_CHAN_THUONG_3)}</h3><p className="medical-modal-patient"><span>{msg(MSG.MEDICAL_WORKSPACE_PATIENT_LABEL)}</span><strong>{selectedHorse ? horseNameOf(selectedHorse) : ""}</strong><span>{systemRegistrationCode(selectedHorse) || msg(MSG.MEDICAL_WORKSPACE_NO_CODE)}</span></p>
 
                             </div>
                             <button className="medical-icon-button" aria-label={msg(MSG.MEDICAL_WORKSPACE_CLOSE)} onClick={closeModal} disabled={saving}><X size={18} /></button>

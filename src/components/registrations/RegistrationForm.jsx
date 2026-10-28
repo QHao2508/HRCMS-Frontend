@@ -27,12 +27,12 @@ export default function RegistrationForm({ values, onChange, errors = {}, disabl
         if (field.type === "textarea") return <textarea {...props} rows={3} maxLength={field.maxLength} />;
         return <input {...props} onInput={field.type === "date" ? onChange : undefined} type={field.type || "text"} maxLength={field.maxLength} min={field.min} max={field.max} step={field.type === "number" ? "any" : undefined} placeholder={field.type === "date" ? undefined : msg(MSG.NHAP_THONG_TIN)} />;
     }
-    const sections = step === 0 ? [{ title: REGISTRATION_SECTION.Identity, fields: ["name","breed","dateOfBirth","gender","sire","dam","registrationNumber"].map(name => FORM_SECTIONS.flatMap(s => s.fields).find(f => f.name === name)) }] : FORM_SECTIONS;
+    const sections = step === 0 ? [{ title: REGISTRATION_SECTION.Identity, fields: ["name","breed","dateOfBirth","gender","sire","dam","externalRegistrationNumber"].map(name => FORM_SECTIONS.flatMap(s => s.fields).find(f => f.name === name)) }] : FORM_SECTIONS;
     return <>
         {sections.map(section => <fieldset key={section.title} disabled={disabled} className="form-card" hidden={step !== undefined && SECTION_STEPS[section.title] !== step}>
             <legend>{sectionTitles[section.title]}</legend>
             {section.title === REGISTRATION_SECTION.Health && <p className="card-description">{msg(MSG.THONG_TIN_DO_CHU_SO_HUU_KHAI_BAO_KHONG_THAY_THE_KET_LUAN_HOAC_CLEARANCE)}</p>}
-            <div className="row g-3">{section.fields.map(field => <div className={field.type === "textarea" ? "col-12" : "col-12 col-lg-6"} key={field.name}><label className="form-label" htmlFor={`registration-${field.name}`}>{FIELD_LABELS[field.name] || field.label}</label>{input(field)}{errors[field.name] && <div id={`${field.name}-error`} className="text-danger">{errors[field.name]}</div>}</div>)}</div>
+            <div className="row g-3">{section.fields.map(field => <div className={field.type === "textarea" ? "col-12" : "col-12 col-lg-6"} key={field.name}><label className="form-label" htmlFor={`registration-${field.name}`}>{FIELD_LABELS[field.name] || field.label}</label>{input(field)}{field.name === "externalRegistrationNumber" && <p className="form-text">{msg(MSG.HORSE_EXTERNAL_HELP)}</p>}{errors[field.name] && <div id={`${field.name}-error`} className="text-danger">{errors[field.name]}</div>}</div>)}</div>
             {section.title === REGISTRATION_SECTION.Identity && <div className="mt-3"><label className="form-label" htmlFor="registration-owner">{msg(MSG.CHU_SO_HUU)}</label><input id="registration-owner" className="form-control" readOnly value={[user?.firstName,user?.lastName].filter(Boolean).join(" ") || user?.userName || msg(MSG.TAI_KHOAN_DANG_DANG_NHAP)} /></div>}
         </fieldset>)}
         <fieldset disabled={disabled} className="form-card" hidden={step !== undefined && step !== 3}>

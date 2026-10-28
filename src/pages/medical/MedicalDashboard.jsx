@@ -1,3 +1,4 @@
+import { systemRegistrationCode } from "../../services/horseIdentifiers.js";
 import { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AlertTriangle, ArrowRight, ClipboardPlus, HeartPulse, Search, Stethoscope } from 'lucide-react';
@@ -40,7 +41,7 @@ export default function MedicalDashboard() {
             {resource.data && <><div className="medical-table-wrapper"><table className="medical-table medical-overview-table">
                 <thead><tr><th>{msg(MSG.MEDICAL_HORSE)}</th><th>{msg(MSG.MEDICAL_HEALTH)}</th><th>{msg(MSG.MEDICAL_WORKSPACE_ACTIONS)}</th></tr></thead>
                 <tbody>{items.map(horse => <tr key={horse.id}>
-                    <td><Link className="medical-patient-name" to={`/horses/${encodeURIComponent(horse.id)}`}>{horse.name}</Link><span className="medical-patient-subtitle">{horse.registrationNumber || horse.breed || msg(MSG.MEDICAL_WORKSPACE_NO_CODE)}</span></td>
+                    <td><Link className="medical-patient-name" to={`/horses/${encodeURIComponent(horse.id)}`}>{horse.name}</Link><span className="medical-patient-subtitle">{systemRegistrationCode(horse) || horse.breed || msg(MSG.MEDICAL_WORKSPACE_NO_CODE)}</span></td>
                     <td><StateBadge value={horse.healthStatus} /></td>
                     <td><div className="medical-patient-actions"><Link className="medical-secondary-button" to={`/medical/examination?horseId=${encodeURIComponent(horse.id)}`}>{msg(MSG.MEDICAL_WORKSPACE_OPEN_RECORD)}<ArrowRight size={16} aria-hidden="true" /></Link>
                         <Link className="medical-text-link" to={`/medical/follow-up?horseId=${encodeURIComponent(horse.id)}`}>{msg(MSG.MEDICAL_WORKSPACE_REVIEW)}</Link></div></td>

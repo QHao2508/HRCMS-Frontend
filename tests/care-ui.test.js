@@ -5,7 +5,8 @@ import { activeTreatmentPlans, canUploadIncidentPhoto, horseRegistrationCode } f
 test('horse without a registration number does not display its internal UUID', () => {
     assert.equal(horseRegistrationCode({ id: 'e860828e-3ce7-4925-9a3d-28780188630b', name: 'BubuChacha' }), '');
     assert.equal(horseRegistrationCode({ id: 'internal', registrationNumber: 'H-104' }), 'H-104');
-    assert.equal(horseRegistrationCode({ registrationNumber: '', registrationNo: 'H-105' }), 'H-105');
+    assert.equal(horseRegistrationCode({ externalRegistrationNumber: 'PAPER-1', identifier: 'UUID' }), '');
+    assert.equal(horseRegistrationCode({ systemRegistrationCode: 'HRC-105', registrationNumber: 'old' }), 'HRC-105');
 });
 
 test('care treatment choices exclude completed and malformed plans', () => {

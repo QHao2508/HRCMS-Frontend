@@ -1,4 +1,5 @@
 import { getEnumLabel } from "../../constants/enumLabels.js";
+import { externalRegistrationNumber } from "../../services/horseIdentifiers.js";
 import { MSG, msg } from "../../messages/index.js";
 import { FORM_SECTIONS } from "../../services/registrationValidation.js";
 import { WIZARD_STEPS, FIELD_LABELS, SECTION_TITLES } from "../../constants/registrationWizard.js";
@@ -14,4 +15,7 @@ export function WizardSteps({ step, onChange, disabled }) { return <nav classNam
  * Nhãn/thông báo lấy từ catalog; enum và dữ liệu người dùng giữ nguyên giá trị.
  * @param options0 Đối tượng destructuring: { record }. Các props/callback lấy từ caller.
  */
-export function RegistrationSummary({ record }) { return <>{FORM_SECTIONS.map(section => <section className="surface-card registration-summary-section" key={section.title}><h2>{SECTION_TITLES[section.title]}</h2><dl className="summary-grid">{section.fields.map(field => <div key={field.name}><dt>{FIELD_LABELS[field.name]}</dt><dd>{record[field.name] == null || record[field.name] === "" ? msg(MSG.CHUA_NHAP) : field.name === "gender" ? getEnumLabel(record[field.name]) : field.name === "gender" ? getEnumLabel(record[field.name]) : String(record[field.name])}</dd></div>)}</dl></section>)}</>; }
+export function RegistrationSummary({ record }) {
+    const values = { ...record, externalRegistrationNumber: externalRegistrationNumber(record) };
+    return <>{FORM_SECTIONS.map(section => <section className="surface-card registration-summary-section" key={section.title}><h2>{SECTION_TITLES[section.title]}</h2><dl className="summary-grid">{section.fields.map(field => <div key={field.name}><dt>{FIELD_LABELS[field.name]}</dt><dd>{values[field.name] == null || values[field.name] === "" ? msg(MSG.CHUA_NHAP) : field.name === "gender" ? getEnumLabel(values[field.name]) : String(values[field.name])}</dd></div>)}</dl></section>)}</>;
+}
