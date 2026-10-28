@@ -1,5 +1,6 @@
 // Message key enum, independent of displayed content.
 export const MSG = Object.freeze({
+    "SCHED_PICK_TRAINER": "SCHED_PICK_TRAINER",
     "HEAD_TRAINER_CHANGE_REASON": "HEAD_TRAINER_CHANGE_REASON",
     "HEAD_TRAINER_CHANGE_HELP": "HEAD_TRAINER_CHANGE_HELP",
     "HEAD_TRAINER_CURRENT": "HEAD_TRAINER_CURRENT",

@@ -255,6 +255,8 @@ html { scroll-padding-top: calc(var(--hc-header-height) + 16px); }
 .availability-slots > div { display: flex; flex-direction: column; gap: 8px; background: #fff; border: 1px solid #b9cdb5; padding: 12px; border-radius: 8px; }
 .availability-match { color: #315c39; font-weight: 700; }
 .trainer-candidates { margin: 18px 0; }
+.candidate-issues { margin: 6px 0 0; padding-left: 18px; font-size: .875rem; color: #7a4b16; }
+.candidate-issues li + li { margin-top: 2px; }
 .profile-schedule-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; padding: 14px 0; }
 .profile-schedule-row > div { flex: 1 1 160px; width: auto; }
 .profile-schedule-row > button { margin-bottom: 1px; }

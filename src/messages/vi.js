@@ -1,5 +1,6 @@
 // Vietnamese display text only. API values belong in constants/.
 export const VI = Object.freeze({
+    "SCHED_PICK_TRAINER": "Chọn người này",
     "HEAD_TRAINER_CHANGE_REASON": "Lý do đổi huấn luyện viên trưởng",
     "HEAD_TRAINER_CHANGE_HELP": "Mỗi ngựa chỉ có một huấn luyện viên trưởng. Muốn đổi, chọn người mới và ghi rõ lý do; chủ ngựa, huấn luyện viên trưởng cũ và mới đều nhận được thông báo.",
     "HEAD_TRAINER_CURRENT": "Huấn luyện viên trưởng hiện tại: {name}",
@@ -267,9 +268,9 @@ export const VI = Object.freeze({
     "SCHED_MATCH": "Phù hợp",
     "SCHED_NO_MATCH": "Chưa phù hợp",
     "SCHED_LOAD": "Số ngựa đang phụ trách",
-    "SCHED_CANDIDATES_HELP": "Ưu tiên chuyên môn phù hợp, mức thành thạo và số ngựa đang phụ trách. Kiểm tra lịch khi lập buổi tập.",
+    "SCHED_CANDIDATES_HELP": "Hệ thống xét mỗi huấn luyện viên theo đúng quy tắc khi lưu: có chuyên môn đang chọn, được giao giáo án mà ngựa đang tập, và lịch các buổi tập sắp tới không vướng ca làm, nghỉ phép hay ngựa khác. Người phù hợp xếp trước theo mức thành thạo và số ngựa đang phụ trách.",
     "SCHED_NOT_CONFIRMED": "Chưa xác nhận",
-    "SCHED_NO_CANDIDATES": "Chưa có huấn luyện viên phù hợp. Quản lý cần bổ sung chuyên môn trong hồ sơ nhân sự.",
+    "SCHED_NO_CANDIDATES": "Chưa có huấn luyện viên phù hợp. Xem lý do ở từng người: bổ sung chuyên môn trong hồ sơ nhân sự, giao giáo án cho huấn luyện viên hoặc điều chỉnh lịch tập.",
     "SCHED_SHIFTS": "Ca làm việc theo tuần",
     "SCHED_START": "Bắt đầu",
     "SCHED_END": "Kết thúc",

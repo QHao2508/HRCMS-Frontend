@@ -170,6 +170,7 @@ export const SERVER_MESSAGES = Object.freeze({
     TemplateMustBeAssignedToQualifiedTrainer: "Giáo án phải được giao cho huấn luyện viên có đủ chuyên môn ở mức yêu cầu.",
     ThePlanWasArchivedAndThisSessionWasCancelled: "Kế hoạch đã được lưu trữ; buổi tập chưa thực hiện đã được hủy.",
     TooMuchReportDataNarrowHorseDateFilters: "Có quá nhiều dữ liệu báo cáo. Hãy chọn ngựa hoặc thu hẹp khoảng thời gian.",
+    TrainerNotQualifiedForTemplate: "Ngựa đang có buổi tập theo giáo án “{0}”. Huấn luyện viên phải được giao giáo án này và có đủ chuyên môn ở mức yêu cầu.",
     TrainerScheduleOverlap: "huấn luyện viên có buổi tập trùng lịch. Chọn giờ khác hoặc nhân sự khác.",
     TrainerSessionInProgress: "Hoàn tất hoặc bỏ qua buổi tập đang thực hiện trước khi đổi huấn luyện viên.",
     TrainerSpecialtyMismatch: "huấn luyện viên chưa có chuyên môn phù hợp với bài tập hoặc các buổi tập cần tiếp quản.",
