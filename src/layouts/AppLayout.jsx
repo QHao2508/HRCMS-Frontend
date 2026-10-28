@@ -1,4 +1,5 @@
 import SystemHeader from "../components/SystemHeader.jsx";
+import '../style/workspace.css';
 import { MSG, msg } from "../messages/index.js";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useState } from "react";
