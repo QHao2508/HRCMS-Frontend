@@ -18,7 +18,7 @@ import { useTrainingFormFocus } from '../../context/useTrainingFormFocus.js';
 import '../../style/training.css';
 
 const TEMPLATE_DEFAULT = { name:'',goal:'',phase:'Base',distanceMetres:1000,intensity:INTENSITY.Light,surface:TRAINING_SURFACE.Sand,frequencyPerWeek:3,notes:'' };
-export function TemplateForm({ form, onChange, disabled }) {
+export function TemplateForm({ form, onChange, onReplace, disabled }) {
     return <fieldset disabled={disabled}><div className="row g-3">
         <Field label={msg(MSG.TEN_GIAO_AN)} name="name" value={form.name} onChange={onChange} required maxLength={200}/>
         <Field label={msg(MSG.MUC_TIEU)} name="goal" value={form.goal} onChange={onChange} required multiline/>
@@ -28,7 +28,7 @@ export function TemplateForm({ form, onChange, disabled }) {
         <TrainingSurfaceField value={form.surface} onChange={onChange}/>
         <Field label={msg(MSG.SO_BUOI_MOI_TUAN)} name="frequencyPerWeek" value={form.frequencyPerWeek} onChange={onChange} required type="number" min={1} max={21}/>
         <Field label={msg(MSG.GHI_CHU)} name="notes" value={form.notes} onChange={onChange} multiline/>
-        <TemplateCurriculumEditor form={templateEditorForm(form)} onChange={onChange}/>
+        <TemplateCurriculumEditor form={templateEditorForm(form)} onChange={onChange} onReplace={onReplace}/>
     </div></fieldset>;
 }
 function TemplateTable({ items, canEdit, open, assign, archive }) {
@@ -61,7 +61,7 @@ export function TemplateList() {
     const personal = resource.data?.items.filter(template => !showDefaults || !template.isSystemDefault) || [];
     return <section className="training-page"><PageHeading title={msg(MSG.GIAO_AN_HUAN_LUYEN_TIEU_CHUAN)} description={msg(MSG.CURRIC_PAGE_HELP)} action={canEdit && <button className="btn btn-primary" onClick={() => open(null)} disabled={mutation.pending}>{msg(MSG.TAO_GIAO_AN)}</button>}/>
         <MutationState mutation={mutation} reload={resource.reload}/>
-        {editing && <section ref={editorPanel} className="surface-card training-action-panel"><h2 tabIndex={-1} data-training-form-heading>{msg(editing === 'new' ? MSG.TAO_GIAO_AN : MSG.CHINH_SUA_GIAO_AN)}</h2><form onSubmit={submit}><TemplateForm form={form} onChange={e => setForm({...form,[e.target.name]:e.target.value})} disabled={mutation.pending || mutation.uncertain}/>
+        {editing && <section ref={editorPanel} className="surface-card training-action-panel"><h2 tabIndex={-1} data-training-form-heading>{msg(editing === 'new' ? MSG.TAO_GIAO_AN : MSG.CHINH_SUA_GIAO_AN)}</h2><form onSubmit={submit}><TemplateForm form={form} onChange={e => setForm({...form,[e.target.name]:e.target.value})} onReplace={setForm} disabled={mutation.pending || mutation.uncertain}/>
             <div className="wizard-actions"><button type="button" className="btn btn-outline-primary" onClick={() => setEditing(null)}>{msg(MSG.HUY)}</button><button className="btn btn-success" disabled={mutation.pending || mutation.uncertain || !form.requiredTrainingTypes.length}>{msg(MSG.LUU_GIAO_AN)}</button></div></form></section>}
         {assignedTemplate && <TemplateTrainerAssignment key={assignedTemplate.id} template={assignedTemplate} opening={assignmentOpening} onClose={() => setAssignedTemplate(null)}/>}
         {showDefaults && <section className="surface-card"><h2>{msg(MSG.CURRIC_DEFAULT_TITLE)}</h2><p>{msg(MSG.CURRIC_ILLUSTRATIVE)}</p><ResourceState resource={defaults}/>{defaults.data && <TemplateTable items={defaults.data} canEdit={canEdit} open={open} assign={openAssignment} archive={openArchive}/>}</section>}

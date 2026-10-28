@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { curriculumOf, requiredTypes, choosePlanOption, chooseExercise, initialPlanForm, initialSessionForm, templateEditorForm, templatePayload, OTHER_OPTION } from '../src/services/templateCurriculum.js';
+import { curriculumOf, requiredTypes, choosePlanOption, chooseExercise, initialPlanForm, initialSessionForm, templateEditorForm, templatePayload, withRequiredTypes, OTHER_OPTION } from '../src/services/templateCurriculum.js';
 import { sessionPayload } from '../src/services/trainingPayload.js';
 const option = { key:'canter-1',label:'Canter đều',trainingType:'Canter',distanceMetres:800,intensity:'Light',surface:'Cát',durationMinutes:20,target:'Giữ nhịp đều' };
 const template = { id:'shared',isSystemDefault:true,name:'Duy trì nhịp chạy',goal:'Sức bền',phase:'Build',distanceMetres:800,intensity:'Light',surface:'Cát',frequencyPerWeek:3,notes:'',
@@ -39,4 +39,16 @@ test('copying a default cannot submit its protected identity and edited options 
 });
 test('legacy or malformed metadata is not mistaken for a validated curriculum',()=>{
     assert.equal(curriculumOf({curriculumJson:'bad'}),null);assert.deepEqual(requiredTypes({requiredTrainingTypesJson:'["Unrecognized"]'}),[]);
+});
+test('a template can require a single specialty; exercises follow the remaining one', () => {
+    const form = templateEditorForm({ name: 'Walk only', goal: 'g', phase: 'p', distanceMetres: 800, intensity: 'Light', surface: 'Sand', frequencyPerWeek: 3 });
+    assert.deepEqual(form.requiredTrainingTypes, ['Trot']);
+    const both = withRequiredTypes(form, ['Trot', 'Walk']);
+    const walkOnly = withRequiredTypes(both, ['Walk']);
+    assert.deepEqual(walkOnly.requiredTrainingTypes, ['Walk']);
+    assert.deepEqual(walkOnly.sessionOptions.map(o => o.trainingType), ['Walk']);
+    const payload = templatePayload(walkOnly);
+    assert.deepEqual(payload.requiredTrainingTypes, ['Walk']);
+    assert.ok(payload.curriculum.sessionOptions.every(o => payload.requiredTrainingTypes.includes(o.trainingType)));
+    assert.equal(withRequiredTypes(walkOnly, []), walkOnly); // không bỏ được chuyên môn cuối cùng
 });

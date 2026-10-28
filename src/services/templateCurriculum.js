@@ -61,6 +61,17 @@ export function templateEditorForm(template = {}) {
     return { ...template, requiredTrainingTypes: template.requiredTrainingTypes || (requiredTypes(template).length ? requiredTypes(template) : [TRAINING_TYPE.Trot]),
         minimumExpertiseLevel: template.minimumExpertiseLevel || 1, sessionOptions: options.map(option => ({ ...option })) };
 }
+/**
+ * Đổi danh sách chuyên môn yêu cầu của giáo án. Mỗi bài tập phải thuộc một chuyên môn trong danh sách
+ * (Backend kiểm tra), nên bài tập đang dùng chuyên môn vừa bỏ được chuyển sang chuyên môn đầu tiên còn lại.
+ * Nhờ vậy giáo án chỉ cần một chuyên môn vẫn lưu được.
+ */
+export function withRequiredTypes(form, types) {
+    const ordered = Object.values(TRAINING_TYPE).filter(type => types.includes(type));
+    if (!ordered.length) return form;
+    return { ...form, requiredTrainingTypes: ordered,
+        sessionOptions: form.sessionOptions.map(option => ordered.includes(option.trainingType) ? option : { ...option, trainingType: ordered[0] }) };
+}
 export function templatePayload(form) {
     return {
         name: form.name.trim(), goal: form.goal.trim(), phase: form.phase.trim(), distanceMetres: Number(form.distanceMetres),

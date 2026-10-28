@@ -1477,7 +1477,7 @@ export const VI = Object.freeze({
     "CURRIC_PAGE_HELP": "Bộ khung chung luôn có cho huấn luyện viên trưởng mới. Huấn luyện viên sử dụng giáo án được giao theo chuyên môn đã xác nhận.",
     "CURRIC_PLAN_CHOICE": "Phương án kế hoạch",
     "CURRIC_REQUIREMENTS": "Chuyên môn huấn luyện viên cần có",
-    "CURRIC_REQUIREMENTS_HELP": "Huấn luyện viên phải có đủ các chuyên môn được chọn ở mức tối thiểu để được giao và sử dụng giáo án. Quản lý câu lạc bộ xác nhận chuyên môn tại mục Nhân sự.",
+    "CURRIC_REQUIREMENTS_HELP": "Chọn một hoặc nhiều chuyên môn. Huấn luyện viên phải có đủ các chuyên môn được chọn ở mức tối thiểu để được giao và sử dụng giáo án; mỗi bài tập thuộc một trong các chuyên môn này. Quản lý câu lạc bộ xác nhận chuyên môn tại mục Nhân sự.",
     "CURRIC_REVOKE": "Thu hồi giáo án",
     "CURRIC_SELECT": "Chọn một phương án…",
     "CURRIC_STARTING_GATE": "Luyện cổng xuất phát",

@@ -3,14 +3,21 @@ import { MSG, msg } from '../messages/index.js';
 import { Field } from './WorkflowUI.jsx';
 import { TRAINING_TYPE, INTENSITY } from '../constants/training.js';
 import { getEnumLabel } from '../constants/enumLabels.js';
-export default function TemplateCurriculumEditor({ form, onChange }) {
+import { withRequiredTypes } from '../services/templateCurriculum.js';
+/**
+ * Phần "Chuyên môn huấn luyện viên cần có" và các bài tập của giáo án.
+ * Chọn từ một chuyên môn trở lên; không bỏ được chuyên môn cuối cùng. Bỏ một chuyên môn thì bài tập đang dùng nó chuyển sang chuyên môn còn lại.
+ * @param onReplace Thay cả form (cần khi đổi chuyên môn vì bài tập đổi theo).
+ */
+export default function TemplateCurriculumEditor({ form, onChange, onReplace }) {
     const update = (name, value) => onChange({ target: { name, value } });
     const updateExercise = (index, name, value) => update('sessionOptions', form.sessionOptions.map((option, i) => i === index ? { ...option, [name]: value } : option));
     return <section className="col-12"><h3>{msg(MSG.CURRIC_REQUIREMENTS)}</h3><p className="form-text">{msg(MSG.CURRIC_REQUIREMENTS_HELP)}</p>
         <div className="d-flex flex-wrap gap-3 mb-3">{Object.values(TRAINING_TYPE).map(type => <label key={type} className="form-check">
-            <input className="form-check-input" type="checkbox" checked={form.requiredTrainingTypes.includes(type)} onChange={e => {
+            <input className="form-check-input" type="checkbox" checked={form.requiredTrainingTypes.includes(type)}
+                disabled={form.requiredTrainingTypes.length === 1 && form.requiredTrainingTypes.includes(type)} onChange={e => {
                 const types = e.target.checked ? [...form.requiredTrainingTypes, type] : form.requiredTrainingTypes.filter(value => value !== type);
-                update('requiredTrainingTypes', types);
+                onReplace(withRequiredTypes(form, types));
             }}/><span className="form-check-label">{getEnumLabel(type)}</span></label>)}</div>
         <div className="row"><Field name="minimumExpertiseLevel" label={msg(MSG.CURRIC_MIN_LEVEL)} value={form.minimumExpertiseLevel} onChange={onChange} options={[1,2,3].map(value => ({ value, label: msg(MSG['SCHED_LEVEL_' + value]) }))}/></div>
         <h3 className="mt-4">{msg(MSG.CURRIC_EXERCISE_OPTIONS)}</h3>
