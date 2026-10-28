@@ -605,7 +605,7 @@ export const VI = Object.freeze({
     "TAT_CA_TRANG_THAI": "Tất cả trạng thái",
     "REGISTRATION_PAGES": "Phân trang hồ sơ đăng ký",
     "HO_SO": "hồ sơ",
-    "KIEM_TRA_HO_SO_TRUOC_KHI_PHE_DUYET_VA_TAO_HORSE_PROFILE": "Kiểm tra hồ sơ trước khi phê duyệt và tạo hồ sơ ngựa.",
+    "KIEM_TRA_HO_SO_TRUOC_KHI_PHE_DUYET_VA_TAO_HORSE_PROFILE": "Kiểm tra hồ sơ trước khi phê duyệt. Khi duyệt, hệ thống tạo hồ sơ ngựa và cấp mã đăng ký của câu lạc bộ (dạng HRC-000001), không trùng với ngựa nào khác.",
     "LOC_THEO_TRANG_THAI": "Lọc theo trạng thái",
     "TAT_CA": "Tất cả",
     "KIEM_TRA_HO_SO": "Kiểm tra hồ sơ",

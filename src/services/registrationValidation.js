@@ -9,7 +9,7 @@ export const FORM_SECTIONS = [
         { name: "dateOfBirth", label: msg(MSG.NGAY_SINH), type: "date" },
         { name: "gender", label: msg(MSG.GENDER), options: HORSE_GENDERS },
         { name: "breed", label: msg(MSG.BREED), maxLength: 100 },
-        { name: "registrationNumber", label: msg(MSG.MA_DANG_KY), maxLength: 100 },
+        { name: "registrationNumber", label: msg(MSG.MA_DANG_KY_BEN_NGOAI_NEU_CO), maxLength: 100 },
     ] },
     { title: REGISTRATION_SECTION.Pedigree, fields: [
         { name: "sire", label: msg(MSG.SIRE), maxLength: 200 }, { name: "dam", label: msg(MSG.DAM), maxLength: 200 },
