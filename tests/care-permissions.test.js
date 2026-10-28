@@ -199,12 +199,12 @@ test('FE07 Owner keeps care reading without assignment or recording controls', (
     assert.equal(globalThis.__careTest.buttons.some(x => x.children === msg(MSG.SUPPORT_RECORD)), false);
 });
 
-test('FE07 permission matrix changes only careAssign; every other role/permission remains exact', () => {
+test('care reading includes every role while assignment and recording permissions stay restricted', () => {
     const R = ROLES;
     assert.deepEqual(PERMISSIONS, {
         incidentRead: [R.ClubManager, R.HeadTrainer, R.Trainer, R.WorkRider, R.Veterinarian, R.Groom, R.HorseOwner],
         incidentReport: [R.Groom, R.WorkRider, R.Trainer, R.Veterinarian], incidentReroute: [R.ClubManager],
-        careRead: [R.ClubManager, R.HeadTrainer, R.Trainer, R.Veterinarian, R.Groom, R.HorseOwner],
+        careRead: [R.ClubManager, R.HeadTrainer, R.Trainer, R.WorkRider, R.Veterinarian, R.Groom, R.HorseOwner],
         careAssign: [R.Veterinarian], careRecord: [R.Groom], medicalWorkspace: [R.Veterinarian],
         medicalOverview: [R.Veterinarian, R.ClubManager, R.HeadTrainer, R.HorseOwner],
         measurementWrite: [R.ClubManager, R.Veterinarian, R.Groom],
@@ -213,6 +213,17 @@ test('FE07 permission matrix changes only careAssign; every other role/permissio
     });
     for (const role of ALL_ROLES) assert.equal(can({ role }, 'careAssign'), role === R.Veterinarian);
     assert.equal(can({ role: R.ClubManager }, 'careRead'), true);
+});
+
+for (const role of ALL_ROLES) test(`${role} can see treatment care instructions and notes`, () => {
+    const visibleTask = { ...task, type: 'Treatment', instructions: 'Chườm đá · 1 lần/ngày', notes: 'Ngựa ổn định sau chăm sóc' };
+    globalThis.__careTest.data['/api/care/tasks'] = { items: [visibleTask], page: 1, pageSize: 20, total: 1 };
+    const html = render(role);
+    assert.deepEqual(globalThis.__careTest.redirects, []);
+    assert.ok(html.includes(visibleTask.instructions));
+    assert.ok(html.includes(visibleTask.notes));
+    assert.ok(html.includes(msg(MSG.SUPPORT_INSTRUCTIONS)));
+    assert.ok(html.includes(msg(MSG.GHI_CHU)));
 });
 
 test('FE07 HeadTrainer and Trainer remain care readers without assignment controls', () => {

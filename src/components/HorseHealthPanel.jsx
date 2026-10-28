@@ -1,3 +1,4 @@
+import { treatmentFrequency } from "../services/treatmentFrequency.js";
 import { useCallback } from 'react';
 import { MSG, msg } from '../messages/index.js';
 import { getEnumLabel } from '../constants/enumLabels.js';
@@ -43,7 +44,7 @@ export function HorseHealthPanel({ horseId, user }) {
                     <tbody>{data.cases.map(c => <tr key={c.recordId}><td>{c.reason}{data.includesClinicalNotes && <div className="form-text">{c.symptoms && <div>{msg(MSG.HMED_SYMPTOMS)}{': '}{c.symptoms}</div>}{c.findings && <div>{msg(MSG.HMED_FINDINGS)}{': '}{c.findings}</div>}{c.notes && <div>{msg(MSG.HMED_NOTES)}{': '}{c.notes}</div>}</div>}</td><td>{c.diagnosis}</td><td><StateBadge value={c.healthStatus} /></td><td>{when(c.openedAt)}</td><td>{when(c.lastExaminationAt)}</td>
                         <td><span className={`badge ${c.resolved ? 'text-bg-success' : 'text-bg-warning'}`}>{msg(c.resolved ? MSG.HMED_CASE_RESOLVED : MSG.HMED_CASE_OPEN)}</span><div className="form-text">{msg(MSG.HMED_FOLLOWUPS, { count: c.followUps })}</div></td></tr>)}</tbody></table></div>}
                 <h3 className="h5 mt-3">{msg(MSG.HMED_TREATMENTS)}</h3>
-                {!data.treatments.length ? <p>{msg(MSG.HMED_NO_TREATMENTS)}</p> : <ul>{data.treatments.map(t => <li key={t.id}><strong>{t.objective}</strong>{' — '}{[t.instructions, t.medication, t.frequency].filter(Boolean).join(' · ')}{' ('}{date(t.startDate)}{' → '}{date(t.endDate)}{') '}<span className={`badge ${t.completed ? 'text-bg-success' : 'text-bg-secondary'}`}>{msg(t.completed ? MSG.HMED_PLAN_DONE : MSG.HMED_PLAN_ACTIVE)}</span></li>)}</ul>}
+                {!data.treatments.length ? <p>{msg(MSG.HMED_NO_TREATMENTS)}</p> : <ul>{data.treatments.map(t => <li key={t.id}><strong>{t.objective}</strong>{' — '}{[t.instructions, t.medication, treatmentFrequency(t.frequency)].filter(Boolean).join(' · ')}{' ('}{date(t.startDate)}{') '}<span className={`badge ${t.completed ? 'text-bg-success' : 'text-bg-secondary'}`}>{msg(t.completed ? MSG.HMED_PLAN_DONE : MSG.HMED_PLAN_ACTIVE)}</span></li>)}</ul>}
             </>}
             <Restrictions items={data.restrictions} />
         </>}

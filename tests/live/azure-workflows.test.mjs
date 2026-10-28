@@ -55,7 +55,7 @@ test('marked Azure fixture: medical, care, stable, inventory, reports and permis
     const iceTask = await request('post', '/api/care/tasks', { horseId: horse, groomId, treatmentPlanId: null, type: 'IceBath', scheduledAt: new Date().toISOString(), instructions: `${marker} Clinical instruction`, approvedPortionKg: null });
     await login('ClubManager');
     const managerCare = await request('get', `/api/care/tasks?horseId=${horse}&pageSize=100`);
-    assert.equal(managerCare.items.find(x => x.id === iceTask.id).instructions, null);
+    assert.equal(managerCare.items.find(x => x.id === iceTask.id).instructions, `${marker} Clinical instruction`);
     assert.equal(managerCare.items.find(x => x.id === iceTask.id).notes, null);
     const task = await request('post', '/api/care/tasks', { horseId: horse, groomId, treatmentPlanId: null, type: 'Feeding', scheduledAt: new Date().toISOString(), instructions: marker, approvedPortionKg: 1 });
     const stable = await request('post', '/api/care/stables', { name: `${marker} Chuồng mẫu ${Date.now()}` });
@@ -88,7 +88,7 @@ test('marked Azure fixture: medical, care, stable, inventory, reports and permis
     for (const path of ['/api/care/tasks', '/api/care/incidents', '/api/care/stables', '/api/care/stalls', '/api/inventory', '/api/inventory/replenishments', `/api/reports?horseId=${horse}`, `/api/audit?referenceId=${record.id}`, '/api/notifications', '/api/website', '/api/branding/logo']) await request('get', path);
     await login('HorseOwner');
     const ownerCare = await request('get', `/api/care/tasks?horseId=${horse}&pageSize=100`);
-    assert.equal(ownerCare.items.find(x => x.id === iceTask.id).instructions, null);
+    assert.equal(ownerCare.items.find(x => x.id === iceTask.id).instructions, `${marker} Clinical instruction`);
     assert.equal(ownerCare.items.find(x => x.id === iceTask.id).notes, null);
     await assert.rejects(api.post('/api/inventory', { name: marker, category: 'Mẫu', unit: 'kg', minimumStock: 0 }), e => e.status === 403 && /[À-ỹ]/.test(e.message));
     await assert.rejects(api.post(`${base}/records`, examination), e => e.status === 403 && /[À-ỹ]/.test(e.message));

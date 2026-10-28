@@ -8,7 +8,7 @@ export const PERMISSIONS = Object.freeze({
     incidentRead: [R.ClubManager, R.HeadTrainer, R.Trainer, R.WorkRider, R.Veterinarian, R.Groom, R.HorseOwner],
     incidentReport: [R.Groom, R.WorkRider, R.Trainer, R.Veterinarian],
     incidentReroute: [R.ClubManager],
-    careRead: [R.ClubManager, R.HeadTrainer, R.Trainer, R.Veterinarian, R.Groom, R.HorseOwner],
+    careRead: [R.ClubManager, R.HeadTrainer, R.Trainer, R.WorkRider, R.Veterinarian, R.Groom, R.HorseOwner],
     careAssign: [R.Veterinarian],
     careRecord: [R.Groom],
     medicalWorkspace: [R.Veterinarian],

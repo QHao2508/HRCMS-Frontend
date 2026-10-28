@@ -1,3 +1,4 @@
+import { treatmentFrequency } from "../../services/treatmentFrequency.js";
 import { Link, useSearchParams } from 'react-router-dom';
 import { activeTreatmentPlans } from '../../services/careUi.js';
 import { can } from '../../constants/permissions.js';
@@ -32,7 +33,7 @@ function CareList({ horseId, user, horses }) {
     </>;
 }
 // Phác đồ đã có hướng dẫn: ghép hướng dẫn + thuốc + tần suất để vet không phải nhập lại.
-const planInstructions = plan => [plan.instructions, plan.medication, plan.frequency].map(x => (x || '').trim()).filter(Boolean).join(' · ').slice(0, 4000);
+const planInstructions = plan => [plan.instructions, plan.medication, treatmentFrequency(plan.frequency)].map(x => (x || '').trim()).filter(Boolean).join(' · ').slice(0, 4000);
 function CareCreate({ horseId, role, reload }) {
     const load = useCallback(() => read(`/api/horses/${id(horseId)}`), [horseId]); const profile = useRegistrationResource(load);
     const directory = useChoices('/api/staff/directory', { role: 'Groom' });

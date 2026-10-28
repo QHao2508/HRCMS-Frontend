@@ -40,7 +40,7 @@ test('separate forms with the same field name keep distinct label targets', () =
     for (const id of ids) assert.ok(html.includes(`for="${id}"`));
 });
 const supportingRoutes = [
-    ['/care/tasks', ['HorseOwner','ClubManager','HeadTrainer','Trainer','Groom','Veterinarian'], 'Công việc chăm sóc'],
+    ['/care/tasks', ['HorseOwner','ClubManager','HeadTrainer','Trainer','WorkRider','Groom','Veterinarian'], 'Công việc chăm sóc'],
     ['/care/incidents', ['HorseOwner','ClubManager','HeadTrainer','Groom','Trainer','Veterinarian','WorkRider'], 'Sự cố'],
     ['/care/stables', ['ClubManager','Groom'], 'Chuồng trại'],
     ['/inventory', ['ClubManager','Groom'], 'Kho vật tư'],

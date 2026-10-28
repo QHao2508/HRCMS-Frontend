@@ -188,7 +188,7 @@ test("navigation uses exact roles and exposes only implemented links for each ro
         if (![ROLES.Groom,ROLES.Veterinarian].includes(role)) expected.push({to:"/training/plans",label:"Kế hoạch huấn luyện"},{to:"/training/sessions",label:"Buổi tập"});
         if (role === ROLES.Veterinarian) expected.unshift({to:"/medical",label:"Thú y"});
         const supporting = [{to:'/medical/preventive-care',label:'Chăm sóc phòng ngừa'}];
-        if ([ROLES.ClubManager,ROLES.HorseOwner,ROLES.HeadTrainer,ROLES.Trainer,ROLES.Groom,ROLES.Veterinarian].includes(role)) supporting.push({to:'/care/tasks',label:'Công việc chăm sóc'});
+        if ([ROLES.ClubManager,ROLES.HorseOwner,ROLES.HeadTrainer,ROLES.Trainer,ROLES.WorkRider,ROLES.Groom,ROLES.Veterinarian].includes(role)) supporting.push({to:'/care/tasks',label:'Công việc chăm sóc'});
         supporting.push({to:'/care/incidents',label:'Sự cố'});
         if ([ROLES.ClubManager,ROLES.Groom].includes(role)) supporting.push({to:'/care/stables',label:'Chuồng trại'},{to:'/inventory',label:'Kho vật tư'},{to:'/inventory/issue',label:'Xuất vật tư'},{to:'/inventory/replenishments',label:'Yêu cầu bổ sung vật tư'});
         supporting.push({to:'/reports',label:'Báo cáo hoạt động'});

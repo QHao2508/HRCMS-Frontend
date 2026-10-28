@@ -22,8 +22,9 @@ export default function MedicalChoiceField({ field, label, value, onChange, disa
     }
     const toggle = (option, checked) => update(checked ? [...parsed.selected, option] : parsed.selected.filter(x => x !== option), parsed.other);
     return <fieldset className={`medical-field${full ? ' medical-field-full' : ''}`} disabled={disabled}><legend className="form-label fs-6">{label}</legend>
-        <div className="d-flex flex-wrap gap-2">{options.map(option => <label key={option} className={`btn btn-sm ${parsed.selected.includes(option) ? 'btn-primary' : 'btn-outline-secondary'}`}>
-            <input type="checkbox" className="visually-hidden" checked={parsed.selected.includes(option)} onChange={e => toggle(option, e.target.checked)} />{option}</label>)}
-            <label className={`btn btn-sm ${otherOpen || parsed.other ? 'btn-primary' : 'btn-outline-secondary'}`}><input type="checkbox" className="visually-hidden" checked={otherOpen || !!parsed.other} onChange={e => { setOtherOpen(e.target.checked); if (!e.target.checked) update(parsed.selected, ''); }} />{msg(MSG.MED_OTHER)}</label>
+        <p className="medical-choice-help">{msg(MSG.MED_CHOICE_HELP)}</p>
+        <div className="medical-choice-grid">{options.map(option => <label key={option} className={`medical-choice-option${parsed.selected.includes(option) ? ' is-selected' : ''}`}>
+            <input type="checkbox" checked={parsed.selected.includes(option)} onChange={e => toggle(option, e.target.checked)} /><span>{option}</span></label>)}
+            <label className={`medical-choice-option${otherOpen || parsed.other ? ' is-selected' : ''}`}><input type="checkbox" checked={otherOpen || !!parsed.other} onChange={e => { setOtherOpen(e.target.checked); if (!e.target.checked) update(parsed.selected, ''); }} /><span>{msg(MSG.MED_OTHER)}</span></label>
         </div>{otherInput}</fieldset>;
 }

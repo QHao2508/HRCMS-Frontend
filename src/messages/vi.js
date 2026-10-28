@@ -1,5 +1,8 @@
 // Vietnamese display text only. API values belong in constants/.
 export const VI = Object.freeze({
+    "MED_CHOICE_HELP": "Có thể chọn nhiều mục. Ô có dấu tích là mục đã chọn.",
+    "TREAT_FREQUENCY_PER_DAY": "{count} lần/ngày",
+    "TREAT_FREQUENCY_HELP": "Ví dụ: 1 lần/ngày hoặc 2 lần/tuần. Nếu chỉ nhập số, hệ thống hiểu là số lần mỗi ngày.",
     "HORSE_EXTERNAL_HELP": "Nhập đúng mã trên giấy tờ của ngựa. Mã ngựa trong hệ thống sẽ được cấp khi hồ sơ được duyệt.",
     "HORSE_EXTERNAL_MISSING": "Chưa cung cấp",
     "HORSE_EXTERNAL_CODE": "Mã đăng ký trên giấy tờ",
