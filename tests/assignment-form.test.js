@@ -6,7 +6,7 @@ import { ssrDependencies } from './ssrDependencies.js';
 let server, form;
 before(async () => {
     server = await createServer({ configFile: false, plugins: [ssrDependencies(), react()], server: { middlewareMode: true, hmr: false, ws: false }, appType: 'custom', logLevel: 'error' });
-    form = await server.ssrLoadModule('/src/pages/horses/AssignmentForm.jsx');
+    form = await server.ssrLoadModule('/src/pages/horses/assignmentRules.js');
 });
 after(async () => server.close());
 

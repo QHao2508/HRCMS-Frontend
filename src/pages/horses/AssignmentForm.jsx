@@ -8,6 +8,7 @@ import { useRegistrationResource } from '../../context/useRegistrationResource.j
 import { assignStaff, staffDirectory } from '../../services/clubService.js';
 import { getTrainerCandidates } from '../../services/trainingSchedulingService.js';
 import TrainerCandidates from '../../components/TrainerCandidates.jsx';
+import { assignableRoles, assignmentRequest, currentHeadTrainer, staffOptions } from './assignmentRules.js';
 import { Field, MutationState, ResourceState } from '../../components/WorkflowUI.jsx';
 
 /*
@@ -19,45 +20,6 @@ import { Field, MutationState, ResourceState } from '../../components/WorkflowUI
  *    người "Chưa phù hợp" kèm lý do (thiếu chuyên môn, chưa được giao giáo án ngựa đang dùng, trùng lịch…).
  * Lịch sử phân công cũ luôn được giữ lại.
  */
-
-/** Vai trò người dùng hiện tại được phép phân công. */
-export function assignableRoles(user) {
-    return user.role === ROLES.ClubManager ? [ROLES.HeadTrainer, ROLES.Groom, ROLES.Veterinarian] : [ROLES.Trainer];
-}
-
-/** Huấn luyện viên trưởng đang phụ trách (null nếu chưa có). */
-export function currentHeadTrainer(horse) {
-    return horse.assignments.find(a => a.active && a.role === ROLES.HeadTrainer) || null;
-}
-
-function personName(person) {
-    return person.name || [person.firstName, person.lastName].filter(Boolean).join(' ');
-}
-
-/**
- * Lựa chọn trong ô "Nhân sự": Trainer chỉ hiện người phù hợp; khi đổi Huấn luyện viên trưởng thì ẩn người đang phụ trách.
- */
-export function staffOptions(people, role, currentHead) {
-    return (people || [])
-        .filter(person => role !== ROLES.Trainer || person.matches)
-        .filter(person => !(role === ROLES.HeadTrainer && person.id === currentHead?.staffId))
-        .map(person => ({ value: person.id, label: personName(person) }));
-}
-
-/** Body gửi POST /api/horses/{id}/assignments; chỉ kèm trường thuộc vai trò đang chọn. */
-export function assignmentRequest(form, { replacingHead }) {
-    return {
-        staffId: form.staffId,
-        role: form.role,
-        startDate: form.startDate,
-        endDate: form.endDate || null,
-        notes: form.notes,
-        requiredTrainingType: form.role === ROLES.Trainer ? form.requiredTrainingType : undefined,
-        takeOverInProgress: form.role === ROLES.Groom && form.takeOverInProgress,
-        takeOverReason: form.role === ROLES.Groom ? form.takeOverReason : undefined,
-        changeReason: replacingHead ? form.changeReason.trim() : undefined,
-    };
-}
 
 /** Form phân công trên hồ sơ ngựa (chỉ hiện cho Quản lý hoặc Huấn luyện viên trưởng đang phụ trách). */
 export default function AssignmentForm({ horse, user, reload }) {
