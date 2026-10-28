@@ -2,21 +2,18 @@ import { getEnumLabel } from "../../constants/enumLabels.js";
 import { MSG, msg } from "../../messages/index.js";
 
 import HorseTrainingAvailability from '../../components/HorseTrainingAvailability.jsx';
-import { TRAINING_TYPE } from '../../constants/training.js';
-import { getTrainerCandidates } from '../../services/trainingSchedulingService.js';
-import TrainerCandidates from '../../components/TrainerCandidates.jsx';
+import AssignmentForm from './AssignmentForm.jsx';
 import { ROLES } from "../../constants/roles.js";
-import { isAssigned,clubToday } from "../../services/workflowHelpers.js";
-import { useMutation } from "../../context/useMutation.js";
+import { isAssigned } from "../../services/workflowHelpers.js";
 import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useAuth } from "../../context/useAuth.js";
 import { useRegistrationResource } from "../../context/useRegistrationResource.js";
-import { listHorses,getHorse,assignStaff,staffDirectory,fetchHorsePhoto } from "../../services/clubService.js";
+import { listHorses,getHorse,fetchHorsePhoto } from "../../services/clubService.js";
 import { SupportForm } from '../../components/SupportUI.jsx';
 import { HorseHealthPanel, HorseMeasurements } from '../../components/HorseHealthPanel.jsx';
 import { change as supportChange, id as supportId } from '../../services/supportService.js';
-import { PageHeading,ResourceState,Pagination,BackLink,StateBadge,Field,MutationState} from "../../components/WorkflowUI.jsx";
+import { PageHeading,ResourceState,Pagination,BackLink,StateBadge} from "../../components/WorkflowUI.jsx";
 /**
  * Tải/lọc/phân trang ngựa trong phạm vi API cấp; trình bày sức khỏe bằng enum và liên kết hồ sơ.
  * Nhãn/thông báo lấy từ catalog; enum và dữ liệu người dùng giữ nguyên giá trị.
@@ -42,34 +39,6 @@ function HorsePhoto({ id }) {
     const [url,setUrl] = useState(null);
     useEffect(() => { let active = true, objectUrl; fetchHorsePhoto(id).then(blob => { if (active) { objectUrl = URL.createObjectURL(blob); setUrl(objectUrl); } }).catch(() => {}); return () => { active = false; if (objectUrl) URL.revokeObjectURL(objectUrl); }; },[id]);
     return url ? <img className="horse-photo mb-3" src={url} alt={msg(MSG.ANH_NHAN_DIEN_NGUA)} /> : null;
-}
-/**
- * Quản lý chọn nhân sự chính thức hoặc huấn luyện viên trưởng chọn huấn luyện viên; gửi role/staff/date theo contract.
- * Nhãn/thông báo lấy từ catalog; enum và dữ liệu người dùng giữ nguyên giá trị.
- * @param options0 Đối tượng destructuring: { horse,user,reload }. Các props/callback lấy từ caller.
- */
-function AssignmentForm({ horse,user,reload }) {
-    // Manager có thể phân công Trainer thay HeadTrainer (khi HeadTrainer vắng) nhưng phải ghi lý do.
-    const roles = user.role === ROLES.ClubManager ? [ROLES.HeadTrainer,ROLES.Groom,ROLES.Veterinarian,ROLES.Trainer] : [ROLES.Trainer];
-    const [form,setForm] = useState({role:roles[0],staffId:"",startDate:clubToday(),endDate:"",notes:"",takeOverInProgress:false,takeOverReason:"",requiredTrainingType:TRAINING_TYPE.Trot});
-    /**
-     * Đọc dữ liệu cần cho component qua service/API; hook resource quản lý loading, response muộn và lỗi.
-     */
-    const load = useCallback(() => form.role===ROLES.Trainer ? getTrainerCandidates(horse.horse.id,form.requiredTrainingType) : staffDirectory(form.role),[horse.horse.id,form.role,form.requiredTrainingType]);
-    const staff = useRegistrationResource(load);
-    const mutation = useMutation();
-    /**
-     * Cập nhật form theo name/value và reset lựa chọn phụ thuộc khi cần, không tự sửa dữ liệu server.
-     * @param e Event UI/exception theo kiểu của hàm; xem nhánh xử lý trong thân hàm.
-     */
-    function change(e) { setForm({...form,[e.target.name]:e.target.value,...((e.target.name === "role" || e.target.name === "requiredTrainingType") && {staffId:""})}); }
-    /**
-     * Kiểm điều kiện form rồi gọi thao tác nghiệp vụ tương ứng; hook/lock ngăn request lặp và điều hướng chỉ sau thành công.
-     * Nhãn/thông báo lấy từ catalog; enum và dữ liệu người dùng giữ nguyên giá trị.
-     * @param e Event UI/exception theo kiểu của hàm; xem nhánh xử lý trong thân hàm.
-     */
-    async function submit(e) { e.preventDefault(); if (!form.staffId || (form.role===ROLES.Trainer && !staff.data?.some(x=>x.id===form.staffId && x.matches))) return; await mutation.run(() => assignStaff(horse.horse.id,{...form,endDate:form.endDate || null,requiredTrainingType:form.role===ROLES.Trainer ? form.requiredTrainingType : undefined,takeOverInProgress:form.role===ROLES.Groom && form.takeOverInProgress,takeOverReason:form.role===ROLES.Groom?form.takeOverReason:undefined}),reload,msg(MSG.DA_PHAN_CONG_NHAN_SU_LICH_SU_PHAN_CONG_DUOC_GIU_LAI)); }
-    return <section className="surface-card"><h2>{user.role === ROLES.ClubManager ? msg(MSG.PHAN_CONG_NHAN_SU_CHINH_THUC) : msg(MSG.CHON_TRAINER_PHU_TRACH)}</h2><p className="form-text">{msg(MSG.BR_HANDOVER_HELP)}</p><p className="card-description">{user.role === ROLES.ClubManager ? msg(MSG.MANAGER_XAC_NHAN_HEADTRAINER_GROOM_VA_BAC_SI_THU_Y_HEADTRAINER_DUOC_GIAO) : msg(MSG.CHI_HEADTRAINER_DANG_PHU_TRACH_NGUA_DUOC_CHON_TRAINER)}</p><MutationState mutation={mutation} reload={reload} /><ResourceState resource={staff} />{form.role===ROLES.Trainer && staff.data && <TrainerCandidates candidates={staff.data} selectedId={form.staffId}/>}<form onSubmit={submit}><fieldset disabled={mutation.pending || mutation.uncertain || staff.loading || !!staff.error}><div className="row g-3"><Field label={msg(MSG.VAI_TRO)} name="role" value={form.role} onChange={change} options={roles} />{form.role===ROLES.Trainer && <Field label={msg(MSG.SCHED_SPECIALTY)} name="requiredTrainingType" value={form.requiredTrainingType} options={Object.values(TRAINING_TYPE)} onChange={change} required/>}<Field label={msg(MSG.NHAN_SU)} name="staffId" value={form.staffId} onChange={change} required options={[{value:"",label:msg(MSG.CHON_NHAN_SU)},...(staff.data || []).filter(person=>form.role!==ROLES.Trainer || person.matches).map(person => ({value:person.id,label:person.name || [person.firstName,person.lastName].filter(Boolean).join(" ")}))]} /><Field label={msg(MSG.NGAY_BAT_DAU)} name="startDate" value={form.startDate} onChange={change} type="date" required /><Field label={msg(MSG.NGAY_KET_THUC)} name="endDate" value={form.endDate} onChange={change} type="date" min={form.startDate} help={msg(MSG.KHONG_BAT_BUOC)} /><Field label={msg(user.role===ROLES.ClubManager && form.role===ROLES.Trainer ? MSG.ASSIGN_REASON_REQUIRED : MSG.GHI_CHU)} name="notes" value={form.notes} onChange={change} maxLength={2000} required={user.role===ROLES.ClubManager && form.role===ROLES.Trainer} /></div>{form.role===ROLES.Groom && <><label className="d-flex gap-2 mt-3"><input type="checkbox" checked={form.takeOverInProgress} onChange={e=>setForm({...form,takeOverInProgress:e.target.checked})}/>{msg(MSG.BR_TAKEOVER)}</label>{form.takeOverInProgress && <Field name="takeOverReason" label={msg(MSG.BR_REASON)} value={form.takeOverReason} onChange={change} required multiline maxLength={2000}/>}</>}<button className="btn btn-primary mt-3">{msg(MSG.XAC_NHAN_PHAN_CONG)}</button></fieldset></form></section>;
 }
 /**
  * Tải hồ sơ ngựa, số đo/phân công và danh bạ cần thiết; chỉ render form phân công khi role/phạm vi phù hợp.
