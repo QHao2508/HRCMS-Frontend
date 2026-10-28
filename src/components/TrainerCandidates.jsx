@@ -28,7 +28,7 @@ export default function TrainerCandidates({ candidates, selectedId, onSelect }) 
         <h3>{msg(MSG.SCHED_CANDIDATES)}</h3>
         <p>{msg(MSG.SCHED_CANDIDATES_HELP)}</p>
         <div className="table-responsive"><table className="table">
-            <thead><tr><th>{msg(MSG.NHAN_SU)}</th><th>{msg(MSG.SCHED_SKILLS)}</th><th>{msg(MSG.SCHED_LOAD)}</th><th>{msg(MSG.TRANG_THAI)}</th></tr></thead>
+            <thead><tr><th scope="col">{msg(MSG.NHAN_SU)}</th><th scope="col">{msg(MSG.SCHED_SKILLS)}</th><th scope="col">{msg(MSG.SCHED_LOAD)}</th><th scope="col">{msg(MSG.TRANG_THAI)}</th></tr></thead>
             <tbody>{candidates.map(x => <tr key={x.id} className={x.id === selectedId ? 'table-success' : ''}>
                 <td>{x.name}</td>
                 <td><TrainerSpecialties specialties={x.specialties}/></td>

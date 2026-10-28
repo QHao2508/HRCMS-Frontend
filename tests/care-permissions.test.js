@@ -131,12 +131,18 @@ function assertNoAssignment(html) {
     assert.deepEqual(globalThis.__careTest.writes, []);
 }
 
-test('FE07 Manager direct care URL keeps list, filters and pagination without assignment form or submit', () => {
+test('Manager routine care matches current backend contract without loading clinical treatments', async () => {
     const html = render(ROLES.ClubManager);
     assertReader(html);
-    assertNoAssignment(html);
-    assert.ok(globalThis.__careTest.buttons.some(x => x.children === msg(MSG.SAU) && !x.disabled));
-    assert.ok(globalThis.__careTest.buttons.some(x => x.children === msg(MSG.TRUOC) && x.disabled));
+    const form = globalThis.__careTest.supportForms[0];
+    assert.ok(form);
+    assert.deepEqual(form.fields(form.initial).find(x => x.name === 'type').options.map(x => x.value), ['Feeding','Cleaning','Bathing','Grooming','WaterCheck']);
+    assert.equal(globalThis.__careTest.reads.some(x => x.path.endsWith('/medical/treatments')), false);
+    assert.equal(form.fields(form.initial).find(x => x.name === 'approvedPortionKg').required, true);
+    await form.submit({...form.initial,groomId:'Groom-id',scheduledAt:'2026-10-24T09:00',approvedPortionKg:'2.5',instructions:'Khẩu phần đã duyệt'});
+    assert.equal(globalThis.__careTest.writes[0].body.approvedPortionKg,2.5);
+    assert.equal(globalThis.__careTest.writes[0].body.treatmentPlanId,null);
+    assert.equal(globalThis.__careTest.writes[0].body.scheduledAt,'2026-10-24T09:00:00+07:00');
 });
 
 test('FE07 Vet retains real treatment form, allowed types, active plan validation and unchanged payload', async () => {
@@ -205,13 +211,13 @@ test('care reading includes every role while assignment and recording permission
         incidentRead: [R.ClubManager, R.HeadTrainer, R.Trainer, R.WorkRider, R.Veterinarian, R.Groom, R.HorseOwner],
         incidentReport: [R.Groom, R.WorkRider, R.Trainer, R.Veterinarian], incidentReroute: [R.ClubManager],
         careRead: [R.ClubManager, R.HeadTrainer, R.Trainer, R.WorkRider, R.Veterinarian, R.Groom, R.HorseOwner],
-        careAssign: [R.Veterinarian], careRecord: [R.Groom], medicalWorkspace: [R.Veterinarian],
+        careAssign: [R.ClubManager, R.Veterinarian], careRecord: [R.Groom], medicalWorkspace: [R.Veterinarian],
         medicalOverview: [R.Veterinarian, R.ClubManager, R.HeadTrainer, R.HorseOwner],
         measurementWrite: [R.ClubManager, R.Veterinarian, R.Groom],
         trainingMenu: [R.HorseOwner, R.ClubManager, R.HeadTrainer, R.Trainer, R.WorkRider],
         trainingRead: [R.HorseOwner, R.ClubManager, R.HeadTrainer, R.Trainer, R.WorkRider, R.Veterinarian],
     });
-    for (const role of ALL_ROLES) assert.equal(can({ role }, 'careAssign'), role === R.Veterinarian);
+    for (const role of ALL_ROLES) assert.equal(can({ role }, 'careAssign'), [R.ClubManager,R.Veterinarian].includes(role));
     assert.equal(can({ role: R.ClubManager }, 'careRead'), true);
 });
 

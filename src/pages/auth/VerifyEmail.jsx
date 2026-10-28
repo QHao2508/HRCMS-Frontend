@@ -54,7 +54,7 @@ export default function VerifyEmail() {
         <AuthForm title={msg(MSG.VERIFY_YOUR_EMAIL)} description={msg(MSG.ENTER_YOUR_EMAIL_AND_THE_SIX_DIGIT_CODE_FROM_YOUR_VERIFICATION_EMAIL)}
             form={form} onSubmit={() => form.submit(verify)} submitLabel={msg(MSG.VERIFY_YOUR_EMAIL)}
             pendingLabel={form.pending === "resend" ? msg(MSG.REQUESTING_CODE) : msg(MSG.VERIFYING)} success={message}
-            footer={<Link to="/login">{msg(MSG.BACK_TO_SIGN_IN)}</Link>}>
+            footer={<Link className="action-link" to="/login">{msg(MSG.BACK_TO_SIGN_IN)}</Link>}>
             <p className="form-text">{msg(MSG.REGISTRATION_EXPIRY_HELP)}</p>
             <AuthInput label={msg(MSG.EMAIL)} {...form.field("email")} type="email" required autoComplete="email" />
             <AuthInput label={msg(MSG.VERIFICATION_CODE)} {...form.field("code")} required inputMode="numeric"

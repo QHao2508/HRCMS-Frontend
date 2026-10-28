@@ -1,3 +1,6 @@
+import RegistrationErrors from '../../components/registrations/RegistrationErrors.jsx';
+import { focusRegistrationField } from '../../services/registrationFocus.js';
+import { useUnsavedChanges } from '../../context/useUnsavedChanges.js';
 import { MSG, msg } from "../../messages/index.js";
 import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -24,6 +27,7 @@ export default function RegistrationCreate() {
     const [photo, setPhoto] = useState(null);
     const [savedDraftId, setSavedDraftId] = useState(null);
     const [uncertain, setUncertain] = useState(false);
+    useUnsavedChanges(Object.values(values).some(Boolean) || !!photo);
     /**
      * Kiểm dữ liệu hiện có, lưu qua API và dùng ID/response thật để cập nhật form hoặc chuyển trang.
      * Có điều hướng router; thông tin nhạy cảm không được đưa lên query URL.
@@ -31,7 +35,7 @@ export default function RegistrationCreate() {
      */
     async function save(event) {
         event.preventDefault(); if (lock.current || uncertain) return;
-        const nextErrors = validateDraft(values); setErrors(nextErrors); if (Object.keys(nextErrors).length) return;
+        const nextErrors = validateDraft(values); setErrors(nextErrors); if (Object.keys(nextErrors).length) { focusRegistrationField(Object.keys(nextErrors)[0],setStep); return; }
         lock.current = true; setBusy(true); setError(null);
         try { const record = await saveDraftWithPhoto({ registrationId: savedDraftId, values, file: photo, onSaved:
     /**
@@ -43,10 +47,10 @@ export default function RegistrationCreate() {
         finally { lock.current = false; setBusy(false); }
     }
     return <section><BackLink to="/registrations">{msg(MSG.YEU_CAU_DANG_KY)}</BackLink><PageHeading title={msg(MSG.DANG_KY_NGUA_MOI)} description={msg(MSG.BAN_NHAP_CHU_SO_HUU)} />
-        <WizardSteps step={step} onChange={setStep} disabled={busy} /><RegistrationError error={error} />
-        {!!Object.keys(errors).length && <div className="alert alert-danger" role="alert">{msg(MSG.KIEM_TRA_THONG_TIN_DA_NHAP_BAN_CO_THE_CHUYEN_GIUA_CAC_BUOC_DE_SUA_LOI)}</div>}
-        {savedDraftId && <p className="alert alert-info">{msg(MSG.PHOTO_SAVED_DRAFT)}{' '}<Link to={`/registrations/${savedDraftId}`}>{msg(MSG.PHOTO_OPEN_SAVED_DRAFT)}</Link></p>}
-        {uncertain && <p className="alert alert-warning" role="alert">{msg(MSG.PHOTO_UPLOAD_UNCERTAIN)}{' '}<Link to="/registrations">{msg(MSG.YEU_CAU_DANG_KY)}</Link></p>}
+        <WizardSteps step={step} onChange={setStep} errors={errors} disabled={busy} /><RegistrationError error={error} />
+        <RegistrationErrors errors={errors} onStep={setStep}/><p className="form-text">{msg(MSG.UX_DRAFT_HELP)}</p>
+        {savedDraftId && <p className="alert alert-info">{msg(MSG.PHOTO_SAVED_DRAFT)}{' '}<Link className="action-link" to={`/registrations/${savedDraftId}`}>{msg(MSG.PHOTO_OPEN_SAVED_DRAFT)}</Link></p>}
+        {uncertain && <p className="alert alert-warning" role="alert">{msg(MSG.PHOTO_UPLOAD_UNCERTAIN)}{' '}<Link className="action-link" to="/registrations">{msg(MSG.YEU_CAU_DANG_KY)}</Link></p>}
         <form onSubmit={save} noValidate><RegistrationForm values={values} errors={errors} disabled={busy} step={step} onChange={e => setValues({...values,[e.target.name]:e.target.value})} />
             {step === 4 && <RegistrationSummary record={values} />}
             <div hidden={step !== 0}><HorsePhotoInput file={photo} onChange={setPhoto} disabled={busy || uncertain} /></div>

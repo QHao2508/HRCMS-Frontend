@@ -16,7 +16,7 @@ export default function MedicalRecordPicker({ records, horseId, value, onChange,
             {choices.map(choice => <option key={choice.value} value={choice.value}>{choice.label}</option>)}
         </select>
         <p id={selectId + '-help'} className="medical-record-source">{msg(MSG.MEDICAL_RECORD_SOURCE)}{' '}
-            <Link to={`/medical/examination?horseId=${encodeURIComponent(horseId)}`}>{msg(MSG.MEDICAL_RECORD_OPEN_EXAMINATION)}</Link>
+            <Link className="action-link" to={`/medical/examination?horseId=${encodeURIComponent(horseId)}`}>{msg(MSG.MEDICAL_RECORD_OPEN_EXAMINATION)}</Link>
         </p>
         {selected && <div className="medical-record-selection" aria-live="polite">
             <strong>{[selected.title, selected.examinedAt].join(' · ')}</strong>

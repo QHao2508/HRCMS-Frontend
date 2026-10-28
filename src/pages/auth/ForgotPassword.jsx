@@ -38,7 +38,7 @@ export default function ForgotPassword() {
             form={form} onSubmit={() => { if (!cooldown.seconds) void form.submit(requestCode); }}
             submitLabel={cooldown.seconds ? msg(MSG.REQUEST_AGAIN_IN_S, { p0: cooldown.seconds }) : msg(MSG.SEND_RESET_CODE)}
             pendingLabel={msg(MSG.REQUESTING_CODE)} submitDisabled={cooldown.seconds > 0} success={message}
-            footer={<><p><Link to="/reset-password" state={{ email: form.values.email.trim() }}>{msg(MSG.ALREADY_HAVE_A_RESET_CODE)}</Link></p><Link to="/login">{msg(MSG.BACK_TO_SIGN_IN)}</Link></>}>
+            footer={<><p><Link className="action-link" to="/reset-password" state={{ email: form.values.email.trim() }}>{msg(MSG.ALREADY_HAVE_A_RESET_CODE)}</Link></p><Link className="action-link" to="/login">{msg(MSG.BACK_TO_SIGN_IN)}</Link></>}>
             <AuthInput label={msg(MSG.EMAIL)} {...form.field("email")} type="email" required autoComplete="email" />
         </AuthForm>
     );

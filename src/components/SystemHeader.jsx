@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { UserRound, ArrowUpRight } from 'lucide-react';
 import BrandMark from './BrandMark.jsx';
 import NotificationBell from './NotificationBell.jsx';
 import LogoutButton from './auth/LogoutButton.jsx';
@@ -22,12 +23,12 @@ export default function SystemHeader() {
     }, []);
     return <header ref={headerRef} className="system-header">
         <div className="system-header-inner">
-            <Link className="system-brand" to="/" aria-label={msg(MSG.HRCMS_TRANG_CHU)}><BrandMark /><span>{msg(MSG.HRCMS)}</span></Link>
+            <div className="system-brand-group"><Link className="system-brand" to="/" aria-label={msg(MSG.HRCMS_TRANG_CHU)}><BrandMark /><span>{msg(MSG.HRCMS)}</span></Link></div>
             <span className="system-portal-title">{msg(MSG.CONG_QUAN_TRI_CHIEN_MA_HOANG_GIA)}</span>
             {isAuthenticated && <div className="system-account-controls">
-                <Link className="system-dashboard-link" to="/dashboard">{msg(MSG.HOME_REFERENCE_MANAGEMENT)}</Link>
-                <div className="system-account"><span>{getUserDisplayName(user)}</span><small>{getRoleLabel(user?.role)}</small></div>
-                <NotificationBell /><LogoutButton />
+                <Link className="system-dashboard-link" to="/dashboard">{msg(MSG.HOME_REFERENCE_MANAGEMENT)}<ArrowUpRight size={15} aria-hidden="true" /></Link>
+                <NotificationBell /><div className="system-profile"><span className="system-avatar" aria-hidden="true"><UserRound size={19} /></span><div className="system-account"><span title={getUserDisplayName(user)}>{getUserDisplayName(user)}</span><small>{getRoleLabel(user?.role)}</small></div></div>
+                <LogoutButton />
             </div>}
         </div>
     </header>;

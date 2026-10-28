@@ -38,7 +38,7 @@ export default function RegistrationForm({ values, onChange, errors = {}, disabl
         <fieldset disabled={disabled} className="form-card" hidden={step !== undefined && step !== 3}>
             <legend>{msg(MSG.NHAN_SU_DE_XUAT)}</legend><p className="card-description">{msg(MSG.LUA_CHON_UU_TIEN_LA_DE_XUAT_KHONG_PHAI_PHAN_CONG_CHINH_THUC)}</p>
             {directory.loading && <p role="status">{msg(MSG.DANG_TAI_NHAN_SU)}</p>}
-            {directory.error && <div role="alert">{msg(MSG.CHUA_TAI_DUOC_DANH_SACH_CAC_LUA_CHON_DA_LUU_VAN_DUOC_GIU)}<button type="button" className="btn btn-link" onClick={directory.reload}>{msg(MSG.THU_LAI)}</button></div>}
+            {directory.error && <div role="alert">{msg(MSG.CHUA_TAI_DUOC_DANH_SACH_CAC_LUA_CHON_DA_LUU_VAN_DUOC_GIU)}<button type="button" className="btn btn-outline-primary" onClick={directory.reload}>{msg(MSG.THU_LAI)}</button></div>}
             <div className="row g-3">{PREFERENCES.map(({ field, role }) => {
                 const options = directory.data?.[role] || [];
                 const retained = values[field] && !options.some(person => person.id === values[field]);

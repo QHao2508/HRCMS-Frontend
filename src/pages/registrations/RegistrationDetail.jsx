@@ -1,3 +1,6 @@
+import RegistrationErrors from '../../components/registrations/RegistrationErrors.jsx';
+import { focusRegistrationField } from '../../services/registrationFocus.js';
+import { useUnsavedChanges } from '../../context/useUnsavedChanges.js';
 import { MSG, msg } from "../../messages/index.js";
 import { WizardSteps, RegistrationSummary } from "../../components/registrations/RegistrationWizard.jsx";
 import { useCallback, useRef, useState } from "react";
@@ -33,6 +36,7 @@ export function RegistrationDetailContent({ initialRecord, initialAttachments, r
     const editable = canEditRegistration(record.status) && !stale;
     const dirty = JSON.stringify(registrationPayload(values)) !== JSON.stringify(registrationPayload(record));
     const missing = submissionMissing(record, attachments);
+    useUnsavedChanges(dirty);
     /**
      * Khóa lượt thao tác đang chạy, gọi hàm ghi rồi reload/callback; ghi nhận thành công hoặc lỗi và yêu cầu đối soát khi kết quả chưa chắc chắn.
      * @param name Tên/key đầu vào theo mục đích hàm; xem kiểu và điều kiện kiểm trong thân hàm.
@@ -65,7 +69,7 @@ export function RegistrationDetailContent({ initialRecord, initialAttachments, r
         event.preventDefault();
         const nextErrors = validateDraft(values);
         setErrors(nextErrors);
-        if (Object.keys(nextErrors).length) return;
+        if (Object.keys(nextErrors).length) { focusRegistrationField(Object.keys(nextErrors)[0],setStep); return; }
         await run(msg(MSG.DANG_XU_LY), async () => { acceptRecord(await updateRegistration(record.id, values)); setNotice(msg(MSG.DA_LUU_HO_SO)); });
     }
     /**
@@ -77,7 +81,7 @@ export function RegistrationDetailContent({ initialRecord, initialAttachments, r
         if (dirty || missing.length) return;
         const nextErrors = validateDraft(values);
         setErrors(nextErrors);
-        if (Object.keys(nextErrors).length) return;
+        if (Object.keys(nextErrors).length) { focusRegistrationField(Object.keys(nextErrors)[0],setStep); return; }
         await run(msg(MSG.DANG_XU_LY), async () => {
             acceptRecord(await submitRegistration(record.id));
             setStep(4);
@@ -115,11 +119,11 @@ export function RegistrationDetailContent({ initialRecord, initialAttachments, r
         <p className="text-body-secondary">{msg(MSG.MA_HO_SO)}{' '}{record.id}</p>
         {record.reviewReason && <div className="alert alert-warning"><strong>{msg(MSG.LY_DO_YEU_CAU_CHINH_SUA)}</strong><p className="mb-0" style={{ whiteSpace: "pre-wrap" }}>{record.reviewReason}</p></div>}
         {!canEditRegistration(record.status) && <p>{msg(MSG.HO_SO_NAY_CHI_DUOC_XEM)}</p>}
-        <RegistrationError error={error} />
+        <RegistrationError error={error} /><RegistrationErrors errors={errors} onStep={setStep}/>
         {notice && <p className="alert alert-success" role="status">{notice}</p>}
         {pending && <p role="status">{pending}{msg(MSG.SYMBOL_ELLIPSIS)}</p>}
         {stale && <div className="alert alert-warning">{msg(MSG.HAY_TAI_LAI_HO_SO_TRUOC_THAO_TAC_TIEP_THEO_THAY_DOI_CHUA_LUU_SE_BI_BO)}{' '}<button className="btn btn-outline-primary" onClick={reload}>{msg(MSG.TAI_LAI_HO_SO)}</button></div>}
-        {editable && <WizardSteps step={step} onChange={setStep} disabled={!!pending} />}
+        {editable && <WizardSteps step={step} onChange={setStep} errors={errors} disabled={!!pending} />}
         {!canEditRegistration(record.status) && <><section className="surface-card"><h2>{record.status === REGISTRATION_STATUS.PendingReview ? msg(MSG.YEU_CAU_DA_DUOC_GUI) : msg(MSG.THEO_DOI_YEU_CAU)}</h2><RegistrationStatus status={record.status} /><p className="mt-3">{record.status === REGISTRATION_STATUS.PendingReview ? msg(MSG.HO_SO_DANG_CHO_BAN_QUAN_LY_KIEM_TRA_THONG_TIN_VA_FILE_DINH_KEM_DA_DUOC_G) : record.status === REGISTRATION_STATUS.Approved ? msg(MSG.HO_SO_DA_DUOC_PHE_DUYET_NGUA_DA_XUAT_HIEN_TRONG_MUC_NGUA_CUA_TOI) : msg(MSG.BAN_CO_THE_XEM_LAI_THONG_TIN_HO_SO_BEN_DUOI)}</p></section><RegistrationSummary record={record} /></>}
         <form onSubmit={save} noValidate hidden={!editable}>
             <RegistrationForm values={values} errors={errors} disabled={!editable || !!pending} step={editable ? step : undefined}
@@ -161,7 +165,7 @@ export default function RegistrationDetail() {
     }, [id]);
     const resource = useRegistrationResource(load);
     return <section>
-        <Link to="/registrations">{msg(MSG.QUAY_LAI_YEU_CAU_DANG_KY)}</Link>
+        <Link className="action-link" to="/registrations">{msg(MSG.QUAY_LAI_YEU_CAU_DANG_KY)}</Link>
         {resource.loading && <p role="status">{msg(MSG.DANG_TAI_HO_SO)}</p>}
         {resource.error && <><RegistrationError error={resource.error} /><button className="btn btn-outline-primary" onClick={resource.reload}>{msg(MSG.THU_LAI)}</button></>}
         {resource.data && <RegistrationDetailContent key={id} initialRecord={resource.data.record} initialAttachments={resource.data.attachments} reload={resource.reload} />}

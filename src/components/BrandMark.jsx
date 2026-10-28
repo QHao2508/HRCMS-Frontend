@@ -1,10 +1,8 @@
-import {useWebsite} from '../services/websiteStore.js';
 import BrandLogo from './BrandLogo.jsx';
 
 /**
  * Trình bày cùng huy hiệu logo trong mọi header bằng CSS crop, giữ nguyên ảnh gốc và màu theme.
  */
 export default function BrandMark() {
-    const website=useWebsite();
-    return <span className={`brand-crest${website?.logoVersion ? " brand-crest-custom" : ""}`} aria-hidden="true"><BrandLogo className="brand-header-logo" /></span>;
+    return <span className="brand-crest" aria-hidden="true"><BrandLogo className="brand-header-logo" priority /></span>;
 }

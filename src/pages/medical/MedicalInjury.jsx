@@ -1,5 +1,6 @@
+import { calendarDate, clubDateTimeInput } from '../../services/displayDate.js';
 import { systemRegistrationCode } from "../../services/horseIdentifiers.js";
-import { useMedicalDialog } from '../../services/useMedicalDialog.js';
+import { useMedicalDialog, confirmMedicalClose } from '../../services/useMedicalDialog.js';
 import { horseRegistrationCode } from '../../services/careUi.js';
 import { useMedicalPatientSelection } from '../../services/medicalPatientSelection.js';
 import { allMedicalPages } from '../../services/medicalValidation.js';
@@ -48,16 +49,7 @@ function horseCodeOf(horse) {
     return horseRegistrationCode(horse);
 }
 
-function formatDate(value) {
-    if (!value) return "—";
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return String(value);
-    return date.toLocaleDateString("vi-VN", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-    });
-}
+const formatDate = calendarDate;
 
 function statusLabel(status) {
     return String(status ?? "Unknown").toUpperCase();
@@ -160,13 +152,13 @@ function MedicalInjury() {
     const openCreate = () => {
         setError("");
         setSuccess("");
-        const today = new Date().toISOString().slice(0, 10);
+        const today = clubDateTimeInput().slice(0, 10);
         setForm({ ...emptyForm, medicalRecordId: caseChoices[0]?.value ?? "", injuryDate: today, reviewDate: today });
         setShowModal(true);
     };
 
     const closeModal = () => {
-        if (!saving) setShowModal(false);
+        if (!saving) confirmMedicalClose(dialogRef,()=>setShowModal(false));
     };
 
     const handleChange = (event) => {
@@ -306,13 +298,13 @@ function MedicalInjury() {
                     <table className="medical-table medical-injury-table">
                         <thead>
                             <tr>
-                                <th>{msg(MSG.INJURY_NGAY_CHAN_THUONG)}</th>
-                                <th>{msg(MSG.INJURY_LOAI)}</th>
-                                <th>{msg(MSG.INJURY_VI_TRI_TREN_CO_THE)}</th>
-                                <th>{msg(MSG.INJURY_MUC_DO)}</th>
-                                <th>{msg(MSG.INJURY_NGUYEN_NHAN)}</th>
-                                <th>{msg(MSG.INJURY_TRANG_THAI_2)}</th>
-                                <th>{msg(MSG.INJURY_DU_KIEN_TAI_KIEM_TRA)}</th>
+                                <th scope="col">{msg(MSG.INJURY_NGAY_CHAN_THUONG)}</th>
+                                <th scope="col">{msg(MSG.INJURY_LOAI)}</th>
+                                <th scope="col">{msg(MSG.INJURY_VI_TRI_TREN_CO_THE)}</th>
+                                <th scope="col">{msg(MSG.INJURY_MUC_DO)}</th>
+                                <th scope="col">{msg(MSG.INJURY_NGUYEN_NHAN)}</th>
+                                <th scope="col">{msg(MSG.INJURY_TRANG_THAI_2)}</th>
+                                <th scope="col">{msg(MSG.INJURY_DU_KIEN_TAI_KIEM_TRA)}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -363,7 +355,7 @@ function MedicalInjury() {
 
                             <label className="medical-field">
                                 <span>{msg(MSG.INJURY_NGAY_CHAN_THUONG_2)}</span>
-                                <input type="date" name="injuryDate" value={form.injuryDate} onChange={handleChange} max={new Date().toISOString().slice(0, 10)} required />
+                                <input type="date" name="injuryDate" value={form.injuryDate} onChange={handleChange} max={clubDateTimeInput().slice(0, 10)} required />
                             </label>
 
                             <label className="medical-field">
