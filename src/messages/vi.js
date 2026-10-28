@@ -1,5 +1,8 @@
 // Vietnamese display text only. API values belong in constants/.
 export const VI = Object.freeze({
+    "HEAD_TRAINER_CHANGE_REASON": "Lý do đổi huấn luyện viên trưởng",
+    "HEAD_TRAINER_CHANGE_HELP": "Mỗi ngựa chỉ có một huấn luyện viên trưởng. Muốn đổi, chọn người mới và ghi rõ lý do; chủ ngựa, huấn luyện viên trưởng cũ và mới đều nhận được thông báo.",
+    "HEAD_TRAINER_CURRENT": "Huấn luyện viên trưởng hiện tại: {name}",
     "NOTIF_MARK_ALL": "Đánh dấu tất cả đã đọc",
     "NOTIF_MARK_ALL_PENDING": "Đang đánh dấu tất cả…",
     "NOTIF_MARK_ALL_FAILED": "Chưa thể đánh dấu tất cả đã đọc. Hãy tải lại để kiểm tra và thử lại.",
@@ -95,7 +98,6 @@ export const VI = Object.freeze({
     "NAV_GROUP_CARE": "Chăm sóc & chuồng trại",
     "NAV_GROUP_INVENTORY": "Kho vật tư",
     "NAV_GROUP_MANAGEMENT": "Quản trị & báo cáo",
-    "ASSIGN_REASON_REQUIRED": "Lý do phân công thay huấn luyện viên trưởng (bắt buộc)",
     "HMED_TITLE": "Sức khỏe & y tế",
     "HMED_CASES": "Hồ sơ y tế",
     "HMED_NO_CASES": "Chưa có hồ sơ y tế.",
@@ -533,7 +535,7 @@ export const VI = Object.freeze({
     "DA_PHAN_CONG_NHAN_SU_LICH_SU_PHAN_CONG_DUOC_GIU_LAI": "Đã phân công nhân sự. Lịch sử phân công được giữ lại.",
     "PHAN_CONG_NHAN_SU_CHINH_THUC": "Phân công nhân sự chính thức",
     "CHON_TRAINER_PHU_TRACH": "Chọn huấn luyện viên phụ trách",
-    "MANAGER_XAC_NHAN_HEADTRAINER_GROOM_VA_BAC_SI_THU_Y_HEADTRAINER_DUOC_GIAO": "quản lý xác nhận huấn luyện viên trưởng, nhân viên chăm sóc ngựa và bác sĩ thú y. huấn luyện viên trưởng được giao ngựa sẽ chọn huấn luyện viên.",
+    "MANAGER_XAC_NHAN_HEADTRAINER_GROOM_VA_BAC_SI_THU_Y_HEADTRAINER_DUOC_GIAO": "Quản lý phân công huấn luyện viên trưởng, nhân viên chăm sóc ngựa và bác sĩ thú y. Huấn luyện viên trưởng phụ trách ngựa sẽ chọn huấn luyện viên.",
     "CHI_HEADTRAINER_DANG_PHU_TRACH_NGUA_DUOC_CHON_TRAINER": "Chỉ huấn luyện viên trưởng đang phụ trách ngựa được chọn huấn luyện viên.",
     "NHAN_SU": "Nhân sự",
     "NGAY_BAT_DAU": "Ngày bắt đầu",
