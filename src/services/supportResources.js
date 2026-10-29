@@ -1,5 +1,6 @@
+import { clubDateTime } from './displayDate.js';
 import {useCallback,useState} from 'react';
-import {MSG,msg,UI_LOCALE} from '../messages/index.js';
+import { MSG, msg } from '../messages/index.js';
 import {useRegistrationResource} from '../context/useRegistrationResource.js';
 import {allPages,read} from './supportService.js';
 import {getEnumLabel} from '../constants/enumLabels.js';
@@ -16,6 +17,6 @@ export function usePaged(path, params = {}) {
     return { ...resource, setPage };
 }
 export const choices = (items = [], name = 'name') => [{ value: '', label: msg(MSG.SUPPORT_SELECT) }, ...items.map(x => ({ value: x.id, label: x[name] || x.userName || x.id }))];
-export const when = value => value ? new Date(value).toLocaleString(UI_LOCALE, { timeZone: 'Asia/Ho_Chi_Minh' }) : '—';
+export const when = clubDateTime;
 const statusKeys = { PartiallyReceived: MSG.BR_PARTIAL, Received: MSG.BR_RECEIVED, Pending: MSG.SUPPORT_PENDING, InProgress: MSG.SUPPORT_PROGRESS, Completed: MSG.SUPPORT_COMPLETED, Skipped: MSG.SUPPORT_SKIPPED, IssueReported: MSG.SUPPORT_ISSUE, Approved: MSG.SUPPORT_APPROVED, Rejected: MSG.SUPPORT_REJECTED, Clean: MSG.SUPPORT_CLEAN, NeedsCleaning: MSG.SUPPORT_DIRTY };
 export function supportLabel(value) { return Object.hasOwn(statusKeys, value) ? msg(statusKeys[value]) : getEnumLabel(value); }

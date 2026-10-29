@@ -4,21 +4,32 @@ import { useUnsavedChanges } from '../context/useUnsavedChanges.js';
 import { MSG, msg } from '../messages/index.js';
 import { useMutation } from '../context/useMutation.js';
 import { Field, MutationState, Pagination, ResourceState } from './WorkflowUI.jsx';
+import Drawer from './ui/Drawer.jsx';
+import { Plus } from 'lucide-react';
 
-export function SupportForm({ title, fields, initial = {}, submit, reload, disabled = false, submitDisabled = false, derive, submitLabel, collapsible = false }) {
+/**
+ * Form thao tác dùng chung. `collapsible`: chỉ hiện một nút trên trang, form mở trong ngăn kéo bên phải
+ * (giữ focus trong ngăn kéo, Esc để đóng, hỏi lại nếu đang có thay đổi chưa lưu).
+ */
+export function SupportForm({ title, fields, initial = {}, submit, reload, disabled = false, submitDisabled = false, derive, submitLabel, collapsible = false, danger = false }) {
     const [form, setForm] = useState(initial);
     const [open, setOpen] = useState(!collapsible);
     const headingId = useId(); const formId = useId(); const panel = useRef(null);
     const dirty = JSON.stringify(form) !== JSON.stringify(initial);
     useUnsavedChanges(dirty);
     const mutation = useMutation();
+    const blocked = typeof submitDisabled === 'function' ? submitDisabled(form) : submitDisabled;
     useEffect(() => { if (collapsible && open) panel.current?.querySelector('input:not([type="hidden"]), select, textarea')?.focus(); }, [open, collapsible]);
-    return <section className="surface-card support-form" aria-labelledby={headingId}><div className="card-heading"><h2 id={headingId}>{title}</h2>{collapsible && <button type="button" className="btn btn-outline-primary" aria-expanded={open} aria-controls={formId} disabled={mutation.pending || mutation.uncertain} onClick={() => { if (open && dirty && !window.confirm(msg(MSG.UX_DISCARD))) return; if (open) setForm(initial); setOpen(!open); }}>{msg(open ? MSG.UX_CLOSE_FORM : MSG.UX_OPEN_FORM)}</button>}</div><MutationState mutation={mutation} reload={reload} />
-        <form id={formId} ref={panel} hidden={!open} onSubmit={e => { e.preventDefault(); if (disabled || mutation.pending || mutation.uncertain || (typeof submitDisabled === 'function' ? submitDisabled(form) : submitDisabled)) return; mutation.run(() => submit(form), () => { setForm(initial); reload(); }); }}>
+    const close = () => { if (dirty && !window.confirm(msg(MSG.UX_DISCARD))) return; setForm(initial); setOpen(false); };
+    const body = <><MutationState mutation={mutation} reload={reload} />
+        <form id={formId} ref={panel} onSubmit={e => { e.preventDefault(); if (disabled || mutation.pending || mutation.uncertain || blocked) return; mutation.run(() => submit(form), () => { setForm(initial); reload(); if (collapsible) setOpen(false); }); }}>
             <fieldset disabled={disabled || mutation.pending || mutation.uncertain}><div className="row g-3">
                 {(typeof fields === 'function' ? fields(form) : fields).map(field => <Field key={field.name} {...field} value={form[field.name] ?? ''} onChange={e => { const next = { ...form, [field.name]: e.target.value }; setForm(derive ? derive(next, field.name) : next); }} />)}
-            </div><div className="form-action-bar"><button className="btn btn-primary" type="submit" disabled={typeof submitDisabled === 'function' ? submitDisabled(form) : submitDisabled}>{mutation.pending ? msg(MSG.DANG_XU_LY) : submitLabel || msg(MSG.SUPPORT_SAVE)}</button>{dirty && <span className="form-text" role="status">{msg(MSG.UX_UNSAVED)}</span>}</div></fieldset>
-        </form></section>;
+            </div><div className={collapsible ? 'hc-drawer-actions' : 'form-action-bar'}><button className={danger ? 'btn btn-danger' : 'btn btn-primary'} type="submit" disabled={blocked}>{mutation.pending ? msg(MSG.DANG_XU_LY) : submitLabel || msg(MSG.SUPPORT_SAVE)}</button>{collapsible && <button type="button" className="btn btn-outline-secondary" onClick={close} disabled={mutation.pending}>{msg(MSG.UI_CLOSE)}</button>}{dirty && <span className="form-text" role="status">{msg(MSG.UX_UNSAVED)}</span>}</div></fieldset>
+        </form></>;
+    if (collapsible) return <div className="form-launcher"><button type="button" className={danger ? 'btn btn-outline-danger' : 'btn btn-primary'} aria-haspopup="dialog" disabled={disabled} onClick={() => setOpen(true)}>{!danger && <><Plus size={18} aria-hidden="true" />{' '}</>}{title}</button>
+        <Drawer open={open} title={title} busy={mutation.pending} onClose={close}>{body}</Drawer></div>;
+    return <section className="surface-card support-form" aria-labelledby={headingId}><div className="card-heading"><h2 id={headingId}>{title}</h2></div>{body}</section>;
 }
 export function SupportTable({ resource, columns, actions, tableClassName = 'table' }) {
     return <section className="surface-card" aria-busy={!!resource.loading}><ResourceState resource={resource} />{resource.data && <>

@@ -140,11 +140,11 @@ test('S6 Movement empty and error show contextual feedback with retry', () => {
     globalThis.__s6.resources = [{ data: page([]) }]; assert.ok(render(h(ItemHistory, { item })).includes(msg(MSG.OPS_EMPTY_MOVEMENTS)));
     globalThis.__s6.resources = [{ error: { status: 503, message: 'Lỗi lịch sử' } }]; const html = render(h(ItemHistory, { item })); assert.ok(html.includes(msg(MSG.TAI_LAI))); assert.ok(!html.includes(msg(MSG.OPS_EMPTY_MOVEMENTS)));
 });
-test('S6 Stable loads unchanged stables/horses endpoints and offers named scoped selector', async () => {
+test('S6 Stable loads unchanged stables/horses endpoints and opens the first stable by default', async () => {
     globalThis.__s6.resources = [{ data: [{ id: 'stable-a', name: 'Khu A' }] }, { data: [] }];
-    const html = render(h(Stable)); assert.ok(html.includes('Khu A')); assert.ok(html.includes(msg(MSG.OPS_STABLE_SELECT))); assert.doesNotMatch(html, /Tạo ô chuồng/);
+    const html = render(h(Stable)); assert.ok(html.includes('Khu A')); assert.ok(!html.includes(msg(MSG.OPS_STABLE_SELECT))); assert.doesNotMatch(html, /Tạo ô chuồng/);
     for (const load of globalThis.__s6.loads) await load();
-    assert.deepEqual(globalThis.__s6.requests.map(x => x.url), ['/api/care/stables', '/api/horses']);
+    assert.deepEqual(globalThis.__s6.requests.map(x => x.url).slice(0, 2), ['/api/care/stables', '/api/horses']);
     assert.ok(globalThis.__s6.requests.every(x => x.method === 'get'));
 });
 test('S6 Stable empty/loading/error states do not pretend there are stalls', () => {

@@ -208,6 +208,46 @@ textarea { resize: vertical; }
     .app-shell :is(.support-data-table,.ops-table) td :is(.btn,.badge,.ops-badge) { max-width: 100%; white-space: normal; }
     .app-shell .table-scroll-hint:has(+.table-responsive >.support-data-table) { display: none; }
 }
+/* Danh sách: thanh lọc gọn, ô người (tên + email), nhóm nút thao tác cùng một hàng. */
+.app-shell .list-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 16px; }
+.app-shell .list-toolbar .form-label { margin: 0; }
+.app-shell .list-toolbar .form-select { width: auto; min-width: 220px; max-width: 100%; }
+.app-shell .person-cell { display: grid; gap: 2px; min-width: 0; }
+.app-shell .person-cell span { color: var(--hc-muted); font-size: var(--hc-font-size-1); overflow-wrap: normal; word-break: normal; }
+.app-shell .table-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.app-shell .table-actions .btn { white-space: nowrap; }
+/* Nút mở form thao tác (form nằm trong ngăn kéo bên phải). */
+.app-shell .form-launcher { display: flex; justify-content: flex-end; margin-bottom: 16px; }
+@media (max-width: 600px) { .app-shell .form-launcher .btn { width: 100%; } }
+/* Hồ sơ ngựa: tiêu đề vùng kèm nút thao tác; form trong ngăn kéo không lồng thêm khung. */
+.app-shell .section-heading-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.hc-drawer .surface-card { border: 0; box-shadow: none; padding: 0; margin: 0; background: transparent; }
+.app-shell .horse-availability > summary { cursor: pointer; font-weight: 700; font-size: var(--hc-font-size-3); }
+.app-shell .horse-availability[open] > summary { margin-bottom: 16px; }
+.app-shell .horse-availability > .surface-card { border: 0; box-shadow: none; padding: 0; margin: 0; }
+.app-shell .horse-availability > .surface-card > h2:first-child { display: none; }
+.app-shell .section-heading-row > .form-launcher { margin: 0; }
+.app-shell .section-heading-row > h2 { margin: 0; }
+/* Nhãn trạng thái trong bảng không bẻ dòng; ô có nhiều nút xếp ngang. */
+@media (min-width: 601px) { .app-shell table .badge { white-space: nowrap; } .app-shell td:has(> .btn ~ .btn) { white-space: nowrap; } .app-shell td:has(> .btn ~ .btn) > .btn + .btn { margin-left: 8px; } }
+/* Màn hình hẹp: mọi bảng đã gắn nhãn cột chuyển thành thẻ "Nhãn: giá trị", không cắt cột. */
+@media (max-width: 600px) {
+    .app-shell .table-responsive:has(> table.has-cell-labels), .app-shell :is(.medical-table-wrapper, .table-scroll):has(> table.has-cell-labels) { border: 0; overflow: visible; }
+    .app-shell table.has-cell-labels { display: block; min-width: 0 !important; width: 100% !important; border: 0; background: transparent; }
+    .app-shell table.has-cell-labels thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+    .app-shell table.has-cell-labels tbody { display: grid; gap: 12px; }
+    .app-shell table.has-cell-labels tbody tr { display: block; border: 1px solid var(--hc-border); border-radius: 10px; overflow: hidden; background: var(--hc-surface); }
+    .app-shell table.has-cell-labels td { display: grid; grid-template-columns: minmax(96px, .8fr) minmax(0, 1.2fr); align-items: start; gap: 12px; width: 100% !important; min-width: 0 !important; padding: 10px 12px; border: 0; border-bottom: 1px solid var(--hc-border); text-align: left !important; white-space: normal !important; overflow-wrap: anywhere; background: transparent; }
+    .app-shell table.has-cell-labels td:last-child { border-bottom: 0; }
+    .app-shell table.has-cell-labels td::before { content: attr(data-label); font-weight: 650; color: var(--hc-muted); font-size: var(--hc-font-size-1); text-align: left; }
+    .app-shell table.has-cell-labels td[data-span] { display: block; }
+    .app-shell table.has-cell-labels td[data-multi] { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .app-shell table.has-cell-labels td[data-multi]::before { flex: 0 0 100%; }
+    .app-shell table.has-cell-labels td[data-span]::before, .app-shell table.has-cell-labels td:not([data-label])::before { content: none; }
+    .app-shell table.has-cell-labels td:not([data-label]):not([data-span]) { display: block; }
+    .app-shell table.has-cell-labels td :is(.btn, .badge) { max-width: 100%; white-space: normal; }
+    .app-shell .table-scroll-hint:has(+ .table-responsive > table.has-cell-labels) { display: none; }
+}
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .001ms !important; transition-duration: .001ms !important; }
 }

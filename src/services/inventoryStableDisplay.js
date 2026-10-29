@@ -1,3 +1,4 @@
+import { clubDateTime } from './displayDate.js';
 import { MSG, msg, UI_LOCALE } from '../messages/index.js';
 
 // Categories and units are free text in the contract. Preserve server values.
@@ -16,7 +17,7 @@ export function movementState(row) {
 export const signedQuantity = value => isQuantity(value) ? `${value > 0 ? '+' : ''}${quantityText(value)}` : msg(MSG.CHUA_XAC_DINH);
 export function operationTime(value) {
     if (typeof value !== 'string' || !value.trim() || !Number.isFinite(Date.parse(value))) return msg(MSG.OPS_TIME_UNKNOWN);
-    return new Date(value).toLocaleString(UI_LOCALE, { timeZone: 'Asia/Ho_Chi_Minh' });
+    return clubDateTime(value);
 }
 export function occupancyState(value) {
     if (value === true) return { label: msg(MSG.SUPPORT_OCCUPIED), tone: 'occupied' };

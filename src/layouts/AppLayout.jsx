@@ -3,6 +3,7 @@ import '../style/workspace.css';
 import { MSG, msg } from "../messages/index.js";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { observeTableLabels } from "../services/tableLabels.js";
 import { LayoutDashboard, ClipboardList, BookOpen, Users, Activity, ChevronDown, HeartPulse, Warehouse, PackageMinus, PackagePlus, ShieldCheck, ChartNoAxesCombined, Settings, TriangleAlert, House, Stethoscope } from "lucide-react";
 import { useAuth } from "../context/useAuth.js";
 
@@ -23,6 +24,7 @@ export default function AppLayout() {
     const navigationExpanded = expandedPath === pathname;
     const navigation = getNavigationForRole(user?.role);
     const current = navigation.filter(item => pathname === item.to || pathname.startsWith(item.to + '/')).sort((a,b) => b.to.length - a.to.length)[0];
+    useEffect(() => observeTableLabels(document.getElementById("main-content")), []);
     useEffect(() => {
         document.title = `${current?.label || msg(MSG.HRCMS)} · ${msg(MSG.HRCMS)}`;
         // Only route changes move focus; query/filter changes must not interrupt typing.

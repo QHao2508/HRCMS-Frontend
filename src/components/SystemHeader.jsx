@@ -27,7 +27,7 @@ export default function SystemHeader() {
             <span className="system-portal-title">{msg(MSG.CONG_QUAN_TRI_CHIEN_MA_HOANG_GIA)}</span>
             {isAuthenticated && <div className="system-account-controls">
                 <Link className="system-dashboard-link" to="/dashboard">{msg(MSG.HOME_REFERENCE_MANAGEMENT)}<ArrowUpRight size={15} aria-hidden="true" /></Link>
-                <NotificationBell /><div className="system-profile"><span className="system-avatar" aria-hidden="true"><UserRound size={19} /></span><div className="system-account"><span title={getUserDisplayName(user)}>{getUserDisplayName(user)}</span><small>{getRoleLabel(user?.role)}</small></div></div>
+                <NotificationBell /><div className="system-profile"><span className="system-avatar" aria-hidden="true"><UserRound size={19} /></span><div className="system-account"><span title={getUserDisplayName(user)}>{getUserDisplayName(user)}</span><small title={getRoleLabel(user?.role)}>{getRoleLabel(user?.role)}</small></div></div>
                 <LogoutButton />
             </div>}
         </div>

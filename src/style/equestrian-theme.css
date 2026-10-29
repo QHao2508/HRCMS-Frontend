@@ -397,3 +397,7 @@ body, .app-shell { background: var(--hc-bg); color: var(--hc-text); }
 .app-shell .training-page .wizard-actions {
     position: static; background: #f6eee4; margin-bottom: 0; box-shadow: none;
 }
+
+/* Tên và vai trò trên header luôn một dòng; vai trò dài cắt bằng dấu … (xem đủ khi rê chuột). */
+.system-header .system-account { min-width: 0; }
+.system-header .system-account :is(span, small) { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

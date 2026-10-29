@@ -1,3 +1,4 @@
+import { displayDate } from '../services/displayDate.js';
 import { treatmentFrequency } from "../services/treatmentFrequency.js";
 import { useCallback } from 'react';
 import { MSG, msg } from '../messages/index.js';
@@ -10,7 +11,7 @@ import { clubToday } from '../services/workflowHelpers.js';
 import { ResourceState, StateBadge } from './WorkflowUI.jsx';
 import { SupportForm, SupportTable } from './SupportUI.jsx';
 
-const date = value => value ? new Date(value).toLocaleDateString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' }) : '—';
+const date = displayDate;
 function restrictionText(r) {
     const parts = [];
     if (r.blockAllTraining) parts.push(msg(MSG.HMED_BLOCK_ALL));
@@ -55,9 +56,9 @@ export function HorseHealthPanel({ horseId, user }) {
 export function HorseMeasurements({ horseId, user, reload, archived }) {
     const path = `/api/horses/${id(horseId)}/measurements`;
     const resource = usePaged(path);
-    return <section id="horse-measurements"><h2 className="mt-4">{msg(MSG.HMED_MEASURE_TITLE)}</h2><SupportTable resource={resource} columns={[{ key: 'date', label: msg(MSG.HMED_MEASURE_DATE), render: x => date(x.date) }, { key: 'heightCm', label: msg(MSG.HMED_MEASURE_HEIGHT) }, { key: 'weightKg', label: msg(MSG.HMED_MEASURE_WEIGHT) }]} />
-        {can(user, 'measurementWrite') && !archived && <SupportForm title={msg(MSG.HMED_MEASURE_ADD)} initial={{ date: clubToday(), heightCm: '', weightKg: '' }} reload={() => { resource.reload(); reload?.(); }}
+    return <section id="horse-measurements"><div className="section-heading-row mt-4"><h2>{msg(MSG.HMED_MEASURE_TITLE)}</h2>{can(user, 'measurementWrite') && !archived && <SupportForm collapsible title={msg(MSG.HMED_MEASURE_ADD)} submitLabel={msg(MSG.HMED_MEASURE_ADD)} initial={{ date: clubToday(), heightCm: '', weightKg: '' }} reload={() => { resource.reload(); reload?.(); }}
             submit={f => change(path, { date: f.date, heightCm: Number(f.heightCm), weightKg: Number(f.weightKg) })}
-            fields={[{ name: 'date', label: msg(MSG.HMED_MEASURE_DATE), type: 'date', max: clubToday(), required: true }, { name: 'heightCm', label: msg(MSG.HMED_MEASURE_HEIGHT), type: 'number', min: 1, max: 300, step: '0.1', required: true }, { name: 'weightKg', label: msg(MSG.HMED_MEASURE_WEIGHT), type: 'number', min: 1, max: 2000, step: '0.1', required: true }]} />}
+            fields={[{ name: 'date', label: msg(MSG.HMED_MEASURE_DATE), type: 'date', max: clubToday(), required: true }, { name: 'heightCm', label: msg(MSG.HMED_MEASURE_HEIGHT), type: 'number', min: 1, max: 300, step: '0.1', required: true }, { name: 'weightKg', label: msg(MSG.HMED_MEASURE_WEIGHT), type: 'number', min: 1, max: 2000, step: '0.1', required: true }]} />}</div><SupportTable resource={resource} columns={[{ key: 'date', label: msg(MSG.HMED_MEASURE_DATE), render: x => date(x.date) }, { key: 'heightCm', label: msg(MSG.HMED_MEASURE_HEIGHT) }, { key: 'weightKg', label: msg(MSG.HMED_MEASURE_WEIGHT) }]} />
+        
     </section>;
 }

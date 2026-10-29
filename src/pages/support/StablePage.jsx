@@ -10,12 +10,14 @@ import { displayText, occupancyState, operationTime, stallHorse, stayState } fro
 export default function StablePage() {
     const { user } = useAuth(); const manager = user.role === 'ClubManager'; const stables = useChoices('/api/care/stables'); const [stableId, setStableId] = useState('');
     const horses = useChoices('/api/horses');
-    const stable = stables.data?.find(x => x.id === stableId);
+    // Chưa chọn thì mặc định khu đầu tiên để thấy ngay danh sách ô.
+    const activeStableId = stableId || stables.data?.[0]?.id || '';
+    const stable = stables.data?.find(x => x.id === activeStableId);
     return <div className="ops-page"><PageHeading title={msg(MSG.SUPPORT_STABLES)} description={msg(MSG.OPS_STABLE_HELP)} /><ResourceState resource={stables} />
         {manager && <SupportForm collapsible submitLabel={msg(MSG.SUPPORT_NEW_STABLE)} title={msg(MSG.SUPPORT_NEW_STABLE)} initial={{ name: '' }} reload={stables.reload} submit={f => change('/api/care/stables', f)} fields={[{ name: 'name', label: msg(MSG.SUPPORT_NAME), required: true, maxLength: 100 }]} />}
-        {!stables.loading && !stables.error && <section className="surface-card ops-filter"><Field name="stableId" label={msg(MSG.SUPPORT_STABLE)} value={stableId} options={choices(stables.data)} onChange={e => setStableId(e.target.value)} /><p>{msg(MSG.OPS_SCOPE_HELP)}</p></section>}
-        {!stables.loading && !stables.error && (!stables.data?.length ? <p className="surface-card ops-empty" role="status">{msg(MSG.OPS_STABLE_EMPTY)}</p> : !stableId && <p className="surface-card ops-empty" role="status">{msg(MSG.OPS_STABLE_SELECT)}</p>)}
-        {stableId && <Stalls key={stableId} stableId={stableId} stableName={displayText(stable?.name)} horses={horses} manager={manager} groom={user.role === 'Groom'} />}
+        {!stables.loading && !stables.error && <section className="surface-card ops-filter"><Field name="stableId" label={msg(MSG.SUPPORT_STABLE)} value={activeStableId} options={choices(stables.data)} onChange={e => setStableId(e.target.value)} /><p>{msg(MSG.OPS_SCOPE_HELP)}</p></section>}
+        {!stables.loading && !stables.error && (!stables.data?.length ? <p className="surface-card ops-empty" role="status">{msg(MSG.OPS_STABLE_EMPTY)}</p> : !activeStableId && <p className="surface-card ops-empty" role="status">{msg(MSG.OPS_STABLE_SELECT)}</p>)}
+        {activeStableId && <Stalls key={activeStableId} stableId={activeStableId} stableName={displayText(stable?.name)} horses={horses} manager={manager} groom={user.role === 'Groom'} />}
     </div>;
 }
 export function Stalls({ stableId, stableName, horses, manager, groom }) {

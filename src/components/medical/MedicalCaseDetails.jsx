@@ -1,3 +1,4 @@
+import { clubDateTime } from '../../services/displayDate.js';
 import { useCallback, useState } from 'react';
 import { MSG, msg } from '../../messages/index.js';
 import { getMedicalCaseHistory, mergeMedicalCases } from '../../services/medicalService.js';
@@ -6,7 +7,7 @@ import { useMutation } from '../../context/useMutation.js';
 import { ResourceState, MutationState, Field } from '../WorkflowUI.jsx';
 import { getMedicalLabel } from '../../constants/medicalLabels.js';
 
-const dateTime = value => new Date(value).toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' });
+const dateTime = clubDateTime;
 /** Show immutable clinical visits and let the vet explicitly join duplicate cases. */
 export default function MedicalCaseDetails({ horseId, recordId, cases = [], onMerged }) {
     const load = useCallback(() => getMedicalCaseHistory(horseId, recordId), [horseId, recordId]);

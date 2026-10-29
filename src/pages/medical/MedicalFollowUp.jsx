@@ -1,4 +1,4 @@
-import { clubDateTimeInput } from '../../services/displayDate.js';
+import { clubDateTime, clubDateTimeInput } from '../../services/displayDate.js';
 import { useCallback, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import MedicalChoiceField from '../../components/medical/MedicalChoiceField.jsx';
@@ -6,7 +6,7 @@ import { medicalCases } from '../../services/medicalCases.js';
 import { medicalRecordChoices } from '../../services/medicalRecordChoices.js';
 import { useMedicalPatientSelection } from '../../services/medicalPatientSelection.js';
 import MedicalLayout from '../../components/medical/MedicalLayout.jsx';
-import { MSG, msg, UI_LOCALE } from '../../messages/index.js';
+import { MSG, msg } from '../../messages/index.js';
 import { getInjuryStatusLabel } from '../../constants/medicalLabels.js';
 import { Field, MutationState, ResourceState } from '../../components/WorkflowUI.jsx';
 import { useRegistrationResource } from '../../context/useRegistrationResource.js';
@@ -19,7 +19,7 @@ const sections = [
     ['injuryIds', MSG.MEDICAL_CLEARANCE_INJURIES],
     ['treatmentIds', MSG.MEDICAL_CLEARANCE_TREATMENTS],
 ];
-const dateTime = value => new Date(value).toLocaleString(UI_LOCALE, { timeZone: 'Asia/Ho_Chi_Minh' });
+const dateTime = clubDateTime;
 const localNow = clubDateTimeInput;
 
 const caseFields = record => ({ previousRecordId: record?.id || '', reason: record?.reason || '', symptoms: record?.symptoms || '', findings: record?.findings || '', diagnosis: record?.diagnosis || '', healthStatus: record?.healthStatus || 'Monitoring', notes: record?.notes || '' });
