@@ -133,3 +133,6 @@ html:has(.hp) { scroll-behavior: smooth; }
 .hp-header .brand-crest { width: 42px; height: 40px; border-radius: 8px; }
 .hp-header .brand-header-logo { width: 129px; top: -6px; }
 .hp-header .brand-crest .brand-logo-fallback { font-size: var(--hc-font-size-1); line-height: 40px; }
+
+/* Tiêu đề cột ở chân trang giữ cỡ nhỏ trên mọi màn hình (không bị quy tắc h2 của trang chủ phóng to). */
+.hp .hp-footer h2 { font: 700 var(--hc-font-size-1)/1.5 var(--hc-font-body); letter-spacing: .04em; }

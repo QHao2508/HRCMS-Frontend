@@ -1,9 +1,10 @@
 import { MSG, msg, UI_LOCALE } from '../messages/index.js';
 
+const toNumber = value => typeof value === 'string' && value.trim() !== '' ? Number(value) : value;
 const isNumber = value => typeof value === 'number' && Number.isFinite(value);
 /** Số có dấu phân cách hàng nghìn kiểu Việt Nam: 8000 → "8.000". */
-export const formatNumber = value => isNumber(value) ? value.toLocaleString(UI_LOCALE, { maximumFractionDigits: 2 }) : '—';
-export const formatMetres = value => isNumber(value) ? msg(MSG.DISTANCE_VALUE, { value: formatNumber(value) }) : '—';
+export const formatNumber = raw => { const value = toNumber(raw); return isNumber(value) ? value.toLocaleString(UI_LOCALE, { maximumFractionDigits: 2 }) : '—'; };
+export const formatMetres = raw => isNumber(toNumber(raw)) ? msg(MSG.DISTANCE_VALUE, { value: formatNumber(raw) }) : '—';
 /** Thời lượng từ số giây: 4000 → "1 giờ 6 phút", 45 → "45 giây". */
 export function formatDuration(seconds) {
     if (!isNumber(seconds) || seconds < 0) return '—';

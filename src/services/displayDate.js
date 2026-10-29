@@ -3,7 +3,7 @@ export function clubInstant(value) {
     if (!value) return '';
     return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?$/.test(value) ? `${value}+07:00` : value;
 }
-const clubParts = new Intl.DateTimeFormat('en-GB', { timeZone: zone, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+const clubParts = new Intl.DateTimeFormat('en-GB', { timeZone: zone, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' });
 function parts(value) {
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return null;
@@ -13,6 +13,11 @@ function parts(value) {
 export function clubDateTime(value) {
     const p = value ? parts(value) : null;
     return p ? `${p.day}/${p.month}/${p.year} ${p.hour}:${p.minute}` : '—';
+}
+/** Như clubDateTime nhưng có giây, dùng khi cần phân biệt bản ghi cùng phút. */
+export function clubDateTimeSeconds(value) {
+    const p = value ? parts(value) : null;
+    return p ? `${p.day}/${p.month}/${p.year} ${p.hour}:${p.minute}:${p.second}` : '—';
 }
 /** Chỉ giờ:phút theo giờ CLB. */
 export function clubTime(value) {

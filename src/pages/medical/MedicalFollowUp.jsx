@@ -90,10 +90,10 @@ function FollowUpForHorse({ horseId }) {
     return <><ResourceState resource={resource} />{resource.data && <>
         <MedicalFollowUpForm key={`${horseId}-${resource.data.followUps.length}`} horseId={horseId} data={resource.data} reload={resource.reload} initialRecordId={search.get('recordId') || ''} />
         <section className="medical-table-card"><h2>{msg(MSG.MEDICAL_FOLLOWUP_HISTORY)}</h2>
-            {!resource.data.followUps.length && <p>{msg(MSG.MEDICAL_FOLLOWUP_EMPTY)}</p>}
-            <div className="medical-table-wrapper" role="region" aria-label={msg(MSG.MEDICAL_FOLLOWUP_HISTORY)} tabIndex={0}><table className="medical-table"><thead><tr><th scope="col">{msg(MSG.THOI_GIAN)}</th><th scope="col">{msg(MSG.MED_CASE_COLUMN)}</th><th scope="col">{msg(MSG.MEDICAL_OUTCOME)}</th><th scope="col">{msg(MSG.MED_CASE_RESOLVE)}</th></tr></thead>
+            {!resource.data.followUps.length && <p className="empty-state">{msg(MSG.MEDICAL_FOLLOWUP_EMPTY)}</p>}
+            {!!resource.data.followUps.length && <div className="medical-table-wrapper" role="region" aria-label={msg(MSG.MEDICAL_FOLLOWUP_HISTORY)} tabIndex={0}><table className="medical-table"><thead><tr><th scope="col">{msg(MSG.THOI_GIAN)}</th><th scope="col">{msg(MSG.MED_CASE_COLUMN)}</th><th scope="col">{msg(MSG.MEDICAL_OUTCOME)}</th><th scope="col">{msg(MSG.MED_CASE_RESOLVE)}</th></tr></thead>
                 <tbody>{resource.data.followUps.map(item => { const owner = cases.find(c => c.ids.has(item.previousRecordId) || c.ids.has(item.currentRecordId)); return <tr key={item.id}><td>{dateTime(item.createdAt)}</td><td>{owner ? `${msg(MSG.MEDICAL_RECORD_NUMBER, { number: owner.number })} · ${owner.first.reason || ''}` : '—'}</td><td>{item.outcome}</td><td>{msg(item.clearance ? MSG.CO : MSG.KHONG)}</td></tr>; })}</tbody>
-            </table></div>
+            </table></div>}
         </section>
     </>}</>;
 }

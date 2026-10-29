@@ -1,3 +1,4 @@
+import { displayDate } from '../../services/displayDate.js';
 import { getEnumLabel } from "../../constants/enumLabels.js";
 import { externalRegistrationNumber } from "../../services/horseIdentifiers.js";
 import { MSG, msg } from "../../messages/index.js";
@@ -18,5 +19,5 @@ export function WizardSteps({ step, onChange, disabled, errors = {} }) { return 
  */
 export function RegistrationSummary({ record }) {
     const values = { ...record, externalRegistrationNumber: externalRegistrationNumber(record) };
-    return <>{FORM_SECTIONS.map(section => <section className="surface-card registration-summary-section" key={section.title}><h2>{SECTION_TITLES[section.title]}</h2><dl className="summary-grid">{section.fields.map(field => <div key={field.name}><dt>{FIELD_LABELS[field.name]}</dt><dd>{values[field.name] == null || values[field.name] === "" ? msg(MSG.CHUA_NHAP) : field.name === "gender" ? getEnumLabel(values[field.name]) : String(values[field.name])}</dd></div>)}</dl></section>)}</>;
+    return <>{FORM_SECTIONS.map(section => <section className="surface-card registration-summary-section" key={section.title}><h2>{SECTION_TITLES[section.title]}</h2><dl className="summary-grid">{section.fields.map(field => <div key={field.name}><dt>{FIELD_LABELS[field.name]}</dt><dd>{values[field.name] == null || values[field.name] === "" ? msg(MSG.CHUA_NHAP) : field.name === "gender" ? getEnumLabel(values[field.name]) : field.type === "date" ? displayDate(values[field.name]) : String(values[field.name])}</dd></div>)}</dl></section>)}</>;
 }

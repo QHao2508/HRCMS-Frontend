@@ -4,7 +4,7 @@ import { useAuth } from '../../context/useAuth.js';
 import { useRegistrationResource } from '../../context/useRegistrationResource.js';
 import { MSG, msg } from '../../messages/index.js';
 import { Field, PageHeading, ResourceState } from '../../components/WorkflowUI.jsx';
-import { choices, supportLabel, useChoices, when } from '../../services/supportResources.js';
+import { choices, supportLabel, useChoices, when, supportTone } from '../../services/supportResources.js';
 import { id, read } from '../../services/supportService.js';
 import { clubToday, scheduledPayload } from '../../services/workflowHelpers.js';
 import { formatDuration, formatMetres, formatNumber, reportPeriod } from '../../services/numberFormat.js';
@@ -30,7 +30,7 @@ export default function ReportsPage() {
 }
 function ReportTable({ title, rows, columns, labels: headings, horses = [], detail }) {
     const [page, setPage] = useState(1); const pages = Math.max(1, Math.ceil(rows.length / 20)); const current = Math.min(page, pages);
-    return <section className="surface-card"><h2>{title}</h2>{!rows.length ? <p className="empty-state">{msg(MSG.SUPPORT_EMPTY)}</p> : <><div className="table-responsive"><table className="table"><thead><tr>{headings.map(key => <th scope="col" key={key}>{msg(key)}</th>)}{detail && <th scope="col">{msg(MSG.CHI_TIET)}</th>}</tr></thead><tbody>{rows.slice((current - 1) * 20, current * 20).map((row, index) => <tr key={row.id || `${row.period}-${index}`}>{columns.map(key => <td key={key}>{key === 'horseId' ? horses.find(h => h.id === row[key])?.name || msg(MSG.CHUA_CO_THONG_TIN) : key === 'status' ? supportLabel(row[key]) : key.endsWith('At') ? when(row[key]) : key === 'period' ? reportPeriod(row[key]) : typeof row[key] === 'number' ? formatNumber(row[key]) : row[key] ?? '—'}</td>)}{detail && <td><Link className="action-link" to={detail(row)}>{msg(MSG.CHI_TIET)}</Link></td>}</tr>)}</tbody></table></div>
+    return <section className="surface-card"><h2>{title}</h2>{!rows.length ? <p className="empty-state">{msg(MSG.SUPPORT_EMPTY)}</p> : <><div className="table-responsive"><table className="table"><thead><tr>{headings.map(key => <th scope="col" key={key}>{msg(key)}</th>)}{detail && <th scope="col">{msg(MSG.CHI_TIET)}</th>}</tr></thead><tbody>{rows.slice((current - 1) * 20, current * 20).map((row, index) => <tr key={row.id || `${row.period}-${index}`}>{columns.map(key => <td key={key}>{key === 'horseId' ? horses.find(h => h.id === row[key])?.name || msg(MSG.CHUA_CO_THONG_TIN) : key === 'status' ? <span className={`badge status-pill ${supportTone(row[key])}`}>{supportLabel(row[key])}</span> : key.endsWith('At') ? when(row[key]) : key === 'period' ? reportPeriod(row[key]) : typeof row[key] === 'number' ? formatNumber(row[key]) : row[key] ?? '—'}</td>)}{detail && <td><Link className="action-link" to={detail(row)}>{msg(MSG.CHI_TIET)}</Link></td>}</tr>)}</tbody></table></div>
         <nav className="pagination-row" aria-label={msg(MSG.PHAN_TRANG)}><button className="btn btn-outline-secondary" disabled={current <= 1} onClick={() => setPage(current - 1)}>{msg(MSG.TRUOC)}</button><span>{msg(MSG.PAGINATION_SUMMARY, { page: current, pages, total: rows.length })}</span><button className="btn btn-outline-secondary" disabled={current >= pages} onClick={() => setPage(current + 1)}>{msg(MSG.SAU)}</button></nav></>}
     </section>;
 }

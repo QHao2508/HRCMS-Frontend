@@ -230,6 +230,12 @@ textarea { resize: vertical; }
 .app-shell .section-heading-row > h2 { margin: 0; }
 /* Nhãn trạng thái trong bảng không bẻ dòng; ô có nhiều nút xếp ngang. */
 @media (min-width: 601px) { .app-shell table .badge { white-space: nowrap; } .app-shell td:has(> .btn ~ .btn) { white-space: nowrap; } .app-shell td:has(> .btn ~ .btn) > .btn + .btn { margin-left: 8px; } }
+/* Điện thoại: header (logo + tài khoản) cuộn đi để nhường chỗ cho nội dung; chỉ giữ thanh "Điều hướng chính" ở mép trên. */
+@media (max-width: 768px) {
+    .app-shell .system-header { position: static; }
+    .app-shell .app-sidebar.grouped-sidebar { top: 0; }
+    html:has(.app-shell) { scroll-padding-top: 72px; }
+}
 /* Màn hình hẹp: mọi bảng đã gắn nhãn cột chuyển thành thẻ "Nhãn: giá trị", không cắt cột. */
 @media (max-width: 600px) {
     .app-shell .table-responsive:has(> table.has-cell-labels), .app-shell :is(.medical-table-wrapper, .table-scroll):has(> table.has-cell-labels) { border: 0; overflow: visible; }

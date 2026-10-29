@@ -6,3 +6,6 @@ export const TRAINING_TYPE=Object.freeze({Walk:'Walk',Trot:'Trot',Canter:'Canter
 // Giá trị mặt sân được lưu trong dữ liệu (Templates/Plans/Sessions.Surface) và khớp mặc định "Cát" của Backend.
 // Đây là dữ liệu đã lưu, không phải nhãn giao diện; người dùng vẫn có thể nhập mặt sân khác.
 export const TRAINING_SURFACE=Object.freeze({Sand:'Cát',Turf:'Cỏ',Dirt:'Đất',Synthetic:'Đường đua tổng hợp'});
+// Giai đoạn huấn luyện là chuỗi tự do; các giá trị mẫu hệ thống được hiển thị bằng tiếng Việt.
+export const TRAINING_PHASE=Object.freeze({Base:'Nền tảng',Build:'Phát triển',Peak:'Cao điểm',Technique:'Kỹ thuật',Recovery:'Phục hồi',Conditioning:'Thể lực'});
+export const phaseLabel=value=>Object.hasOwn(TRAINING_PHASE,value||'')?TRAINING_PHASE[value]:(value||'—');

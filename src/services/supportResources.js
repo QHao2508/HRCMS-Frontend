@@ -20,3 +20,6 @@ export const choices = (items = [], name = 'name') => [{ value: '', label: msg(M
 export const when = clubDateTime;
 const statusKeys = { PartiallyReceived: MSG.BR_PARTIAL, Received: MSG.BR_RECEIVED, Pending: MSG.SUPPORT_PENDING, InProgress: MSG.SUPPORT_PROGRESS, Completed: MSG.SUPPORT_COMPLETED, Skipped: MSG.SUPPORT_SKIPPED, IssueReported: MSG.SUPPORT_ISSUE, Approved: MSG.SUPPORT_APPROVED, Rejected: MSG.SUPPORT_REJECTED, Clean: MSG.SUPPORT_CLEAN, NeedsCleaning: MSG.SUPPORT_DIRTY };
 export function supportLabel(value) { return Object.hasOwn(statusKeys, value) ? msg(statusKeys[value]) : getEnumLabel(value); }
+const statusTones = { Completed: 'success', Received: 'success', Approved: 'success', Clean: 'success', Pending: 'warning', PartiallyReceived: 'warning', InProgress: 'info', NeedsCleaning: 'warning', Rejected: 'danger', IssueReported: 'danger', Skipped: 'secondary' };
+/** Lớp màu Bootstrap cho nhãn trạng thái hỗ trợ; trạng thái lạ dùng màu trung tính. */
+export const supportTone = value => `text-bg-${statusTones[value] || 'secondary'}`;

@@ -29,7 +29,7 @@ export default function TemplateTrainerAssignment({ template, onClose, opening =
     }
     return <section ref={panel} className="surface-card training-action-panel training-assignment">
         <div className="card-heading"><h2 tabIndex={-1} data-training-form-heading>{msg(MSG.CURRIC_ASSIGN)}{' · '}{template.name}</h2><button type="button" className="btn btn-outline-secondary" onClick={onClose}>{msg(MSG.UI_CLOSE)}</button></div>
-        <div className="training-requirements"><strong>{msg(MSG.CURRIC_REQUIREMENTS)}</strong><p>{types.map(getEnumLabel).join(', ') || msg(MSG.CURRIC_REQUIREMENTS_MISSING)}</p>{configured && <p>{msg(MSG.CURRIC_MIN_LEVEL)}{' '}{msg(MSG['SCHED_LEVEL_' + template.minimumExpertiseLevel])}</p>}</div>
+        <div className="training-requirements"><strong>{msg(MSG.CURRIC_REQUIREMENTS)}</strong><p>{types.map(getEnumLabel).join(', ') || msg(MSG.CURRIC_REQUIREMENTS_MISSING)}</p>{configured && <p>{msg(MSG.CURRIC_MIN_LEVEL)}{': '}{msg(MSG['SCHED_LEVEL_' + template.minimumExpertiseLevel])}</p>}</div>
         {!configured && <p className="alert alert-warning">{msg(MSG.CURRIC_REQUIREMENTS_MISSING)}</p>}
         <ResourceState resource={resource}/><MutationState mutation={mutation} reload={resource.reload}/>
         {resource.data && <><div className="training-trainer-choice"><Field name="trainerId" label={msg(MSG.TRAINING_TRAINER)} value={trainerId} onChange={e => setTrainerId(e.target.value)} options={[
