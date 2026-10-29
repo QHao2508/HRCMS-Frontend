@@ -1,0 +1,44 @@
+/* Tổng quan (#8): theo bản thiết kế Main — việc cần xử lý, 4 KPI, lịch hôm nay + sức khỏe, hoạt động gần đây. */
+.dash { display: grid; gap: 20px; }
+.dash .hc-page-header { margin-bottom: 0; }
+.dash-muted { margin: 0; color: var(--hc-muted); font-size: var(--hc-font-size-1); }
+
+.dash-todo { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+
+.dash-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; }
+.dash-kpis .dashboard-kpi, .dash-kpis .hc-stat { height: 100%; }
+
+.dash-columns { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 20px; align-items: start; }
+
+.dash-rows { list-style: none; margin: 0; padding: 0; }
+.dash-rows li { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-top: 1px solid var(--hc-border-soft, var(--hc-border)); min-width: 0; }
+.dash-rows li:first-child { border-top: 0; padding-top: 0; }
+.dash-time { flex: 0 0 52px; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--hc-text); }
+.dash-row-main { flex: 1; min-width: 0; display: grid; gap: 2px; font-size: var(--hc-font-size-1); }
+.dash-row-main > a, .dash-row-main > strong { color: var(--hc-text); font-weight: 700; text-decoration: none; overflow-wrap: anywhere; }
+.dash-row-main > a:hover { color: var(--hc-primary); text-decoration: underline; }
+.dash-row-main small { color: var(--hc-muted); font-size: var(--hc-font-size-1); }
+.dash-ago { flex-shrink: 0; color: var(--hc-muted); font-size: var(--hc-font-size-1); white-space: nowrap; }
+.dash-activity .dash-row-main > a { font-weight: 500; }
+
+.dash-health-bar { display: flex; gap: 3px; height: 14px; border-radius: 999px; overflow: hidden; background: var(--hc-neutral-bg); }
+.dash-health-bar span { flex-basis: 0; min-width: 6px; }
+.dash-health-bar .tone-success, .dash-dot.tone-success { background: var(--hc-success-text); }
+.dash-health-bar .tone-warning, .dash-dot.tone-warning { background: var(--hc-warning-dot); }
+.dash-health-bar .tone-danger, .dash-dot.tone-danger { background: var(--hc-danger-text); }
+.dash-health-bar .tone-info, .dash-dot.tone-info { background: var(--hc-info-text); }
+.dash-health-legend { list-style: none; display: flex; flex-wrap: wrap; gap: 10px 20px; margin: 14px 0 0; padding: 0; font-size: var(--hc-font-size-1); color: var(--hc-muted); }
+.dash-health-legend li { display: flex; align-items: center; gap: 6px; }
+.dash-health-legend strong { color: var(--hc-text); font-weight: 800; }
+.dash-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.dash-note { display: flex; align-items: center; gap: 8px; margin: 16px 0 0; padding: 12px 14px; border-radius: 8px; background: var(--hc-danger-bg); color: var(--hc-danger-text); font-size: var(--hc-font-size-1); font-weight: 600; }
+
+@media (max-width: 1100px) { .dash-columns { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 560px) {
+    .dash-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .dash-kpis .hc-stat { padding: 14px; }
+    .dash-todo { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .dash-rows li { flex-wrap: wrap; gap: 6px 12px; }
+    .dash-rows li .dash-row-main { flex-basis: calc(100% - 66px); }
+    .dash-rows li .hc-badge { margin-left: 66px; }
+}

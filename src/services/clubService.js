@@ -53,3 +53,18 @@ export async function staffDirectory(role) {
  * @param id ID đối tượng được thao tác; quyền/phạm vi được kiểm trước khi đọc hoặc ghi.
  */
 export const fetchHorsePhoto = id => api.get(`/api/horses/${idPath(id)}/photo`, { responseType: "blob" }).then(r => r.data);
+
+/**
+ * Số ngựa theo sức khỏe và lựa chọn lọc (giống, chuồng) trong phạm vi người xem.
+ * Backend cũ chưa có /api/horses/summary thì đếm bằng 4 lần gọi danh sách pageSize=1 và không có lựa chọn lọc.
+ */
+export async function horseSummary() {
+    try {
+        return (await api.get("/api/horses/summary")).data;
+    } catch (error) {
+        if (error?.response?.status !== 404) throw error;
+        const statuses = ["Fit", "Monitoring", "Injured", "Isolated"];
+        const totals = await Promise.all(statuses.map(healthStatus => listHorses({ healthStatus, page: 1, pageSize: 1 }).then(data => data.total ?? 0)));
+        return { health: Object.fromEntries(statuses.map((status, index) => [status, totals[index]])), breeds: [], stalls: [], partial: true };
+    }
+}

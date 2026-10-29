@@ -11,7 +11,7 @@ import { getNavigationForRole } from '../src/routes/navigation.js';
 import { MSG, msg } from '../src/messages/index.js';
 
 let server, AuthContext, Dashboard, TemplateList, PageHeading, Field, api;
-const metrics = { horseCount: 17, activePlans: 13, sessionsToday: 11, overdueSessions: 7, restrictedHorses: 5, unreadNotifications: 3, careTasksToday: 9 };
+const metrics = { horseCount: 17, activePlans: 13, sessionsToday: 11, overdueSessions: 7, restrictedHorses: 5, unreadNotifications: 3, careTasksToday: 9, openIncidents: 2, pendingReviews: 4, lowStockItems: 6 };
 const template = { id: 'unicode', name: 'Xây dựng thể lực nền tảng', goal: 'Làm quen nhịp vận động từng bước.', notes: 'Theo dõi sức khỏe.', isSystemDefault: true, requiredTrainingTypesJson: '["Walk","Trot"]', minimumExpertiseLevel: 1, frequencyPerWeek: 3 };
 before(async () => {
     server = await createServer({ configFile: false, plugins: [ssrDependencies(), {
@@ -126,16 +126,19 @@ test('S7.1 rich labels receive a marker without losing label text, help or error
     assert.match(html, /aria-invalid="true"/);
 });
 
-test('Dashboard keeps scoped API data and prioritizes care metrics for Groom', async () => {
+test('Dashboard keeps scoped API data, shows role KPIs and only links to-do tiles the role can open', async () => {
     for (const role of Object.values(ROLES)) {
         globalThis.__foundation.resources = [metrics];
         globalThis.__foundation.loads = [];
         const html = render(h(Dashboard), role);
         assert.match(html, /id="dashboard-title"/);
-        assert.equal((html.match(/class="dashboard-kpi-value"/g) || []).length, role === ROLES.Groom ? 3 : 6);
-        const fields=role===ROLES.Groom?['horseCount','careTasksToday','unreadNotifications']:['horseCount','activePlans','sessionsToday','overdueSessions','restrictedHorses','unreadNotifications'];
-        for (const field of fields) assert.ok(html.includes(`>${metrics[field]}</div>`));
-        for (const item of getNavigationForRole(role).filter(x => x.to !== '/dashboard')) assert.ok(html.includes(`href="${item.to}"`));
+        assert.match(html, /Kiểm thử/);
+        assert.equal((html.match(/class="dashboard-kpi-value"/g) || []).length, role === ROLES.Groom ? 3 : 4);
+        const fields = role === ROLES.Groom ? ['careTasksToday', 'horseCount', 'openIncidents'] : ['horseCount', 'activePlans', 'sessionsToday', 'restrictedHorses'];
+        for (const field of fields) assert.ok(html.includes(`class="dashboard-kpi-value">${metrics[field]}</span>`), `${role} ${field}`);
+        const routes = new Set(getNavigationForRole(role).map(item => item.to));
+        assert.equal(html.includes('href="/reviews"'), routes.has('/reviews'));
+        assert.equal(html.includes('href="/inventory"'), routes.has('/inventory'));
         let requests = 0;
         api.defaults.adapter = async config => {
             requests++;

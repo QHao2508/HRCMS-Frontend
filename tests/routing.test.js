@@ -153,7 +153,7 @@ test("unrestricted authenticated routes and the real dashboard work for every ba
         const value = authValue({ user: { ...owner, role } });
         assert.match(renderRestricted(undefined, value), /Restricted content/);
         const html = render(h(AppRoutes), value);
-        assert.match(html, /Xin chào, Test Owner/);
+        assert.match(html, /Chào buổi (sáng|chiều|tối), Test</);
         assert.ok(html.includes(getRoleLabel(role)));
     }
     assert.deepEqual(globalThis.__hrcmsRoutingTest.redirects, []);

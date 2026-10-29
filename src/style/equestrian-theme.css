@@ -7,7 +7,7 @@
     --hc-brown: var(--hc-primary); --hc-brown-hover: var(--hc-primary-hover); --hc-dark: var(--hc-sidebar);
     --hc-green: #286348; --hc-focus: var(--hc-primary); --hc-radius: 12px;
     --hc-success-bg: #e5f1eb; --hc-success-text: #245f45;
-    --hc-warning-bg: #fff2d8; --hc-warning-text: #805000;
+    --hc-warning-bg: #fff2d8; --hc-warning-text: #805000; --hc-warning-dot: #c98a1b;
     --hc-danger-bg: #fbe6e3; --hc-danger-text: #a33326;
     --hc-info-bg: #e3eef6; --hc-info-text: #245879;
     --hc-neutral-bg: #efece8; --hc-neutral-text: #6b6259;

@@ -2,25 +2,16 @@ import { displayDate } from '../services/displayDate.js';
 import { treatmentFrequency } from "../services/treatmentFrequency.js";
 import { useCallback } from 'react';
 import { MSG, msg } from '../messages/index.js';
-import { getEnumLabel } from '../constants/enumLabels.js';
 import { can } from '../constants/permissions.js';
 import { useRegistrationResource } from '../context/useRegistrationResource.js';
 import { change, id, read } from '../services/supportService.js';
 import { usePaged, when } from '../services/supportResources.js';
 import { clubToday } from '../services/workflowHelpers.js';
 import { ResourceState, StateBadge } from './WorkflowUI.jsx';
+import { restrictionText } from '../services/restrictionText.js';
 import { SupportForm, SupportTable } from './SupportUI.jsx';
 
 const date = displayDate;
-function restrictionText(r) {
-    const parts = [];
-    if (r.blockAllTraining) parts.push(msg(MSG.HMED_BLOCK_ALL));
-    if (r.trainingLock) parts.push(msg(MSG.HMED_LOCK));
-    if (r.noSprint) parts.push(msg(MSG.HMED_NO_SPRINT));
-    if (r.maxIntensity) parts.push(msg(MSG.HMED_MAX_INTENSITY, { value: getEnumLabel(r.maxIntensity) }));
-    if (r.maxDistanceMetres != null) parts.push(msg(MSG.HMED_MAX_DISTANCE, { value: r.maxDistanceMetres }));
-    return parts.join(' · ');
-}
 function Restrictions({ items }) {
     return <><h3 className="h5 mt-3">{msg(MSG.HMED_RESTRICTIONS)}</h3>
         {!items.length ? <p>{msg(MSG.HMED_NO_RESTRICTIONS)}</p> : <ul>{items.map(r => <li key={r.id}><strong>{restrictionText(r)}</strong>{r.reason && ` — ${r.reason}`}{' ('}{msg(MSG.HMED_UNTIL, { value: r.validUntil ? date(r.validUntil) : msg(MSG.HMED_NO_END) })}{')'}</li>)}</ul>}</>;

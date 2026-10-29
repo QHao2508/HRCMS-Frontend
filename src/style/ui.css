@@ -67,7 +67,7 @@
 .hc-chip.is-active b { color: #cfc3b6; }
 .hc-chip-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--hc-muted); }
 .hc-chip-dot.tone-success { background: var(--hc-success-text); }
-.hc-chip-dot.tone-warning { background: #c98a1b; }
+.hc-chip-dot.tone-warning { background: var(--hc-warning-dot); }
 .hc-chip-dot.tone-danger { background: var(--hc-danger-text); }
 
 /* Bảng */
@@ -112,7 +112,7 @@
 .hc-timeline time { color: var(--hc-muted); font-size: var(--hc-font-size-1); }
 .hc-timeline-dot { flex: 0 0 10px; height: 10px; margin-top: 5px; border-radius: 50%; background: #b8ada1; }
 .hc-timeline .tone-success .hc-timeline-dot { background: var(--hc-success-text); }
-.hc-timeline .tone-warning .hc-timeline-dot { background: #c98a1b; }
+.hc-timeline .tone-warning .hc-timeline-dot { background: var(--hc-warning-dot); }
 .hc-timeline .tone-danger .hc-timeline-dot { background: var(--hc-danger-text); }
 .hc-timeline .tone-info .hc-timeline-dot { background: var(--hc-info-text); }
 
@@ -178,3 +178,16 @@
     .hc-sticky-buttons > .btn { flex: 1 1 auto; }
 }
 @media (prefers-reduced-motion: reduce) { .hc-skeleton i { animation: none; } }
+/* Bảng mới (hc-table) theo thiết kế: tiêu đề nền sáng, không kẻ sọc; thắng kiểu bảng nâu cũ của theme. */
+.app-shell .hc-table-wrap.table-responsive { border: 0; border-top: 1px solid var(--hc-border); border-radius: 0; }
+.app-shell .table.hc-table th { background: #faf9f6; color: var(--hc-muted); border-bottom-color: var(--hc-border); --bs-table-bg: #faf9f6; --bs-table-color: var(--hc-muted); }
+.app-shell .table.hc-table tbody tr:nth-child(even) > td { background: var(--hc-surface); }
+.app-shell .table.hc-table tbody tr:hover > td { background: #fcfbf8; }
+.hc-chip-dot.tone-info { background: var(--hc-info-text); }
+.hc-page-actions .btn { display: inline-flex; align-items: center; gap: 6px; }
+.hc-card-action a { text-decoration: none; }
+.hc-card-action a:hover { text-decoration: underline; }
+.hc-badge { justify-self: start; width: fit-content; }
+.hc-link-button { border: 0; background: none; padding: 0; font: inherit; font-weight: 700; color: var(--hc-primary); cursor: pointer; }
+.hc-link-button:hover { text-decoration: underline; }
+.hc-link-button:focus-visible { outline: 2px solid var(--hc-primary); outline-offset: 2px; border-radius: 4px; }

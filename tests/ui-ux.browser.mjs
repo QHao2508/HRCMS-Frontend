@@ -13,7 +13,7 @@ await mkdir(output,{recursive:true});
 const browser = await chromium.launch({headless:true,channel:process.env.UI_UX_BROWSER || 'chrome'});
 const photo = await readFile('public/images/home-scope-horse.jpg');
 const roles=['HorseOwner','ClubManager','HeadTrainer','Trainer','WorkRider','Veterinarian','Groom'];
-const horse={id:'horse-1',name:'Bạch Phong',breed:'Thoroughbred',gender:'Gelding',systemRegistrationCode:'HRC-001',externalRegistrationNumber:'VN-001',dateOfBirth:'2020-03-15',healthStatus:'Fit',archived:false};
+const horse={id:'horse-1',name:'Bạch Phong',breed:'Thoroughbred',gender:'Gelding',systemRegistrationCode:'HRC-001',externalRegistrationNumber:'VN-001',dateOfBirth:'2020-03-15',healthStatus:'Fit',archived:false,stallName:'A-01',leadTrainerName:'Minh Trần',nextSessionAt:'2026-10-30T02:00:00Z',hasPhoto:true};
 const template={id:'template-1',name:'Xây dựng thể lực nền tảng',goal:'Cải thiện sức bền',phase:'Base',distanceMetres:1000,intensity:'Light',surface:'Sand',frequencyPerWeek:3,isSystemDefault:true,minimumExpertiseLevel:1,requiredTrainingTypesJson:'["Trot"]'};
 const plan={id:'plan-1',horseId:horse.id,templateId:template.id,trainerId:'Trainer-id',goal:'Tăng sức bền',phase:'Base',startDate:'2026-10-28',endDate:'2026-11-28',status:'Active',version:1,notes:''};
 const session={id:'session-1',horseId:horse.id,planId:plan.id,horseName:horse.name,trainerName:'Minh Trần',riderName:'An Nguyễn',riderId:'WorkRider-id',status:'Assigned',scheduledAt:'2026-10-29T02:00:00Z',scheduledEndAt:'2026-10-29T02:30:00Z',durationMinutes:30,trainingType:'Trot',distanceMetres:1000,intensity:'Light',surface:'Sand',target:'Giữ nhịp ổn định',version:1};
@@ -46,10 +46,11 @@ async function setup(role, viewport={width:1440,height:900}) {
         if(p==='/api/auth/me')return reply({id:`${role}-id`,role,firstName:'Nguyễn',lastName:'An',userName:'fixture',active:true,emailVerified:true});
         if(p==='/api/website')return reply(site);
         if(p==='/api/notifications')return reply(paged([]));
-        if(p==='/api/dashboard')return reply({horseCount:12,activePlans:5,sessionsToday:4,overdueSessions:1,restrictedHorses:2,unreadNotifications:0,careTasksToday:7});
+        if(p==='/api/dashboard')return reply({horseCount:12,activePlans:5,sessionsToday:4,overdueSessions:1,restrictedHorses:2,unreadNotifications:0,careTasksToday:7,openIncidents:1,pendingReviews:3,lowStockItems:2});
+        if(p==='/api/horses/summary')return reply({health:{Fit:8,Monitoring:2,Injured:1,Isolated:1},breeds:['Arabian','Thoroughbred'],stalls:[{id:'stall-1',name:'A-01'}]});
         if(p==='/api/horses')return reply(paged([horse]));
         if(p==='/api/horses/horse-1')return reply({horse,assignments:staff.map(x=>({id:x.id,staffId:x.id,role:x.role,active:true,startDate:'2026-10-01'})),staffNames:Object.fromEntries(staff.map(x=>[x.id,x.firstName])),latestMeasurement:{heightCm:160,weightKg:450}});
-        if(p.endsWith('/medical/summary'))return reply({healthStatus:'Fit',restrictions:[],trainingLocked:false});
+        if(p.endsWith('/medical/summary'))return reply({healthStatus:'Fit',restrictions:[{id:'restriction-1',noSprint:true,maxDistanceMetres:1200,reason:'Theo dõi chân trước trái',validUntil:'2026-11-05'}],trainingLocked:false});
         if(p.endsWith('/medical/overview'))return reply({healthStatus:'Fit',restrictions:[],cases:[],treatments:[],includesClinicalNotes:role==='ClubManager'});
         if(p.endsWith('/medical/records'))return reply(paged([record]));
         if(p.endsWith('/medical/treatments'))return reply(paged([treatment,{...treatment,id:'treatment-done',objective:'Phác đồ đã hoàn tất',completed:true}]));
@@ -193,7 +194,7 @@ try {
         assert.equal(await page.locator('#horse-search').inputValue(),'Bạch');await context.close();results.push({interaction:'list filter restored on Back',status:'pass'});
     }
     for(const role of roles){
-        const {context,page}=await setup(role);await page.goto(base+'/dashboard');await ready(page);assert.equal(await page.locator('.dashboard-kpi-value').count(),role==='Groom'?3:6);
+        const {context,page}=await setup(role);await page.goto(base+'/dashboard');await ready(page);assert.equal(await page.locator('.dashboard-kpi-value').count(),role==='Groom'?3:4);
         await context.close();results.push({interaction:`dashboard ${role}`,status:'pass'});
     }
     // Password visibility preserves entered value and form field identity.
