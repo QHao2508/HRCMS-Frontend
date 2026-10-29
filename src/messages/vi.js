@@ -1521,4 +1521,6 @@ export const VI = Object.freeze({
     "CURRIC_REVOKE": "Thu hồi giáo án",
     "CURRIC_SELECT": "Chọn một phương án…",
     "CURRIC_STARTING_GATE": "Luyện cổng xuất phát",
+    "DRAWER_CLOSE": "Đóng",
+    "DRAWER_CLOSE_LABEL": "Đóng bảng {title}",
 });

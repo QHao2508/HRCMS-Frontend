@@ -1,0 +1,18 @@
+/* Ngăn kéo bên phải cho form thao tác. Chỉ dùng biến màu/cỡ chữ của theme hiện hành. */
+.hc-drawer-layer { position: fixed; inset: 0; z-index: 1060; display: flex; justify-content: flex-end; }
+.hc-drawer-backdrop { position: absolute; inset: 0; background: color-mix(in srgb, var(--hc-text) 45%, transparent); animation: hc-drawer-fade .15s ease-out; }
+.hc-drawer { position: relative; display: flex; flex-direction: column; width: min(480px, 100%); height: 100%; background: var(--hc-surface); box-shadow: 0 12px 40px color-mix(in srgb, var(--hc-text) 18%, transparent); animation: hc-drawer-slide .2s ease-out; color: var(--hc-text); font-family: var(--hc-font-body); }
+.hc-drawer-header { display: flex; align-items: center; gap: 12px; padding: 18px 20px; border-bottom: 1px solid var(--hc-border); }
+.hc-drawer-header h2 { flex: 1; min-width: 0; margin: 0; font: 800 var(--hc-font-size-3)/1.35 var(--hc-font-body); overflow-wrap: anywhere; }
+.hc-drawer-close { display: grid; place-items: center; width: 40px; height: 40px; border: 0; border-radius: var(--hc-radius, 8px); background: transparent; color: var(--hc-muted); cursor: pointer; }
+.hc-drawer-close:hover:not(:disabled) { background: var(--hc-bg); color: var(--hc-text); }
+.hc-drawer-close:focus-visible { outline: 3px solid var(--hc-focus, var(--hc-primary)); outline-offset: 2px; }
+.hc-drawer-body { flex: 1; overflow-y: auto; padding: 20px; overscroll-behavior: contain; }
+.hc-drawer-body .form-label { font-size: var(--hc-font-size-1); font-weight: 700; margin-bottom: 6px; }
+.hc-drawer-body :is(.form-control, .form-select) { min-height: 42px; font-size: var(--hc-font-size-1); }
+.hc-drawer .row > [class*="col-"] { flex: 0 0 100%; max-width: 100%; }
+.hc-drawer-actions { position: sticky; bottom: -20px; display: flex; gap: 8px; margin: 20px -20px -20px; padding: 16px 20px; background: var(--hc-surface); border-top: 1px solid var(--hc-border); }
+.hc-drawer-actions .btn { min-height: 40px; font-size: var(--hc-font-size-1); font-weight: 700; }
+@keyframes hc-drawer-fade { from { opacity: 0; } }
+@keyframes hc-drawer-slide { from { transform: translateX(24px); opacity: .6; } }
+@media (prefers-reduced-motion: reduce) { .hc-drawer, .hc-drawer-backdrop { animation: none; } }
