@@ -39,7 +39,8 @@ test('bulk-read button invokes the feed and disables for loading, empty, error o
     globalThis.__notifUI.buttons = []; render({ markAllPending: true });
     assert.equal(button(msg(MSG.NOTIF_MARK_ALL_PENDING)).disabled, true);
     assert.equal(itemButton().disabled, true);
-    assert.ok(render({ markAllError: true }).includes(msg(MSG.NOTIF_MARK_ALL_FAILED)));
+    const failed = render({ markAllError: true });
+    assert.ok(failed.includes(msg(MSG.NOTIF_MARK_ALL_FAILED))); assert.doesNotMatch(failed, /đã đọc|Đã đọc/);
 });
 test('S5 bell has real loading, never empty or a fabricated zero while GET is pending', () => {
     const html = render({ items: [], unreadTotal: null, total: 0, loading: true });
@@ -56,10 +57,10 @@ test('S5 bell keeps accessible native summary and shows the unread total from th
     assert.ok(bell.includes('>51</span>')); assert.doesNotMatch(bell, /notification-panel/);
     assert.ok(render({ unreadTotal: 51 }).includes(msg(MSG.NOTIFICATION_NEW_COUNT, { count: 51 })));
 });
-test('S5 only the bulk action uses read wording; clicking a row opens it', () => {
+test('S5 the panel never shows read wording; clicking a row opens it', () => {
     const html = render({ view: 'all', items: [{ ...row, id: 'seen', read: true }, row], total: 2, unreadTotal: 1 });
     assert.equal(html.split(msg(MSG.NOTIF_MARK_ALL)).length - 1, 1);
-    assert.doesNotMatch(html.replace(msg(MSG.NOTIF_MARK_ALL), ''), /đã đọc|chưa đọc|Đã đọc|Chưa đọc/);
+    assert.doesNotMatch(html, /đã đọc|chưa đọc|Đã đọc|Chưa đọc/);
     assert.match(html, /notification-item is-new/); assert.equal((html.match(/class="notification-item"/g) || []).length, 1);
     assert.ok(html.includes('Thần Phong')); assert.ok(html.includes(msg(MSG.NOTIFICATION_NEW_MARK)));
     assert.match(html, /datetime="2026-10-21T08:30:00Z"/i); assert.ok(html.includes('15:30'));

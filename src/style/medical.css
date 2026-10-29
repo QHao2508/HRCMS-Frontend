@@ -1571,7 +1571,7 @@
 @media (max-width: 600px) { .medical-case-facts { grid-template-columns: 1fr; } }
 
 /* Native checkboxes keep multi-selection readable without relying on color. */
-.medical-choice-help { margin: 0 0 12px; color: #63564b; font-size: .875rem; }
+.medical-choice-help { margin: 0 0 12px; color: #63564b; font-size: var(--hc-font-size-1); }
 .medical-choice-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .medical-choice-grid .medical-choice-option {
     display: flex; align-items: center; gap: 10px; margin: 0; padding: 12px 14px;
