@@ -1,3 +1,4 @@
+import { clubDateTimeInput } from '../../services/displayDate.js';
 import { useCallback, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import MedicalChoiceField from '../../components/medical/MedicalChoiceField.jsx';
@@ -19,7 +20,7 @@ const sections = [
     ['treatmentIds', MSG.MEDICAL_CLEARANCE_TREATMENTS],
 ];
 const dateTime = value => new Date(value).toLocaleString(UI_LOCALE, { timeZone: 'Asia/Ho_Chi_Minh' });
-function localNow() { const now = new Date(); return new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16); }
+const localNow = clubDateTimeInput;
 
 const caseFields = record => ({ previousRecordId: record?.id || '', reason: record?.reason || '', symptoms: record?.symptoms || '', findings: record?.findings || '', diagnosis: record?.diagnosis || '', healthStatus: record?.healthStatus || 'Monitoring', notes: record?.notes || '' });
 
@@ -90,9 +91,9 @@ function FollowUpForHorse({ horseId }) {
         <MedicalFollowUpForm key={`${horseId}-${resource.data.followUps.length}`} horseId={horseId} data={resource.data} reload={resource.reload} initialRecordId={search.get('recordId') || ''} />
         <section className="medical-table-card"><h2>{msg(MSG.MEDICAL_FOLLOWUP_HISTORY)}</h2>
             {!resource.data.followUps.length && <p>{msg(MSG.MEDICAL_FOLLOWUP_EMPTY)}</p>}
-            <table className="medical-table"><thead><tr><th>{msg(MSG.THOI_GIAN)}</th><th>{msg(MSG.MED_CASE_COLUMN)}</th><th>{msg(MSG.MEDICAL_OUTCOME)}</th><th>{msg(MSG.MED_CASE_RESOLVE)}</th></tr></thead>
+            <div className="medical-table-wrapper" role="region" aria-label={msg(MSG.MEDICAL_FOLLOWUP_HISTORY)} tabIndex={0}><table className="medical-table"><thead><tr><th scope="col">{msg(MSG.THOI_GIAN)}</th><th scope="col">{msg(MSG.MED_CASE_COLUMN)}</th><th scope="col">{msg(MSG.MEDICAL_OUTCOME)}</th><th scope="col">{msg(MSG.MED_CASE_RESOLVE)}</th></tr></thead>
                 <tbody>{resource.data.followUps.map(item => { const owner = cases.find(c => c.ids.has(item.previousRecordId) || c.ids.has(item.currentRecordId)); return <tr key={item.id}><td>{dateTime(item.createdAt)}</td><td>{owner ? `${msg(MSG.MEDICAL_RECORD_NUMBER, { number: owner.number })} · ${owner.first.reason || ''}` : '—'}</td><td>{item.outcome}</td><td>{msg(item.clearance ? MSG.CO : MSG.KHONG)}</td></tr>; })}</tbody>
-            </table>
+            </table></div>
         </section>
     </>}</>;
 }

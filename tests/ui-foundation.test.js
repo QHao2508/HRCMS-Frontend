@@ -11,7 +11,7 @@ import { getNavigationForRole } from '../src/routes/navigation.js';
 import { MSG, msg } from '../src/messages/index.js';
 
 let server, AuthContext, Dashboard, TemplateList, PageHeading, Field, api;
-const metrics = { horseCount: 17, activePlans: 13, sessionsToday: 11, overdueSessions: 7, restrictedHorses: 5, unreadNotifications: 3 };
+const metrics = { horseCount: 17, activePlans: 13, sessionsToday: 11, overdueSessions: 7, restrictedHorses: 5, unreadNotifications: 3, careTasksToday: 9 };
 const template = { id: 'unicode', name: 'Xây dựng thể lực nền tảng', goal: 'Làm quen nhịp vận động từng bước.', notes: 'Theo dõi sức khỏe.', isSystemDefault: true, requiredTrainingTypesJson: '["Walk","Trot"]', minimumExpertiseLevel: 1, frequencyPerWeek: 3 };
 before(async () => {
     server = await createServer({ configFile: false, plugins: [ssrDependencies(), {
@@ -126,14 +126,15 @@ test('S7.1 rich labels receive a marker without losing label text, help or error
     assert.match(html, /aria-invalid="true"/);
 });
 
-test('S2 Dashboard retains API GET, six exact KPI values and role-scoped quick actions', async () => {
+test('Dashboard keeps scoped API data and prioritizes care metrics for Groom', async () => {
     for (const role of Object.values(ROLES)) {
         globalThis.__foundation.resources = [metrics];
         globalThis.__foundation.loads = [];
         const html = render(h(Dashboard), role);
         assert.match(html, /id="dashboard-title"/);
-        assert.equal((html.match(/class="dashboard-kpi-value"/g) || []).length, 6);
-        for (const value of Object.values(metrics)) assert.ok(html.includes(`>${value}</div>`));
+        assert.equal((html.match(/class="dashboard-kpi-value"/g) || []).length, role === ROLES.Groom ? 3 : 6);
+        const fields=role===ROLES.Groom?['horseCount','careTasksToday','unreadNotifications']:['horseCount','activePlans','sessionsToday','overdueSessions','restrictedHorses','unreadNotifications'];
+        for (const field of fields) assert.ok(html.includes(`>${metrics[field]}</div>`));
         for (const item of getNavigationForRole(role).filter(x => x.to !== '/dashboard')) assert.ok(html.includes(`href="${item.to}"`));
         let requests = 0;
         api.defaults.adapter = async config => {

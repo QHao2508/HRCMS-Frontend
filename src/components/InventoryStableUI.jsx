@@ -10,7 +10,7 @@ export function OperationsTable({ resource, columns, actions, title, emptyText =
         <h2>{title}</h2><ResourceState resource={resource} />
         {ready && <>{!resource.data.items.length ? <p className="ops-empty" role="status">{emptyText}</p> : <div className="table-responsive ops-scroll" role="region" aria-label={title} tabIndex={0}>
             <table className="table ops-table"><caption className="visually-hidden">{title}</caption><thead><tr>{columns.map(c => <th scope="col" key={c.key} className={c.numeric ? 'ops-number' : undefined}>{c.label}</th>)}{actions && <th scope="col">{msg(MSG.SUPPORT_ACTIONS)}</th>}</tr></thead>
-                <tbody>{resource.data.items.map(row => <tr key={row.id}>{columns.map(c => <td key={c.key} className={[c.numeric ? 'ops-number' : '', c.key === 'name' ? 'ops-name' : ''].join(' ')}>{c.render ? c.render(row) : row[c.key] ?? '—'}</td>)}{actions && <td className="ops-actions">{actions(row)}</td>}</tr>)}</tbody>
+                <tbody>{resource.data.items.map(row => <tr key={row.id}>{columns.map(c => <td key={c.key} data-label={c.label} className={[c.numeric ? 'ops-number' : '', c.key === 'name' ? 'ops-name' : ''].join(' ')}>{c.render ? c.render(row) : row[c.key] ?? '—'}</td>)}{actions && <td className="ops-actions" data-label={msg(MSG.SUPPORT_ACTIONS)}>{actions(row)}</td>}</tr>)}</tbody>
             </table></div>}<Pagination data={resource.data} onChange={resource.setPage} /></>}
     </section>;
 }

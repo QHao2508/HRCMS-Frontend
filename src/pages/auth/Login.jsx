@@ -8,6 +8,7 @@ import { getLoginDestination } from "../../routes/redirects.js";
 import PublicLayout from "../../layouts/PublicLayout.jsx";
 
 import AuthIntro from "../../components/auth/AuthIntro.jsx";
+import PasswordInput from '../../components/auth/PasswordInput.jsx';
 
 const notices = {
     "email-verified": msg(MSG.EMAIL_DA_DUOC_XAC_THUC_BAN_CO_THE_DANG_NHAP),
@@ -61,11 +62,11 @@ export default function Login() {
         {error && <div className="alert alert-danger" role="alert">{error}</div>}
         <form onSubmit={submit} aria-busy={loading || restoring}>
             <div className="mb-3"><label htmlFor="login-email" className="form-label">{msg(MSG.TEN_DANG_NHAP_HOAC_EMAIL)}</label><input id="login-email" type="text" autoComplete="username" name="email" className="form-control" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder={msg(MSG.NHAP_TEN_DANG_NHAP_HOAC_EMAIL)} required disabled={loading || restoring} /></div>
-            <div className="mb-3"><label htmlFor="login-password" className="form-label">{msg(MSG.MAT_KHAU)}</label><input id="login-password" type="password" autoComplete="current-password" name="password" className="form-control" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} placeholder={msg(MSG.NHAP_MAT_KHAU)} required disabled={loading || restoring} /></div>
+            <div className="mb-3"><label htmlFor="login-password" className="form-label">{msg(MSG.MAT_KHAU)}</label><PasswordInput id="login-password" autoComplete="current-password" name="password" className="form-control" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} placeholder={msg(MSG.NHAP_MAT_KHAU)} required disabled={loading || restoring} /></div>
             <Link className="auth-forgot" to="/forgot-password" state={{ email: form.email.includes("@") ? form.email : "" }}>{msg(MSG.QUEN_MAT_KHAU)}</Link>
             <button className="btn btn-primary w-100" type="submit" disabled={loading || restoring}>{loading ? msg(MSG.DANG_DANG_NHAP) : msg(MSG.DANG_NHAP)}</button>
         </form>
-        <div className="auth-register">{msg(MSG.CHUA_CO_TAI_KHOAN)}{' '}<Link to="/register">{msg(MSG.DANG_KY)}</Link></div>
-        <div className="auth-support-links"><Link to="/accept-invitation">{msg(MSG.ACCEPT_STAFF_INVITATION)}</Link></div>
+        <div className="auth-register">{msg(MSG.CHUA_CO_TAI_KHOAN)}{' '}<Link className="action-link" to="/register">{msg(MSG.DANG_KY)}</Link></div>
+        <div className="auth-support-links"><Link className="action-link" to="/accept-invitation">{msg(MSG.ACCEPT_STAFF_INVITATION)}</Link></div>
     </div></div></main></PublicLayout>;
 }

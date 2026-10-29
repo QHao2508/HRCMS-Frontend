@@ -2,7 +2,7 @@ import SystemHeader from "../components/SystemHeader.jsx";
 import '../style/workspace.css';
 import { MSG, msg } from "../messages/index.js";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LayoutDashboard, ClipboardList, BookOpen, Users, Activity, ChevronDown, HeartPulse, Warehouse, PackageMinus, PackagePlus, ShieldCheck, ChartNoAxesCombined, Settings, TriangleAlert, House, Stethoscope } from "lucide-react";
 import { useAuth } from "../context/useAuth.js";
 
@@ -12,7 +12,7 @@ const icons = { "/dashboard": LayoutDashboard, "/registrations": ClipboardList, 
 function NavigationLinks({ items, onNavigate }) {
     return <ul className="list-unstyled">{items.map(item => {
         const Icon = icons[item.to] || ClipboardList;
-        return <li key={item.to}><NavLink className="sidebar-link" to={item.to} end={item.to === "/dashboard"} onClick={onNavigate}><Icon size={18} aria-hidden="true" /><span>{item.label}</span></NavLink></li>;
+        return <li key={item.to}><NavLink className="sidebar-link" to={item.to} end={item.to === "/dashboard" || item.to === '/inventory' || item.to === '/medical'} onClick={onNavigate}><Icon size={18} aria-hidden="true" /><span>{item.label}</span></NavLink></li>;
     })}</ul>;
 }
 /** Render role navigation; groups can be collapsed and the current group opens on navigation. */
@@ -22,6 +22,13 @@ export default function AppLayout() {
     const [expandedPath, setExpandedPath] = useState(null);
     const navigationExpanded = expandedPath === pathname;
     const navigation = getNavigationForRole(user?.role);
+    const current = navigation.filter(item => pathname === item.to || pathname.startsWith(item.to + '/')).sort((a,b) => b.to.length - a.to.length)[0];
+    useEffect(() => {
+        document.title = `${current?.label || msg(MSG.HRCMS)} · ${msg(MSG.HRCMS)}`;
+        // Only route changes move focus; query/filter changes must not interrupt typing.
+        document.getElementById('main-content')?.focus({preventScroll:true});
+        window.scrollTo({top:0,behavior:'instant'});
+    }, [pathname, current?.label]);
 
     const groups = getNavigationGroups(navigation, user?.role);
     return <div className="app-shell">
@@ -35,6 +42,6 @@ export default function AppLayout() {
                 return <details key={`${group.id}-${pathname}`} className={`sidebar-group${active ? ' has-active' : ''}`} open={active || (pathname === '/dashboard' && group.id === 'horses')}><summary><span>{group.label}</span><ChevronDown size={16} aria-hidden="true" /></summary><NavigationLinks items={group.items} onNavigate={() => setExpandedPath(null)} /></details>;
             })}</>}
             {!navigation.length && <p className="text-body-secondary">{msg(MSG.NO_NAVIGATION_OPTIONS_ARE_AVAILABLE_FOR_THIS_ACCOUNT)}</p>}
-        </nav></aside><main id="main-content" tabIndex={-1} className="app-content"><Outlet /></main></div>
+        </nav></aside><main id="main-content" tabIndex={-1} className="app-content"><div className="workspace-context"><span>{msg(MSG.UX_WORKSPACE)}</span><span aria-hidden="true">{msg(MSG.SYMBOL_SLASH)}</span><strong>{current?.label || msg(MSG.HRCMS)}</strong></div><Outlet /></main></div>
     </div>;
 }

@@ -43,9 +43,10 @@ export default function Register() {
     return (
         <AuthForm title={msg(MSG.CREATE_A_HORSE_OWNER_ACCOUNT)} description={msg(MSG.REGISTER_YOUR_ACCOUNT_THEN_VERIFY_YOUR_EMAIL_BEFORE_SIGNING_IN)}
             form={form} onSubmit={() => form.submit(submit)} submitLabel={msg(MSG.DANG_KY)} pendingLabel={msg(MSG.CREATING_ACCOUNT)}
-            footer={<>{existingAccount && <p className="alert alert-info">{msg(MSG.VERIFY_RECOVERY_HELP)}{' '}<Link to="/verify-email" state={{ email: form.values.email.trim() }}>{msg(MSG.VERIFY_EXISTING_ACCOUNT)}</Link></p>}<Link to="/login">{msg(MSG.BACK_TO_SIGN_IN)}</Link><p className="mt-2">{msg(MSG.STAFF_ACCOUNTS_ARE_CREATED_BY_CLUB_MANAGEMENT)}{' '}<Link to="/accept-invitation">{msg(MSG.ACCEPT_STAFF_INVITATION)}</Link></p></>}>
+            footer={<>{existingAccount && <p className="alert alert-info">{msg(MSG.VERIFY_RECOVERY_HELP)}{' '}<Link className="action-link" to="/verify-email" state={{ email: form.values.email.trim() }}>{msg(MSG.VERIFY_EXISTING_ACCOUNT)}</Link></p>}<Link className="action-link" to="/login">{msg(MSG.BACK_TO_SIGN_IN)}</Link><p className="mt-2">{msg(MSG.STAFF_ACCOUNTS_ARE_CREATED_BY_CLUB_MANAGEMENT)}{' '}<Link className="action-link" to="/accept-invitation">{msg(MSG.ACCEPT_STAFF_INVITATION)}</Link></p></>}>
             {location.state?.authNotice === AUTH_NOTICE.RegistrationExpired && <p className="alert alert-warning" role="alert">{msg(MSG.ACCOUNT_REGISTRATION_EXPIRED)}</p>}
             <p className="form-text">{msg(MSG.REGISTRATION_EXPIRY_HELP)}</p>
+            <fieldset className="auth-field-group"><legend>{msg(MSG.UX_IDENTITY)}</legend><div className="auth-register-grid">
             <AuthInput label={msg(MSG.FIRST_NAME)} {...form.field("firstName")} required maxLength={100} autoComplete="given-name" />
             <AuthInput label={msg(MSG.LAST_NAME)} {...form.field("lastName")} required maxLength={100} autoComplete="family-name" />
             <AuthInput label={msg(MSG.USERNAME)} {...form.field("userName")} required minLength={3} maxLength={80} autoComplete="username" help={msg(MSG.BR_USERNAME_HELP)} />
@@ -55,10 +56,12 @@ export default function Register() {
             <AuthInput label={msg(MSG.NATIONAL_ID, { p0: AUTH_POLICY.requireNationalId ? "" : " " + msg(MSG.KHONG_BAT_BUOC) })} {...form.field("nationalId")}
                 required={AUTH_POLICY.requireNationalId} inputMode="numeric" maxLength={AUTH_POLICY.nationalIdDigits}
                 autoComplete="off" help={msg(MSG.IF_SUPPLIED_ENTER_EXACTLY_DIGITS, { p0: AUTH_POLICY.nationalIdDigits })} />
+            </div></fieldset><fieldset className="auth-field-group"><legend>{msg(MSG.MAT_KHAU)}</legend>
             <AuthInput label={msg(MSG.MAT_KHAU)} {...form.field("password")} type="password" required
                 maxLength={AUTH_POLICY.passwordMaxLength} autoComplete="new-password" help={passwordHelp} />
             <AuthInput label={msg(MSG.CONFIRM_PASSWORD)} {...form.field("confirmPassword")} type="password" required
                 maxLength={AUTH_POLICY.passwordMaxLength} autoComplete="new-password" />
+            </fieldset>
         </AuthForm>
     );
 }

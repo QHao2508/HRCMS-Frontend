@@ -1,6 +1,6 @@
 import { ROLES } from './roles.js';
 
-// Ma trận quyền hiển thị theo vai trò. FE07 thu hồi careAssign của Manager; BE còn dependency BE-01.
+// Presentation mirrors the current CareService contract: Manager assigns routine care; Vet assigns clinical care.
 // Backend vẫn là nơi kiểm quyền thật;
 // file này chỉ quyết định menu, route và nút hiển thị, để sửa quyền ở một chỗ.
 const R = ROLES;
@@ -9,7 +9,7 @@ export const PERMISSIONS = Object.freeze({
     incidentReport: [R.Groom, R.WorkRider, R.Trainer, R.Veterinarian],
     incidentReroute: [R.ClubManager],
     careRead: [R.ClubManager, R.HeadTrainer, R.Trainer, R.WorkRider, R.Veterinarian, R.Groom, R.HorseOwner],
-    careAssign: [R.Veterinarian],
+    careAssign: [R.ClubManager, R.Veterinarian],
     careRecord: [R.Groom],
     medicalWorkspace: [R.Veterinarian],
     medicalOverview: [R.Veterinarian, R.ClubManager, R.HeadTrainer, R.HorseOwner],

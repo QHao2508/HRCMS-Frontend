@@ -1,5 +1,6 @@
+import { clubDateTime, clubDateTimeInput, clubInstant } from '../../services/displayDate.js';
 import { systemRegistrationCode } from "../../services/horseIdentifiers.js";
-import { useMedicalDialog } from '../../services/useMedicalDialog.js';
+import { useMedicalDialog, confirmMedicalClose } from '../../services/useMedicalDialog.js';
 import MedicalCaseDetails from '../../components/medical/MedicalCaseDetails.jsx';
 import { medicalCases } from '../../services/medicalCases.js';
 import MedicalChoiceField from '../../components/medical/MedicalChoiceField.jsx';
@@ -57,27 +58,8 @@ function horseName(horse) {
 
 function horseRegistration(horse) { return systemRegistrationCode(horse); }
 
-function formatDateTime(value) {
-    if (!value) return "—";
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return String(value);
-    return date.toLocaleString("vi-VN", {
-        dateStyle: "medium",
-        timeStyle: "short",
-    });
-}
-
-function toLocalInputValue(value) {
-    if (!value) return "";
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return String(value).slice(0, 16);
-
-    const pad = (n) => String(n).padStart(2, "0");
-
-    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(
-        date.getHours()
-    )}:${pad(date.getMinutes())}`;
-}
+const formatDateTime = clubDateTime;
+const toLocalInputValue = clubDateTimeInput;
 
 function healthClass(status) {
     return String(status || "unknown").toLowerCase();
@@ -111,6 +93,7 @@ function MedicalExamination() {
     const dialogRef = useMedicalDialog(showModal, saving, () => setShowModal(false));
     const [editingRecord, setEditingRecord] = useState(null);
     const [viewingRecord, setViewingRecord] = useState(null);
+    const viewingDialogRef = useMedicalDialog(!!viewingRecord,false,()=>setViewingRecord(null));
     const [form, setForm] = useState(emptyForm);
 
     useEffect(() => {
@@ -251,7 +234,7 @@ function MedicalExamination() {
             return;
         }
 
-        const examinationDate = new Date(form.examinationAt);
+        const examinationDate = new Date(clubInstant(form.examinationAt));
 
         if (Number.isNaN(examinationDate.getTime())) {
             setError(msg(MSG.MEDICAL_DATE_INVALID));
@@ -378,14 +361,14 @@ function MedicalExamination() {
                         <Search size={14} />
                         <input
                             type="text"
-                            placeholder={msg(MSG.EXAM_TIM_CHAN_DOAN_LY_DO)}
+                            aria-label={msg(MSG.EXAM_TIM_CHAN_DOAN_LY_DO)} placeholder={msg(MSG.EXAM_TIM_CHAN_DOAN_LY_DO)}
                             value={search}
                             onChange={(event) => setSearch(event.target.value)}
                         />
                     </div>
 
                     <select
-                        className="medical-inline-select"
+                        className="medical-inline-select" aria-label={msg(MSG.MEDICAL_HEALTH)}
                         value={healthFilter}
                         onChange={(event) => setHealthFilter(event.target.value)}
                     >
@@ -511,7 +494,7 @@ function MedicalExamination() {
             </section>
 
             {showModal && (
-                <div className="medical-modal-backdrop" onMouseDown={() => !saving && setShowModal(false)}>
+                <div className="medical-modal-backdrop" onMouseDown={() => !saving && confirmMedicalClose(dialogRef,()=>setShowModal(false))}>
                     <div
                         className="medical-modal" ref={dialogRef} role="dialog" aria-modal="true" aria-label={editingRecord ? msg(MSG.EXAM_DIEU_CHINH_HO_SO_KHAM) : msg(MSG.MEDICAL_CREATE_EXAMINATION)}
                         onMouseDown={(event) => event.stopPropagation()}
@@ -533,7 +516,7 @@ function MedicalExamination() {
                                 type="button"
                                 className="medical-icon-button"
                                 aria-label={msg(MSG.MEDICAL_WORKSPACE_CLOSE)}
-                                onClick={() => setShowModal(false)}
+                                onClick={() => !saving && confirmMedicalClose(dialogRef,()=>setShowModal(false))}
                                 disabled={saving}
                             >
                                 <X size={16} />
@@ -546,8 +529,8 @@ function MedicalExamination() {
 
                         <div className="px-4 pt-3"><p className="form-text mb-2">{msg(MSG.MED_CASE_HELP)}</p>
                         {error && <div className="medical-alert error">{error}</div>}</div>
-                        {!editingRecord && cases.some(item => !item.resolved && ((form.reason && item.record.reason === form.reason) || (form.diagnosis && item.record.diagnosis === form.diagnosis))) && <div className="medical-alert medical-alert-info"><p>{msg(MSG.MED_EXISTING_CASE_HELP)}</p>{cases.filter(item => !item.resolved && ((form.reason && item.record.reason === form.reason) || (form.diagnosis && item.record.diagnosis === form.diagnosis))).map(item => <p key={item.id}><Link to={`/medical/follow-up?horseId=${encodeURIComponent(selectedHorseId)}&recordId=${encodeURIComponent(item.id)}`}>{msg(MSG.MED_EXISTING_CASE_ACTION)}{msg(MSG.MED_HISTORY_COLON)}{item.record.reason}{msg(MSG.MED_HISTORY_SEPARATOR)}{item.record.diagnosis}</Link></p>)}</div>}
-                        <form className="medical-form" onSubmit={submitForm}>
+                        {!editingRecord && cases.some(item => !item.resolved && ((form.reason && item.record.reason === form.reason) || (form.diagnosis && item.record.diagnosis === form.diagnosis))) && <div className="medical-alert medical-alert-info"><p>{msg(MSG.MED_EXISTING_CASE_HELP)}</p>{cases.filter(item => !item.resolved && ((form.reason && item.record.reason === form.reason) || (form.diagnosis && item.record.diagnosis === form.diagnosis))).map(item => <p key={item.id}><Link className="action-link" to={`/medical/follow-up?horseId=${encodeURIComponent(selectedHorseId)}&recordId=${encodeURIComponent(item.id)}`}>{msg(MSG.MED_EXISTING_CASE_ACTION)}{msg(MSG.MED_HISTORY_COLON)}{item.record.reason}{msg(MSG.MED_HISTORY_SEPARATOR)}{item.record.diagnosis}</Link></p>)}</div>}
+                        <form className="medical-form" onSubmit={submitForm}>{error && <p className="alert alert-danger" role="alert">{error}</p>}
                             <div className="medical-form-grid">
                                 <div className="medical-field">
                                     <label htmlFor="examinationAt">{msg(MSG.EXAM_THOI_DIEM_KHAM)}</label>
@@ -600,7 +583,7 @@ function MedicalExamination() {
                                 <button
                                     type="button"
                                     className="medical-secondary-button"
-                                    onClick={() => setShowModal(false)}
+                                    onClick={() => !saving && confirmMedicalClose(dialogRef,()=>setShowModal(false))}
                                     disabled={saving}
                                 >{msg(MSG.EXAM_HUY)}</button>
 
@@ -623,9 +606,9 @@ function MedicalExamination() {
             )}
 
             {viewingRecord && (
-                <div className="medical-modal-backdrop" onMouseDown={() => setViewingRecord(null)}>
+                <div className="medical-modal-backdrop" onMouseDown={() => confirmMedicalClose(viewingDialogRef,()=>setViewingRecord(null))}>
                     <div
-                        className="medical-modal medical-detail-modal"
+                        className="medical-modal medical-detail-modal" ref={viewingDialogRef} role="dialog" aria-modal="true" aria-label={msg(MSG.EXAM_CHI_TIET_THAM_KHAM)}
                         onMouseDown={(event) => event.stopPropagation()}
                     >
                         <div className="medical-modal-header">
@@ -638,7 +621,7 @@ function MedicalExamination() {
                                 type="button"
                                 className="medical-icon-button"
                                 aria-label={msg(MSG.MEDICAL_WORKSPACE_CLOSE)}
-                                onClick={() => setViewingRecord(null)}
+                                onClick={() => confirmMedicalClose(viewingDialogRef,()=>setViewingRecord(null))}
                             >
                                 <X size={16} />
                             </button>

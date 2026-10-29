@@ -1,6 +1,7 @@
+import { useListFilters } from '../../context/useListFilters.js';
 import { externalRegistrationNumber } from "../../services/horseIdentifiers.js";
 import { MSG, msg } from "../../messages/index.js";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useRegistrationResource } from "../../context/useRegistrationResource.js";
 import { listRegistrations } from "../../services/registrationService.js";
@@ -16,11 +17,11 @@ import RegistrationError from "../../components/registrations/RegistrationError.
 export function RegistrationListContent({ data }) {
     if (!data.items.length) return <p>{msg(MSG.CHUA_CO_HO_SO_PHU_HOP_TAO_BAN_NHAP_DE_BAT_DAU)}</p>;
     return <div className="table-responsive"><table className="table align-middle">
-        <thead><tr><th>{msg(MSG.TEN_NGUA)}</th><th>{msg(MSG.TRANG_THAI)}</th><th>{msg(MSG.HORSE_EXTERNAL_CODE)}</th><th>{msg(MSG.NGAY_TAO)}</th><th>{msg(MSG.THAO_TAC)}</th></tr></thead>
+        <thead><tr><th scope="col">{msg(MSG.TEN_NGUA)}</th><th scope="col">{msg(MSG.TRANG_THAI)}</th><th scope="col">{msg(MSG.HORSE_EXTERNAL_CODE)}</th><th scope="col">{msg(MSG.NGAY_TAO)}</th><th scope="col">{msg(MSG.THAO_TAC)}</th></tr></thead>
         <tbody>{data.items.map((item) => <tr key={item.id}>
             <td>{item.name || msg(MSG.BAN_NHAP_CHUA_CO_TEN)}</td><td><RegistrationStatus status={item.status} /></td>
             <td>{externalRegistrationNumber(item) || "—"}</td><td>{item.createdAt ? item.createdAt.slice(0, 10) : "—"}</td>
-            <td><Link to={`/registrations/${encodeURIComponent(item.id)}`}>{canEditRegistration(item.status) ? msg(MSG.XEM_CHINH_SUA) : msg(MSG.VIEW)}</Link></td>
+            <td><Link className="action-link" to={`/registrations/${encodeURIComponent(item.id)}`}>{canEditRegistration(item.status) ? msg(MSG.XEM_CHINH_SUA) : msg(MSG.VIEW)}</Link></td>
         </tr>)}</tbody>
     </table></div>;
 }
@@ -29,14 +30,14 @@ export function RegistrationListContent({ data }) {
  * Nhãn/thông báo lấy từ catalog; enum và dữ liệu người dùng giữ nguyên giá trị.
  */
 export default function RegistrationList() {
-    const [filter, setFilter] = useState({ status: "", page: 1 });
+    const [filter, setFilter] = useListFilters({ status: "", page: 1 });
     /**
      * Đọc dữ liệu cần cho component qua service/API; hook resource quản lý loading, response muộn và lỗi.
      */
     const load = useCallback(() => listRegistrations(filter), [filter]);
     const resource = useRegistrationResource(load, { realtime: true });
     return <section className="surface-card">
-        <div className="d-flex flex-wrap justify-content-between gap-2 mb-3"><h1>{msg(MSG.YEU_CAU_DANG_KY_NGUA)}</h1><Link to="/registrations/new" className="btn btn-primary align-self-start">{msg(MSG.DANG_KY_NGUA)}</Link></div>
+        <div className="d-flex flex-wrap justify-content-between gap-2 mb-3"><h1>{msg(MSG.YEU_CAU_DANG_KY_NGUA)}</h1><Link className="action-link" to="/registrations/new" className="btn btn-primary align-self-start">{msg(MSG.DANG_KY_NGUA)}</Link></div>
         <label htmlFor="registration-status-filter" className="form-label">{msg(MSG.TRANG_THAI)}</label>
         <select id="registration-status-filter" value={filter.status} onChange={(event) => setFilter({ status: event.target.value, page: 1 })} className="form-select mb-3">
             <option value="">{msg(MSG.TAT_CA_TRANG_THAI)}</option>{Object.values(REGISTRATION_STATUS).map((status) => <option key={status} value={status}>{statusDisplay(status).label}</option>)}

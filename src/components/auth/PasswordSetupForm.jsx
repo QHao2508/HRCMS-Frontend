@@ -39,8 +39,8 @@ export default function PasswordSetupForm({ invitation = false }) {
             form={form} onSubmit={() => form.submit(submit)} submitLabel={invitation ? msg(MSG.SET_PASSWORD) : msg(MSG.RESET_PASSWORD)}
             pendingLabel={msg(MSG.SAVING_PASSWORD)}
             footer={<>{invitation ? <p>{msg(MSG.NEED_AN_INVITATION_OR_A_REPLACEMENT_CODE_CONTACT_CLUB_MANAGEMENT)}</p>
-                : <p><Link to="/forgot-password" state={{ email: form.values.email.trim() }}>{msg(MSG.REQUEST_A_NEW_RESET_CODE)}</Link></p>}
-                <Link to="/login">{msg(MSG.BACK_TO_SIGN_IN)}</Link></>}>
+                : <p><Link className="action-link" to="/forgot-password" state={{ email: form.values.email.trim() }}>{msg(MSG.REQUEST_A_NEW_RESET_CODE)}</Link></p>}
+                <Link className="action-link" to="/login">{msg(MSG.BACK_TO_SIGN_IN)}</Link></>}>
             <AuthInput label={msg(MSG.EMAIL)} {...form.field("email")} type="email" required autoComplete="email" />
             <AuthInput label={invitation ? msg(MSG.OTP_KICH_HOAT_6_CHU_SO) : msg(MSG.OTP_DAT_LAI_MAT_KHAU_6_CHU_SO)} {...form.field("code")}
                 required maxLength={6} inputMode="numeric" autoComplete="one-time-code" spellCheck={false} autoCapitalize="none" />

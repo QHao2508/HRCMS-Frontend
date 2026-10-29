@@ -37,7 +37,10 @@ export function useAuthForm(initialValues, validate) {
         const nextErrors = validator(values);
         setErrors(nextErrors);
         setError("");
-        if (Object.keys(nextErrors).length) return;
+        if (Object.keys(nextErrors).length) {
+            if (typeof document !== 'undefined') requestAnimationFrame(() => document.getElementById(`auth-${Object.keys(nextErrors)[0]}`)?.focus());
+            return;
+        }
         busy.current = true;
         setPending(actionName);
         try {

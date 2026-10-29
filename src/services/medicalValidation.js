@@ -1,8 +1,9 @@
+import { clubInstant } from './displayDate.js';
 import { MSG, msg } from '../messages/index.js';
 
 function invalid(key) { throw Object.assign(new Error(msg(key)), { status: 400 }); }
 export function clearanceOptions(data, examinationAt) {
-    const instant = new Date(examinationAt);
+    const instant = new Date(clubInstant(examinationAt));
     if (Number.isNaN(instant.getTime())) return { restrictionIds: [], injuryIds: [], treatmentIds: [] };
     const date = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Ho_Chi_Minh' }).format(instant);
     return {
@@ -13,7 +14,7 @@ export function clearanceOptions(data, examinationAt) {
 }
 export function followUpPayload(form, data, now = new Date()) {
     const previous = data.records.find(x => x.id === form.previousRecordId);
-    const instant = new Date(form.examinationAt);
+    const instant = new Date(clubInstant(form.examinationAt));
     if (!previous || Number.isNaN(instant.getTime()) || instant > now || instant < new Date(previous.examinationAt)) invalid(MSG.MEDICAL_FOLLOWUP_DATES);
     const fields = ['reason', 'symptoms', 'findings', 'diagnosis'];
     if (fields.some(key => !form[key]?.trim()) || !form.outcome?.trim()) invalid(MSG.MEDICAL_FOLLOWUP_REQUIRED);
