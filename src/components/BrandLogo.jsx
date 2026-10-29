@@ -8,15 +8,16 @@ const preparedLogos = new Map();
 /**
  * Chỉ hiển thị logo CMS mới nhất; chờ cấu hình và xử lý nền trước khi hiện ảnh.
  * Nhãn/thông báo lấy từ catalog; enum và dữ liệu người dùng giữ nguyên giá trị.
- * @param options0 Đối tượng destructuring: { className = '', priority = false }. Các props/callback lấy từ caller.
+ * @param options0 Đối tượng destructuring: { className = '', priority = false, fallback }; fallback hiện thay khung chờ khi chưa có logo. Các props/callback lấy từ caller.
  */
-export default function BrandLogo({ className = '', priority = false }) {
+export default function BrandLogo({ className = '', priority = false, fallback }) {
     const website=useWebsite();
     const custom=website?.logoVersion?websiteAsset('Logo',website.logoVersion):null;
     const [failedSources,setFailedSources]=useState([]);
     const [prepared,setPrepared]=useState(null);
     const src=custom && !failedSources.includes(custom)?custom:null;
     const readyUrl=prepared?.source===src?prepared.url:preparedLogos.get(src);
+    if (!src && fallback !== undefined) return fallback;
     return !src ? <span className={`brand-logo-placeholder ${className}`} aria-busy={!website} aria-label={msg(MSG.BRAND_LOGO)} />
         : <img className={`${className} is-custom-logo${readyUrl?'':' is-logo-loading'}`} src={readyUrl || src} crossOrigin="anonymous" onLoad={event=>{
                 if(readyUrl)return;

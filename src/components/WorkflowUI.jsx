@@ -5,12 +5,13 @@ import { MSG, msg } from "../messages/index.js";
 import { Link } from "react-router-dom";
 import RegistrationError from "./registrations/RegistrationError.jsx";
 import { Children, isValidElement, useId } from 'react';
+import PageHeader from './ui/PageHeader.jsx';
 
 /**
  * Dựng tiêu đề, mô tả và action của màn hình theo cùng bố cục.
  * @param options0 Đối tượng destructuring: { title, description, action, id }. Các props/callback lấy từ caller.
  */
-export function PageHeading({ title, description, action, id }) { return <div className="page-heading"><div><h1 id={id}>{title}</h1>{description && <p>{description}</p>}</div>{action}</div>; }
+export function PageHeading({ title, description, action, id }) { return <PageHeader id={id} title={title} description={description} actions={action} />; }
 /**
  * Hiển thị loading/error và nút reload của resource mà không giả lập dữ liệu.
  * Nhãn/thông báo lấy từ catalog; enum và dữ liệu người dùng giữ nguyên giá trị.

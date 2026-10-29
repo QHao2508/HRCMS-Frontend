@@ -162,8 +162,8 @@ try {
         await page.route('**/api/website',route=>route.fulfill({json:{...site,logoVersion:'unavailable-logo'}}));
         await page.route('**/api/website/assets/Logo*',route=>route.fulfill({status:500,json:{title:'internal_error'}}));
         await page.goto(base+'/dashboard');await ready(page);
-        await page.locator('.system-brand .brand-logo-placeholder').waitFor();
-        assert.equal(await page.locator('.system-brand img').count(),0);
+        await page.locator('.ws-brand-tile').filter({hasText:msg(MSG.WS_BRAND_INITIAL)}).waitFor();
+        assert.equal(await page.locator('.ws-brand-tile img').count(),0);
         await context.close();results.push({interaction:'broken CMS logo does not display an old logo',status:'pass'});
     }
     // Photo failures remain visible and a retry can recover without reloading the horse profile.

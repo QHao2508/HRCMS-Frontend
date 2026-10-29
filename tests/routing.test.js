@@ -208,7 +208,9 @@ test("shell displays the current user, readable role, navigation and nested Outl
     assert.match(html, /aria-current="page"/);
     assert.match(html, /Nested page content/);
     assert.match(html, /Đăng xuất/);
-    assert.equal(globalThis.__hrcmsRoutingTest.buttons.length, 2);
+    // Khung mới: nút mở menu, nút đóng menu (điện thoại), đăng xuất; Chủ ngựa có thêm "+ Tạo mới".
+    const names = globalThis.__hrcmsRoutingTest.buttons.map(button => button['aria-label'] || (typeof button.children === 'string' ? button.children : 'create'));
+    assert.deepEqual(names.sort(), ['Mở menu', 'Đóng menu', 'Đăng xuất', 'create'].sort());
     const toggle = globalThis.__hrcmsRoutingTest.buttons.find(button => button['aria-controls'] === 'workflow-navigation');
     assert.ok(toggle);
     assert.equal(toggle['aria-expanded'], false);

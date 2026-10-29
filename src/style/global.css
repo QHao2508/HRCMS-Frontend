@@ -7,13 +7,15 @@
   --hc-font-heading: 'HRCMS Lora', serif;
   --hc-font-size-1: 14px; --hc-font-size-2: 16px; --hc-font-size-3: 18px;
   --hc-font-size-4: 22px; --hc-font-size-5: 28px; --hc-font-size-6: 36px;
+  /* Hai cỡ riêng của bản thiết kế: tiêu đề trang (Lora 30) và số KPI (Manrope 32). */
+  --hc-font-size-title: 30px; --hc-font-size-kpi: 32px;
   --bs-body-font-family: var(--hc-font-body); --bs-font-sans-serif: var(--hc-font-body);
   --hc-bg: #f3efe6; --hc-surface: #fff; --hc-input: #faf7f0;
   --hc-brown: #794629; --hc-brown-hover: #63381f; --hc-dark: #301c15;
   --hc-green: #326749; --hc-border: #d4c6b3; --hc-text: #30281f;
   --hc-muted: #655a4e; --hc-info: #e2f2f1;
   --hc-space-1: 8px; --hc-space-2: 16px; --hc-space-3: 24px; --hc-space-4: 32px;
-  --hc-title-size: var(--hc-font-size-5); --hc-workspace-width: 1600px; --hc-header-height: 91px;
+  --hc-title-size: var(--hc-font-size-title); --hc-workspace-width: 1600px; --hc-header-height: 91px;
   --bs-primary: var(--hc-brown); --bs-primary-rgb: 121,70,41;
   --bs-body-color: var(--hc-text); --bs-body-bg: var(--hc-bg);
 }
