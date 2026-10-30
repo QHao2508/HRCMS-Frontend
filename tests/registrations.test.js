@@ -109,7 +109,7 @@ test("registration list uses backend pagination and exact status filtering", asy
     };
     assert.deepEqual(await services.listRegistrations({ page: 2, status: "RevisionRequired" }), data);
     const html = render(h(ListContent, { data }));
-    assert.match(html, /Comet/); assert.match(html, /REG-7/); assert.match(html, /2026-01-02/); assert.match(html, /Xem \/ chỉnh sửa/);
+    assert.match(html, /Comet/); assert.match(html, /REG-7/); assert.match(html, /02\/01\/2026/); assert.match(html, /Xem \/ chỉnh sửa/);
 });
 test("empty list has an explicit empty state and all-status requests omit status", async () => {
     api.defaults.adapter = async (config) => { assert.equal(Object.hasOwn(config.params, "status"), false); return reply(config, { items: [], page: 1, pageSize: 20, total: 0 }); };

@@ -2,6 +2,9 @@
 .hc-drawer-layer { position: fixed; inset: 0; z-index: 1060; display: flex; justify-content: flex-end; }
 .hc-drawer-backdrop { position: absolute; inset: 0; background: color-mix(in srgb, var(--hc-text) 45%, transparent); animation: hc-drawer-fade .15s ease-out; }
 .hc-drawer { position: relative; display: flex; flex-direction: column; width: min(480px, 100%); height: 100%; background: var(--hc-surface); box-shadow: 0 12px 40px color-mix(in srgb, var(--hc-text) 18%, transparent); animation: hc-drawer-slide .2s ease-out; color: var(--hc-text); font-family: var(--hc-font-body); }
+.hc-drawer.is-lg { width: min(760px, 100%); }
+.hc-drawer.is-lg .row > [class*="col-md-6"] { flex: 0 0 50%; max-width: 50%; }
+@media (max-width: 640px) { .hc-drawer.is-lg .row > [class*="col-md-6"] { flex: 0 0 100%; max-width: 100%; } }
 .hc-drawer-header { display: flex; align-items: center; gap: 12px; padding: 18px 20px; border-bottom: 1px solid var(--hc-border); }
 .hc-drawer-header h2 { flex: 1; min-width: 0; margin: 0; font: 800 var(--hc-font-size-3)/1.35 var(--hc-font-body); overflow-wrap: anywhere; }
 .hc-drawer-close { display: grid; place-items: center; width: 40px; height: 40px; border: 0; border-radius: var(--hc-radius, 8px); background: transparent; color: var(--hc-muted); cursor: pointer; }

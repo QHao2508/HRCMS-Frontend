@@ -58,7 +58,7 @@ test('S4 list renders ownerName between horse and registration columns without r
     assert.ok(html.includes(record.ownerName));
     assert.ok(html.indexOf(msg(MSG.HORSE_OWNER)) > html.indexOf(msg(MSG.TEN_NGUA)));
     assert.ok(html.indexOf(msg(MSG.HORSE_OWNER)) < html.indexOf(msg(MSG.HORSE_EXTERNAL_CODE)));
-    for (const value of [record.name, record.externalRegistrationNumber, '2026-10-21', msg(MSG.CHO_DUYET), 'href="/reviews/review-fixture"']) assert.ok(html.includes(value), value);
+    for (const value of [record.name, record.externalRegistrationNumber, '21/10/2026', msg(MSG.CHO_DUYET), 'href="/reviews/review-fixture"']) assert.ok(html.includes(value), value);
     assert.doesNotMatch(html, /private-owner-id|Tên tài khoản khác/);
 });
 test('S4 list uses explicit missing-owner fallback for null, empty, whitespace and absent names', () => {
@@ -72,7 +72,8 @@ test('S4 list retains status filter, pagination and original GET parameters', as
     list();
     const filter = globalThis.__s4.controls.find(x => x.type === 'select').props;
     assert.equal(filter.id, 'review-filter'); assert.equal(filter.value, 'PendingReview');
-    assert.ok(button(msg(MSG.TRUOC))); assert.ok(button(msg(MSG.SAU)));
+    // Một trang thì phân trang chỉ hiện dòng "Hiển thị 1–1 trong 1", không có nút Trước / Sau.
+    assert.equal(button(msg(MSG.TRUOC)), undefined);
     let request;
     api.defaults.adapter = async config => { request = config; return { config, data: {}, status: 200, headers: {} }; };
     await globalThis.__s4.loads[0]();

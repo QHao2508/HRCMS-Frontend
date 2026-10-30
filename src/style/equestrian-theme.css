@@ -61,7 +61,7 @@ body, .app-shell { background: var(--hc-bg); color: var(--hc-text); }
 .app-shell .action-link:hover, .auth-card a:not(.btn):hover, .app-shell .page-back:hover { background: #f3e9df; border-color: #cdb49f; }
 .app-shell .table { --bs-table-bg: var(--hc-surface); --bs-table-border-color: var(--hc-border); color: var(--hc-text); }
 .app-shell .table th, .app-shell .medical-table th { background: #f0ebe4; color: var(--hc-muted); border-bottom-color: var(--hc-border); font-size: var(--hc-font-size-1); font-weight: 600; }
-.app-shell .table tbody tr:nth-child(even) > td, .app-shell .medical-table tbody tr:nth-child(even) > td { background-color: #fcfaf7; }
+.app-shell .table tbody tr:nth-child(even) > td, .app-shell .medical-table tbody tr:nth-child(even) > td { background-color: var(--hc-surface); }
 .app-shell .table tbody tr:hover > td, .app-shell .medical-table tbody tr:hover > td { background-color: #f6efe6; }
 .app-shell .table-responsive { border-color: var(--hc-border); }
 .app-shell .summary-grid > div { border-bottom-color: var(--hc-border); }
@@ -84,8 +84,6 @@ body, .app-shell { background: var(--hc-bg); color: var(--hc-text); }
 .app-shell .empty-state { background: #f8f5f0; border-color: var(--hc-border); }
 .app-shell .pagination-row, .app-shell .form-action-bar { border-top-color: var(--hc-border); }
 .app-shell .wizard-actions { background: #fffffff5; border-color: var(--hc-border); }
-.app-shell .wizard-step { background: #f4efe8; border-color: var(--hc-border); color: var(--hc-muted); }
-.app-shell .wizard-step[aria-current='step'] { background: #efe1d3; color: var(--hc-primary); box-shadow: inset 0 -3px var(--hc-primary); }
 .app-shell .workflow-progress li { background: #f4efe8; border-color: var(--hc-border); }
 .app-shell .workflow-progress .is-current { background: #f0e3d5; border-color: #c8a27e; color: var(--hc-primary); }
 .app-shell .workflow-progress .is-current > span { background: var(--hc-primary); border-color: var(--hc-primary); }
@@ -250,13 +248,14 @@ body, .app-shell { background: var(--hc-bg); color: var(--hc-text); }
     background: #eadbc9; border-color: #d0b699; border-left: 4px solid var(--hc-accent);
 }
 .app-shell :is(.filter-panel,.filter-bar,.filters-panel) .form-label { color: #5f341c; font-weight: 700; }
+/* Bảng theo bản thiết kế: tiêu đề nền sáng, chữ phụ đậm; dòng không kẻ sọc, rê chuột đổi nền nhẹ. */
 .app-shell :is(.table,.medical-table) th {
-    background: #7a4528; color: #fff8f0; border-bottom-color: #5f341c; font-weight: 700;
-    --bs-table-bg: #7a4528; --bs-table-color: #fff8f0;
+    background: #faf9f6; color: var(--hc-muted); border-bottom-color: var(--hc-border); font-weight: 700;
+    --bs-table-bg: #faf9f6; --bs-table-color: var(--hc-muted);
 }
-.app-shell .table { --bs-table-striped-bg: #f6eee4; --bs-table-hover-bg: #f0dfcd; }
-.app-shell .table tbody tr:nth-child(even) > td { background: #f6eee4; }
-.app-shell .table tbody tr:hover > td { background: #f0dfcd; }
+.app-shell .table { --bs-table-striped-bg: transparent; --bs-table-hover-bg: #fcfbf8; }
+.app-shell .table td { border-bottom-color: #efebe4; }
+.app-shell .table tbody tr:hover > td { background: #fcfbf8; }
 .app-shell .btn-outline-primary {
     --bs-btn-bg: #ead5bf; --bs-btn-color: #5f341c; --bs-btn-border-color: #c79d76;
     --bs-btn-hover-bg: #7a4528; --bs-btn-hover-color: #fff; --bs-btn-hover-border-color: #7a4528;

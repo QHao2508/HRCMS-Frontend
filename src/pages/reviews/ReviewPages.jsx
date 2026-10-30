@@ -14,7 +14,13 @@ import { useRegistrationResource } from "../../context/useRegistrationResource.j
 import RegistrationStatus from "../../components/registrations/RegistrationStatus.jsx";
 import RegistrationAttachments from "../../components/registrations/RegistrationAttachments.jsx";
 import { RegistrationSummary } from "../../components/registrations/RegistrationWizard.jsx";
-import { PageHeading,ResourceState,Pagination,BackLink,Field,MutationState } from "../../components/WorkflowUI.jsx";
+import { ResourceState,Pagination,BackLink,Field,MutationState } from "../../components/WorkflowUI.jsx";
+import PageHeader from "../../components/ui/PageHeader.jsx";
+import Avatar from "../../components/ui/Avatar.jsx";
+import { DataTable } from "../../components/ui/DataTable.jsx";
+import { EmptyState } from "../../components/ui/States.jsx";
+import { displayDate } from "../../services/displayDate.js";
+import '../../style/lists.css';
 import '../../style/registration-review.css';
 function registrationOwnerName(record) {
     return typeof record.ownerName === 'string' && record.ownerName.trim() ? record.ownerName : msg(MSG.REVIEW_OWNER_MISSING);
@@ -30,7 +36,20 @@ export function ReviewList() {
      */
     const load = useCallback(() => listRegistrations(filter),[filter]);
     const resource = useRegistrationResource(load, { realtime: true });
-    return <section className="review-page"><PageHeading title={msg(MSG.YEU_CAU_DANG_KY_NGUA)} description={msg(MSG.KIEM_TRA_HO_SO_TRUOC_KHI_PHE_DUYET_VA_TAO_HORSE_PROFILE)} /><div className="surface-card"><div className="filter-row"><div><label className="form-label" htmlFor="review-filter">{msg(MSG.LOC_THEO_TRANG_THAI)}</label><select id="review-filter" className="form-select" value={filter.status} onChange={e => setFilter({...filter,status:e.target.value,page:1})}>{[REGISTRATION_STATUS.PendingReview,REGISTRATION_STATUS.RevisionRequired,REGISTRATION_STATUS.Approved,REGISTRATION_STATUS.Draft,REGISTRATION_STATUS.Cancelled,""].map(status => <option key={status} value={status}>{status ? getEnumLabel(status) : msg(MSG.TAT_CA)}</option>)}</select></div></div><ResourceState resource={resource} />{resource.data && <><div className="table-responsive" tabIndex={0} role="region" aria-label={msg(MSG.YEU_CAU_DANG_KY_NGUA)}><table className="table review-table"><thead><tr><th scope="col">{msg(MSG.TEN_NGUA)}</th><th scope="col">{msg(MSG.HORSE_OWNER)}</th><th scope="col">{msg(MSG.HORSE_EXTERNAL_CODE)}</th><th scope="col">{msg(MSG.TRANG_THAI)}</th><th scope="col">{msg(MSG.NGAY_TAO)}</th><th scope="col">{msg(MSG.SUPPORT_ACTIONS)}</th></tr></thead><tbody>{resource.data.items.map(r => <tr key={r.id}><td>{r.name || msg(MSG.BAN_NHAP_CHUA_CO_TEN)}</td><td>{registrationOwnerName(r)}</td><td>{externalRegistrationNumber(r) || "—"}</td><td><RegistrationStatus status={r.status} /></td><td>{r.createdAt?.slice(0,10)}</td><td><Link className="btn btn-outline-primary" to={`/reviews/${r.id}`}>{msg(MSG.KIEM_TRA_HO_SO)}</Link></td></tr>)}</tbody></table>{!resource.data.items.length && <p className="empty-state">{msg(MSG.KHONG_CO_HO_SO_O_TRANG_THAI_NAY)}</p>}</div><Pagination data={resource.data} onChange={page => setFilter({...filter,page})} /></>}</div></section>;
+    const open = r => `/reviews/${encodeURIComponent(r.id)}`;
+    return <section className="review-page list-page"><PageHeader title={msg(MSG.YEU_CAU_DANG_KY_NGUA)} description={msg(MSG.KIEM_TRA_HO_SO_TRUOC_KHI_PHE_DUYET_VA_TAO_HORSE_PROFILE)} />
+        <div className="hc-card is-flush list-card">
+            <div className="hc-toolbar"><label className="list-select" htmlFor="review-filter">{msg(MSG.LOC_THEO_TRANG_THAI)}<select id="review-filter" className="form-select" value={filter.status} onChange={e => setFilter({...filter,status:e.target.value,page:1})}>{[REGISTRATION_STATUS.PendingReview,REGISTRATION_STATUS.RevisionRequired,REGISTRATION_STATUS.Approved,REGISTRATION_STATUS.Draft,REGISTRATION_STATUS.Cancelled,""].map(status => <option key={status} value={status}>{status ? getEnumLabel(status) : msg(MSG.TAT_CA)}</option>)}</select></label></div>
+            <ResourceState resource={resource} />
+            {resource.data && <><DataTable caption={msg(MSG.YEU_CAU_DANG_KY_NGUA)} rows={resource.data.items} empty={<EmptyState title={msg(MSG.KHONG_CO_HO_SO_O_TRANG_THAI_NAY)} />} columns={[
+                {key:'name',label:msg(MSG.TEN_NGUA),render:r => <Link className="hc-row-title" to={open(r)}><Avatar name={r.name || '?'} /><span><strong>{r.name || msg(MSG.BAN_NHAP_CHUA_CO_TEN)}</strong></span></Link>},
+                {key:'owner',label:msg(MSG.HORSE_OWNER),render:r => registrationOwnerName(r)},
+                {key:'code',label:msg(MSG.HORSE_EXTERNAL_CODE),render:r => externalRegistrationNumber(r) || '—'},
+                {key:'status',label:msg(MSG.TRANG_THAI),render:r => <RegistrationStatus status={r.status} />},
+                {key:'created',label:msg(MSG.NGAY_TAO),nowrap:true,render:r => displayDate(r.createdAt)},
+                {key:'open',label:<span className="visually-hidden">{msg(MSG.SUPPORT_ACTIONS)}</span>,align:'end',render:r => <Link className="btn btn-outline-primary btn-sm" to={open(r)}>{msg(MSG.KIEM_TRA_HO_SO)}</Link>}]} />
+            <Pagination data={resource.data} onChange={page => setFilter({...filter,page})} /></>}
+        </div></section>;
 }
 /**
  * Render thông tin và tài liệu intake, sửa trường hành chính, phê duyệt hoặc yêu cầu chỉnh sửa có lý do.
@@ -64,8 +83,16 @@ function ReviewContent({ data,reload }) {
      * @param approve Giá trị approve truyền vào review; tham chiếu phần thân để xem cách dùng.
      */
     async function review(approve) { if (!pending || dirty || (!approve && !reason.trim())) return; await mutation.run(() => reviewRegistration(record.id,{approve,...(!approve && {reason:reason.trim()})}),response => { setRecord(response.registration); setHorseId(response.horseId); },approve ? msg(MSG.DA_PHE_DUYET_VA_TAO_HO_SO_NGUA) : msg(MSG.DA_GUI_YEU_CAU_CHINH_SUA_CHO_CHU_SO_HUU)); }
-    return <><PageHeading title={msg(MSG.KIEM_TRA_HO_SO_2, { p0: record.name || msg(MSG.CHUA_CO_TEN) })} action={<RegistrationStatus status={record.status} />} /><MutationState mutation={mutation} reload={reload} />{horseId && <Link className="btn btn-success mb-3" to={`/horses/${horseId}`}>{msg(MSG.MO_HO_SO_NGUA_VA_PHAN_CONG_NHAN_SU)}</Link>}<section className="surface-card review-owner-card"><h2>{msg(MSG.REVIEW_OWNER_TITLE)}</h2><dl className="summary-grid"><div><dt>{msg(MSG.HORSE_OWNER)}</dt><dd>{registrationOwnerName(record)}</dd></div></dl></section><RegistrationSummary record={record} /><RegistrationAttachments registrationId={record.id} attachments={data.attachments} editable={false} busy={locked} />
-        {pending && <><section className="surface-card"><h2>{msg(MSG.THONG_TIN_QUAN_LY)}</h2><form onSubmit={save}><fieldset disabled={locked}><div className="row g-3"><Field label={msg(MSG.TEN_NGUA)} name="name" value={admin.name} onChange={change} required maxLength={200} /><Field label={msg(MSG.HORSE_EXTERNAL_CODE)} name="externalRegistrationNumber" value={admin.externalRegistrationNumber} onChange={change} maxLength={100} /><Field label={msg(MSG.BAT_DAU_LUU_TRU)} name="boardingStart" value={admin.boardingStart} onChange={change} type="date" required /><Field label={msg(MSG.KET_THUC_LUU_TRU)} name="boardingEnd" value={admin.boardingEnd} onChange={change} type="date" /></div><button className="btn btn-outline-primary mt-3" type="submit">{msg(MSG.LUU_THONG_TIN_QUAN_LY)}</button></fieldset></form></section><section className="surface-card"><h2>{msg(MSG.QUYET_DINH_DUYET_HO_SO)}</h2>{dirty && <p className="alert alert-warning" role="status">{msg(MSG.UX_REVIEW_DIRTY)}</p>}<label className="form-label" htmlFor="revision-reason">{msg(MSG.LY_DO_YEU_CAU_CHINH_SUA)}</label><textarea id="revision-reason" className="form-control mb-3" rows={3} maxLength={2000} value={reason} onChange={e => setReason(e.target.value)} disabled={locked} /><div className="inline-actions"><button className="btn btn-outline-primary" disabled={locked || dirty || !reason.trim()} onClick={() => review(false)}>{msg(MSG.YEU_CAU_CHINH_SUA)}</button><button className="btn btn-success" disabled={locked || dirty} onClick={() => review(true)}>{msg(MSG.PHE_DUYET_HO_SO)}</button></div></section></>}
+    return <>
+        <PageHeader title={msg(MSG.KIEM_TRA_HO_SO_2, { p0: record.name || msg(MSG.CHUA_CO_TEN) })} description={<>{msg(MSG.HORSE_OWNER)}{': '}<strong>{registrationOwnerName(record)}</strong>{record.createdAt && <>{' · '}{msg(MSG.NGAY_TAO)}{' '}{displayDate(record.createdAt)}</>}</>} actions={<RegistrationStatus status={record.status} />} />
+        <MutationState mutation={mutation} reload={reload} />{horseId && <Link className="btn btn-success align-self-start" to={`/horses/${horseId}`}>{msg(MSG.MO_HO_SO_NGUA_VA_PHAN_CONG_NHAN_SU)}</Link>}
+        <div className="review-layout">
+            <div className="review-main"><RegistrationSummary record={record} /><RegistrationAttachments registrationId={record.id} attachments={data.attachments} editable={false} busy={locked} /></div>
+            {pending && <aside className="review-side" aria-label={msg(MSG.QUYET_DINH_DUYET_HO_SO)}>
+                <section className="hc-card"><h2 className="review-side-title">{msg(MSG.THONG_TIN_QUAN_LY)}</h2><form onSubmit={save}><fieldset disabled={locked}><div className="row g-3"><Field wide label={msg(MSG.TEN_NGUA)} name="name" value={admin.name} onChange={change} required maxLength={200} /><Field wide label={msg(MSG.HORSE_EXTERNAL_CODE)} name="externalRegistrationNumber" value={admin.externalRegistrationNumber} onChange={change} maxLength={100} /><Field label={msg(MSG.BAT_DAU_LUU_TRU)} name="boardingStart" value={admin.boardingStart} onChange={change} type="date" required /><Field label={msg(MSG.KET_THUC_LUU_TRU)} name="boardingEnd" value={admin.boardingEnd} onChange={change} type="date" /></div><button className="btn btn-outline-primary mt-3 w-100" type="submit">{msg(MSG.LUU_THONG_TIN_QUAN_LY)}</button></fieldset></form></section>
+                <section className="hc-card review-decision"><h2 className="review-side-title">{msg(MSG.QUYET_DINH_DUYET_HO_SO)}</h2>{dirty && <p className="alert alert-warning" role="status">{msg(MSG.UX_REVIEW_DIRTY)}</p>}<label className="form-label" htmlFor="revision-reason">{msg(MSG.LY_DO_YEU_CAU_CHINH_SUA)}</label><textarea id="revision-reason" className="form-control mb-3" rows={3} maxLength={2000} value={reason} onChange={e => setReason(e.target.value)} disabled={locked} /><div className="review-decision-actions"><button className="btn btn-success" disabled={locked || dirty} onClick={() => review(true)}>{msg(MSG.PHE_DUYET_HO_SO)}</button><button className="btn btn-outline-primary" disabled={locked || dirty || !reason.trim()} onClick={() => review(false)}>{msg(MSG.YEU_CAU_CHINH_SUA)}</button></div></section>
+            </aside>}
+        </div>
     </>;
 }
 /**
@@ -79,5 +106,5 @@ export function ReviewDetail() {
      */
     const load = useCallback(async () => { const [record,attachments]=await Promise.all([getRegistration(id),listAttachments(id)]); return {record,attachments}; },[id]);
     const resource = useRegistrationResource(load);
-    return <section className="review-page"><BackLink to="/reviews">{msg(MSG.DANH_SACH_CHO_DUYET)}</BackLink><ResourceState resource={resource} />{resource.data && <ReviewContent key={id} data={resource.data} reload={resource.reload} />}</section>;
+    return <section className="review-page review-detail"><BackLink to="/reviews">{msg(MSG.DANH_SACH_CHO_DUYET)}</BackLink><ResourceState resource={resource} />{resource.data && <ReviewContent key={id} data={resource.data} reload={resource.reload} />}</section>;
 }

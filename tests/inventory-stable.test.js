@@ -111,7 +111,8 @@ test('S6 Inventory retains issue navigation and Manager create/archive controls,
 });
 test('S6 viewing Inventory only executes original paged GET and keeps filter/pagination', async () => {
     const html = inventory(); assert.ok(html.includes(msg(MSG.SUPPORT_STOCK_FILTER))); assert.match(html, /name="lowStock"/);
-    assert.ok(html.includes(msg(MSG.TRUOC))); assert.ok(html.includes(msg(MSG.SAU)));
+    // Phân trang đánh số dùng chung: một trang chỉ hiện "Hiển thị …", nhiều trang mới có Trước / Sau.
+    assert.match(html, /aria-label="Phân trang"/);
     await globalThis.__s6.loads[0](); const [req] = globalThis.__s6.requests;
     assert.equal(req.method, 'get'); assert.equal(req.url, '/api/inventory'); assert.deepEqual(req.params, { lowStock: false, page: 1, pageSize: 20 });
     assert.equal(globalThis.__s6.mutations.length, 0);

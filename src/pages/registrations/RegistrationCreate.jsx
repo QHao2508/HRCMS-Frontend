@@ -46,7 +46,7 @@ export default function RegistrationCreate() {
         catch (failure) { setError(failure); if (!failure.status || failure.status >= 500 || [403, 404, 409].includes(failure.status)) setUncertain(true); }
         finally { lock.current = false; setBusy(false); }
     }
-    return <section><BackLink to="/registrations">{msg(MSG.YEU_CAU_DANG_KY)}</BackLink><PageHeading title={msg(MSG.DANG_KY_NGUA_MOI)} description={msg(MSG.BAN_NHAP_CHU_SO_HUU)} />
+    return <section className="registration-page"><BackLink to="/registrations">{msg(MSG.YEU_CAU_DANG_KY)}</BackLink><PageHeading title={msg(MSG.DANG_KY_NGUA_MOI)} description={msg(MSG.BAN_NHAP_CHU_SO_HUU)} />
         <WizardSteps step={step} onChange={setStep} errors={errors} disabled={busy} /><RegistrationError error={error} />
         <RegistrationErrors errors={errors} onStep={setStep}/><p className="form-text">{msg(MSG.UX_DRAFT_HELP)}</p>
         {savedDraftId && <p className="alert alert-info">{msg(MSG.PHOTO_SAVED_DRAFT)}{' '}<Link className="action-link" to={`/registrations/${savedDraftId}`}>{msg(MSG.PHOTO_OPEN_SAVED_DRAFT)}</Link></p>}

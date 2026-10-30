@@ -171,7 +171,11 @@
 @media (max-width: 960px) { .hc-sticky-actions { margin: 0 -16px; padding: 12px 16px; } }
 @media (max-width: 600px) {
     .hc-form-grid, .hc-kv, .hc-kv.cols-3 { grid-template-columns: minmax(0, 1fr); }
-    .hc-stepper { grid-auto-flow: row; grid-auto-columns: auto; }
+    .hc-stepper { display: flex; gap: 6px; }
+    .hc-stepper li { flex: 0 0 auto; }
+    .hc-stepper li.is-current { flex: 1 1 auto; min-width: 0; }
+    .hc-stepper li:not(.is-current) .hc-step-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    .hc-stepper li:not(.is-current) > :is(button, span) { padding: 10px 8px; }
     .hc-page-actions { width: 100%; margin-left: 0; }
     .hc-page-actions > .btn { flex: 1 1 auto; }
     .hc-sticky-buttons { width: 100%; }

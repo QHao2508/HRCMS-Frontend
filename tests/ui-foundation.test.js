@@ -155,10 +155,11 @@ test('S2 Template table keeps Vietnamese text and HeadTrainer actions while Mana
         globalThis.__foundation.resources = [{ items: [template], page: 1, pageSize: 20, total: 1 }, [template]];
         globalThis.__foundation.controls = [];
         const html = render(h(TemplateList), role);
-        assert.match(html, /class="table template-table"/);
+        assert.match(html, /class="table hc-table"/);
         assert.match(html, /tabindex="0" role="region"/);
         assert.ok(html.includes(template.name)); assert.ok(html.includes(template.goal));
-        const labels = globalThis.__foundation.controls.filter(x => x.type === 'button').map(x => x.props.children);
+        const text = children => [children].flat(Infinity).filter(part => typeof part === 'string').join('');
+        const labels = globalThis.__foundation.controls.filter(x => x.type === 'button').map(x => text(x.props.children));
         for (const label of [msg(MSG.TAO_GIAO_AN), msg(MSG.CURRIC_COPY), msg(MSG.CURRIC_ASSIGN)]) {
             assert.equal(labels.includes(label), role === ROLES.HeadTrainer, label);
         }

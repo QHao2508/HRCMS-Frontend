@@ -1,11 +1,12 @@
-import { HEALTH_STATUS } from "../constants/registration.js";
-import { PLAN_STATUS, SESSION_STATUS } from "../constants/training.js";
 import { getEnumLabel } from "../constants/enumLabels.js";
 import { MSG, msg } from "../messages/index.js";
 import { Link } from "react-router-dom";
 import RegistrationError from "./registrations/RegistrationError.jsx";
 import { Children, isValidElement, useId } from 'react';
 import PageHeader from './ui/PageHeader.jsx';
+import { Pagination as NumberedPagination } from './ui/DataTable.jsx';
+import StatusBadge from './ui/StatusBadge.jsx';
+import { stateTone } from '../utils/statusTone.js';
 
 /**
  * Dựng tiêu đề, mô tả và action của màn hình theo cùng bố cục.
@@ -23,7 +24,7 @@ export function ResourceState({ resource }) { return <>{resource.loading && <div
  * Nhãn/thông báo lấy từ catalog; enum và dữ liệu người dùng giữ nguyên giá trị.
  * @param options0 Đối tượng destructuring: { data, onChange }. Các props/callback lấy từ caller.
  */
-export function Pagination({ data, onChange }) { return data && <nav aria-label={msg(MSG.PHAN_TRANG)} className="pagination-row"><button type="button" className="btn btn-outline-secondary" disabled={data.page <= 1} onClick={() => onChange(data.page - 1)}>{msg(MSG.TRUOC)}</button><span aria-live="polite">{msg(MSG.PAGINATION_SUMMARY, { page: data.page, pages: Math.max(1, Math.ceil(data.total / data.pageSize)), total: data.total })}</span><button type="button" className="btn btn-outline-secondary" disabled={data.page * data.pageSize >= data.total} onClick={() => onChange(data.page + 1)}>{msg(MSG.SAU)}</button></nav>; }
+export function Pagination({ data, onChange }) { return data ? <NumberedPagination page={data.page} pageSize={data.pageSize} total={data.total} onChange={onChange} /> : null; }
 /**
  * Tạo liên kết quay lại với nhãn thông điệp mặc định hoặc nội dung caller truyền.
  * Nhãn/thông báo lấy từ catalog; enum và dữ liệu người dùng giữ nguyên giá trị.
@@ -55,4 +56,4 @@ export function MutationState({ mutation, reload }) { return <><RegistrationErro
  * Chọn màu badge từ enum trạng thái và trả nhãn tiếng Việt an toàn.
  * @param options0 Đối tượng destructuring: { value }. Các props/callback lấy từ caller.
  */
-export function StateBadge({ value }) { return <span className={`badge status-pill ${[PLAN_STATUS.Completed, HEALTH_STATUS.Fit].includes(value) ? "text-bg-success" : [SESSION_STATUS.IssueReported, HEALTH_STATUS.Injured, PLAN_STATUS.Paused].includes(value) ? "text-bg-warning" : "text-bg-secondary"}`}>{getEnumLabel(value)}</span>; }
+export function StateBadge({ value }) { return <StatusBadge tone={stateTone(value)} dot>{getEnumLabel(value)}</StatusBadge>; }

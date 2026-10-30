@@ -1,0 +1,19 @@
+/* Mẫu danh sách M4 dùng chung cho các màn #13, #16, #18, #19, #22: tiêu đề + nút chính, thẻ phẳng chứa bộ lọc, bảng, phân trang. */
+.list-page { display: grid; gap: 20px; }
+.list-page .hc-page-header { margin-bottom: 0; }
+.list-card { display: grid; }
+.list-filters { padding: 16px 16px 0; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.list-filters .hc-chips { padding: 0 0 16px; }
+.list-filters + .hc-table-wrap, .list-filters + .table-responsive { border-top: 1px solid var(--hc-border); }
+.list-card > .hc-empty { margin: 16px; }
+.list-card .hc-pagination { padding: 14px 16px; border-top: 1px solid var(--hc-border); }
+.list-state { padding: 16px; display: grid; gap: 12px; justify-items: start; }
+.list-search { flex: 1 1 280px; display: flex; gap: 8px; min-width: 0; padding-bottom: 16px; }
+.list-search input { flex: 1; min-width: 0; }
+.list-section-title { margin: 0; padding: 16px 16px 0; font: 800 var(--hc-font-size-2)/1.35 var(--hc-font-body); color: var(--hc-text); }
+.list-select { display: flex; align-items: center; gap: 8px; margin: 0; white-space: nowrap; font-size: var(--hc-font-size-1); font-weight: 600; color: var(--hc-muted); }
+.list-select .form-select { height: 40px; min-width: 200px; font-size: var(--hc-font-size-1); }
+.list-card > .hc-toolbar + .hc-table-wrap { border-top: 1px solid var(--hc-border); }
+.list-card > .resource-loading, .list-card > .alert { margin: 0 16px 16px; }
+@media (max-width: 560px) { .list-select { flex: 1 1 100%; display: grid; } .list-select .form-select { min-width: 0; } }
+.list-section-help { margin: 4px 16px 12px; color: var(--hc-muted); font-size: var(--hc-font-size-1); }

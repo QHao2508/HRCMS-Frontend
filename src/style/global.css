@@ -110,10 +110,6 @@ fieldset,.row > * { min-width: 0; }
 .card-description { font-size: var(--hc-font-size-1); color: var(--hc-muted); margin-bottom: 20px; }
 .form-card { background: white; border: 1px solid var(--hc-border); border-radius: 12px; padding: var(--hc-space-3); margin-bottom: var(--hc-space-3); min-width: 0; box-shadow: 0 3px 12px #301c1504; }
 .form-card legend { font-size: var(--hc-font-size-4); font-weight: 700; float: none; width: auto; margin-bottom: 8px; }
-.wizard-steps { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 5px; margin: 22px 0; }
-.wizard-step { background: white; color: var(--hc-muted); border: 1px solid var(--hc-border); padding: 13px 10px; text-align: left; font-size: var(--hc-font-size-1); border-radius: 3px; }
-.wizard-step[aria-current="step"] { background: var(--hc-brown); color: white; border-color: var(--hc-brown); }
-.wizard-step-number { font-weight: bold; margin-right: 4px; }
 .wizard-actions { display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap; margin: 22px 0; }
 .wizard-actions .back-action { margin-right: auto; }
 .upload-zone { padding: 22px; border: 1px dashed #ccbca6; border-radius: 6px; background: var(--hc-input); }
@@ -144,8 +140,6 @@ fieldset,.row > * { min-width: 0; }
 .history-item pre { background: var(--hc-input); padding: 15px; border-radius: 5px; white-space: pre-wrap; word-break: break-word; max-height: 360px; overflow: auto; font-size: var(--hc-font-size-1); }
 @media (max-width: 900px) {
   .app-content { padding: 24px; }
-  .wizard-steps { display: flex; overflow-x: auto; }
-  .wizard-step { min-width: 140px; }
 }
 @media (max-width: 600px) {
   .public-header { padding: 16px 20px; }

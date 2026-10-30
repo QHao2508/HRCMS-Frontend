@@ -1,10 +1,14 @@
 import RegistrationErrors from '../../components/registrations/RegistrationErrors.jsx';
+import PageHeader from "../../components/ui/PageHeader.jsx";
+import { Skeleton } from "../../components/ui/States.jsx";
+import { BackLink } from "../../components/WorkflowUI.jsx";
+import { displayDate } from "../../services/displayDate.js";
 import { focusRegistrationField } from '../../services/registrationFocus.js';
 import { useUnsavedChanges } from '../../context/useUnsavedChanges.js';
 import { MSG, msg } from "../../messages/index.js";
 import { WizardSteps, RegistrationSummary } from "../../components/registrations/RegistrationWizard.jsx";
 import { useCallback, useRef, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useRegistrationResource } from "../../context/useRegistrationResource.js";
 import { getRegistration, updateRegistration, submitRegistration, cancelRegistration } from "../../services/registrationService.js";
 import { listAttachments, uploadAttachment } from "../../services/registrationAttachments.js";
@@ -115,8 +119,7 @@ export function RegistrationDetailContent({ initialRecord, initialAttachments, r
         });
     }
     return <>
-        <div className="d-flex flex-wrap align-items-center gap-3"><h1>{record.name || msg(MSG.HO_SO_CHUA_CO_TEN)}</h1><RegistrationStatus status={record.status} /></div>
-        <p className="text-body-secondary">{msg(MSG.MA_HO_SO)}{' '}{record.id}</p>
+        <PageHeader title={record.name || msg(MSG.HO_SO_CHUA_CO_TEN)} description={<>{msg(MSG.NGAY_TAO)}{' '}{displayDate(record.createdAt)}{' · '}<span className="registration-id">{msg(MSG.MA_HO_SO)}{' '}{record.id}</span></>} actions={<RegistrationStatus status={record.status} />} />
         {record.reviewReason && <div className="alert alert-warning"><strong>{msg(MSG.LY_DO_YEU_CAU_CHINH_SUA)}</strong><p className="mb-0" style={{ whiteSpace: "pre-wrap" }}>{record.reviewReason}</p></div>}
         {!canEditRegistration(record.status) && <p>{msg(MSG.HO_SO_NAY_CHI_DUOC_XEM)}</p>}
         <RegistrationError error={error} /><RegistrationErrors errors={errors} onStep={setStep}/>
@@ -164,9 +167,9 @@ export default function RegistrationDetail() {
         return { record, attachments };
     }, [id]);
     const resource = useRegistrationResource(load);
-    return <section>
-        <Link className="action-link" to="/registrations">{msg(MSG.QUAY_LAI_YEU_CAU_DANG_KY)}</Link>
-        {resource.loading && <p role="status">{msg(MSG.DANG_TAI_HO_SO)}</p>}
+    return <section className="registration-page">
+        <BackLink to="/registrations">{msg(MSG.YEU_CAU_DANG_KY)}</BackLink>
+        {resource.loading && <Skeleton lines={4} />}
         {resource.error && <><RegistrationError error={resource.error} /><button className="btn btn-outline-primary" onClick={resource.reload}>{msg(MSG.THU_LAI)}</button></>}
         {resource.data && <RegistrationDetailContent key={id} initialRecord={resource.data.record} initialAttachments={resource.data.attachments} reload={resource.reload} />}
     </section>;

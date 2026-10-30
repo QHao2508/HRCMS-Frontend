@@ -26,7 +26,7 @@ export function FilterChips({ options, value, onChange, label = msg(MSG.UI_FILTE
  */
 export function DataTable({ columns, rows, rowKey = 'id', empty, caption }) {
     if (!rows?.length) return empty ?? null;
-    return <div className="hc-table-wrap table-responsive">
+    return <div className="hc-table-wrap table-responsive" {...(caption ? { tabIndex: 0, role: 'region', 'aria-label': caption } : {})}>
         <table className="table hc-table">
             {caption && <caption className="visually-hidden">{caption}</caption>}
             <thead><tr>{columns.map(column => <th key={column.key} scope="col" className={column.align === 'end' ? 'text-end' : undefined}>{column.label}</th>)}</tr></thead>
