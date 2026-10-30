@@ -5,13 +5,13 @@
     --hc-bg: #f6f4ef; --hc-surface: #ffffff; --hc-input: #ffffff;
     --hc-border: #e6e1d8; --hc-text: #231c16; --hc-muted: #6b6259;
     --hc-brown: var(--hc-primary); --hc-brown-hover: var(--hc-primary-hover); --hc-dark: var(--hc-sidebar);
-    --hc-green: #286348; --hc-focus: var(--hc-primary); --hc-radius: 12px;
+    --hc-green: #245f45; --hc-focus: var(--hc-primary); --hc-radius: 12px;
     --hc-success-bg: #e5f1eb; --hc-success-text: #245f45;
     --hc-warning-bg: #fff2d8; --hc-warning-text: #805000; --hc-warning-dot: #c98a1b;
     --hc-danger-bg: #fbe6e3; --hc-danger-text: #a33326;
     --hc-info-bg: #e3eef6; --hc-info-text: #245879;
-    --hc-neutral-bg: #efece8; --hc-neutral-text: #6b6259;
-    --hc-shadow: 0 3px 14px #231c1608;
+    --hc-neutral-bg: #f1eee8; --hc-neutral-text: #6b6259;
+    --hc-shadow: 0 3px 14px #231c1600;
     --bs-primary: var(--hc-primary); --bs-primary-rgb: 122,69,40;
     --bs-body-bg: var(--hc-bg); --bs-body-color: var(--hc-text);
 }
@@ -22,151 +22,119 @@ body, .app-shell { background: var(--hc-bg); color: var(--hc-text); }
 .system-header .system-portal-title, .app-shell .system-portal-title { color: var(--hc-muted); }
 .system-header .system-account, .app-shell .system-account { color: var(--hc-text); }
 .system-header .system-account small, .app-shell .system-account small { color: var(--hc-muted); }
-.system-header .system-dashboard-link, .app-shell .system-dashboard-link { color: var(--hc-primary); background: #f2ebe3; border: 1px solid var(--hc-border); border-radius: 8px; padding: 9px 12px; }
+.system-header .system-dashboard-link, .app-shell .system-dashboard-link { color: var(--hc-primary); background: #efebe4; border: 1px solid var(--hc-border); border-radius: 8px; padding: 9px 12px; }
 .system-header .notification-trigger { background: var(--hc-surface); border-color: var(--hc-border); color: var(--hc-primary); }
-.system-header .btn { background: var(--hc-primary); border-color: var(--hc-primary); color: #fff; }
-.system-header .btn:hover { background: var(--hc-primary-hover); color: #fff; }
+.system-header .btn { background: var(--hc-primary); border-color: var(--hc-primary); color: #ffffff; }
+.system-header .btn:hover { background: var(--hc-primary-hover); color: #ffffff; }
 .system-header .brand-crest { width: 52px; height: 56px; border-radius: 8px; background: var(--hc-sidebar); flex-shrink: 0; }
 .system-header .brand-header-logo.is-canonical-logo { position: absolute; width: 180px; height: auto; max-width: none; left: 50%; top: -8px; transform: translateX(-50%); }
 .system-header .brand-header-logo.is-custom-logo { position: static; width: 100%; height: 100%; object-fit: contain; transform: none; padding: 3px; }
-.system-header .brand-crest .brand-logo-fallback { position: static; display: grid; place-items: center; width: 100%; height: 100%; transform: none; color: #e0bf7a; }
-.app-shell .app-sidebar { background: var(--hc-sidebar); border-right: 1px solid #35281e; }
-.app-shell .grouped-sidebar .sidebar-link { color: #e5dcd2; }
-.app-shell .grouped-sidebar .sidebar-link:hover { color: #fff; background: #35271d; }
-.app-shell .grouped-sidebar .sidebar-link.active { color: #fff; background: var(--hc-primary); box-shadow: none; font-weight: 750; }
-.app-shell .sidebar-group { border-top-color: #3b2e24; }
-.app-shell .sidebar-group summary { color: #c5b7a9; }
-.app-shell .sidebar-group summary:hover { background: #35271d; color: #fff; }
-.app-shell .sidebar-group.has-active summary { color: #edc6a6; }
-.app-shell .sidebar-toggle { background: #35271d; color: #f3e7db; border-color: #6c5140; }
-.app-shell .sidebar-toggle:hover { background: var(--hc-primary); color: #fff; }
-.app-shell .workspace-context { color: var(--hc-muted); }
-.app-shell .workspace-context strong { color: var(--hc-primary); }
-.app-shell .page-heading { border-left: 3px solid var(--hc-accent); padding-left: 16px; }
-.app-shell .page-heading h1, .app-shell .medical-workspace-heading h1 { font-family: var(--hc-font-heading); font-size: var(--hc-font-size-5); font-weight: 700; color: var(--hc-text); letter-spacing: -.025em; }
-.app-shell .page-heading p { color: var(--hc-muted); }
+
 .app-shell :is(.surface-card,.form-card,.medical-table-card,.medical-selector-card,.medical-record-card) { background: var(--hc-surface); border-color: var(--hc-border); box-shadow: var(--hc-shadow); border-radius: 12px; }
 .app-shell :is(.surface-card,.form-card,.medical-table-card) > h2, .app-shell .card-heading h2 { color: var(--hc-text); font-family: var(--hc-font-body); font-size: var(--hc-font-size-2); font-weight: 800; }
 .app-shell .form-label { color: var(--hc-text); font-size: var(--hc-font-size-1); }
 .app-shell :is(.muted-caption,.summary-grid dt,.form-text,.workspace-context) { color: var(--hc-muted); font-size: var(--hc-font-size-1); font-weight: 600; }
 .app-shell :is(.form-control,.form-select,.medical-field input,.medical-field select,.medical-field textarea) { background-color: var(--hc-input); border-color: var(--hc-border); color: var(--hc-text); border-radius: 8px; }
-.app-shell :is(.form-control,.form-select,.medical-field input,.medical-field select,.medical-field textarea):focus { background-color: #fff; border-color: var(--hc-accent); box-shadow: 0 0 0 3px #c9773f20; }
+.app-shell :is(.form-control,.form-select,.medical-field input,.medical-field select,.medical-field textarea):focus { background-color: #ffffff; border-color: var(--hc-accent); box-shadow: 0 0 0 3px #c9773f1a; }
 .app-shell .is-invalid { border-color: var(--hc-danger-text); }
 .app-shell .invalid-feedback { color: var(--hc-danger-text); }
 .app-shell .btn-primary, .public-layout .btn-primary { --bs-btn-bg: var(--hc-primary); --bs-btn-border-color: var(--hc-primary); --bs-btn-hover-bg: var(--hc-primary-hover); --bs-btn-hover-border-color: var(--hc-primary-hover); --bs-btn-active-bg: var(--hc-sidebar); --bs-btn-active-border-color: var(--hc-sidebar); --bs-btn-disabled-bg: var(--hc-primary); --bs-btn-disabled-border-color: var(--hc-primary); }
-.app-shell .btn-outline-primary { --bs-btn-color: var(--hc-primary); --bs-btn-border-color: var(--hc-border); --bs-btn-hover-bg: var(--hc-primary); --bs-btn-hover-border-color: var(--hc-primary); --bs-btn-hover-color: #fff; }
-.app-shell .btn-outline-secondary { --bs-btn-color: var(--hc-muted); --bs-btn-border-color: var(--hc-border); --bs-btn-hover-bg: #f0ebe4; --bs-btn-hover-color: var(--hc-text); }
+.app-shell .btn-outline-primary { --bs-btn-color: var(--hc-primary); --bs-btn-border-color: var(--hc-border); --bs-btn-hover-bg: var(--hc-primary); --bs-btn-hover-border-color: var(--hc-primary); --bs-btn-hover-color: #ffffff; }
+.app-shell .btn-outline-secondary { --bs-btn-color: var(--hc-muted); --bs-btn-border-color: var(--hc-border); --bs-btn-hover-bg: #efebe4; --bs-btn-hover-color: var(--hc-text); }
 .app-shell .btn-danger { --bs-btn-bg: var(--hc-danger-text); --bs-btn-border-color: var(--hc-danger-text); --bs-btn-hover-bg: #83271d; --bs-btn-hover-border-color: #83271d; }
 .app-shell .action-link, .auth-card a:not(.btn), .app-shell .page-back { background: var(--hc-surface); color: var(--hc-primary); border-color: var(--hc-border); border-radius: 8px; }
-.app-shell .action-link:hover, .auth-card a:not(.btn):hover, .app-shell .page-back:hover { background: #f3e9df; border-color: #cdb49f; }
+.app-shell .action-link:hover, .auth-card a:not(.btn):hover, .app-shell .page-back:hover { background: #f4e9dd; border-color: #b8ada1; }
 .app-shell .table { --bs-table-bg: var(--hc-surface); --bs-table-border-color: var(--hc-border); color: var(--hc-text); }
-.app-shell .table th, .app-shell .medical-table th { background: #f0ebe4; color: var(--hc-muted); border-bottom-color: var(--hc-border); font-size: var(--hc-font-size-1); font-weight: 600; }
+.app-shell .table th, .app-shell .medical-table th { background: #efebe4; color: var(--hc-muted); border-bottom-color: var(--hc-border); font-size: var(--hc-font-size-1); font-weight: 600; }
 .app-shell .table tbody tr:nth-child(even) > td, .app-shell .medical-table tbody tr:nth-child(even) > td { background-color: var(--hc-surface); }
-.app-shell .table tbody tr:hover > td, .app-shell .medical-table tbody tr:hover > td { background-color: #f6efe6; }
+.app-shell .table tbody tr:hover > td, .app-shell .medical-table tbody tr:hover > td { background-color: #efebe4; }
 .app-shell .table-responsive { border-color: var(--hc-border); }
 .app-shell .summary-grid > div { border-bottom-color: var(--hc-border); }
 .app-shell .summary-grid dd { color: var(--hc-text); }
-.app-shell .section-tabs, .app-shell .medical-nav { background: #ede7de; border: 1px solid var(--hc-border); }
-.app-shell .section-tabs a, .app-shell .section-tabs button, .app-shell .medical-nav-link { color: var(--hc-primary); }
-.app-shell .section-tabs a:hover, .app-shell .medical-nav-link:hover { background: #f8f4ee; }
-.app-shell .section-tabs a.active, .app-shell .medical-nav-link.active { background: var(--hc-primary); color: #fff; box-shadow: none; }
-.app-shell .workspace-role { background: #eee6dc; color: var(--hc-primary); border: 1px solid var(--hc-border); }
-.app-shell .dashboard-welcome { background: #eee6db; border-color: #dfd1c1; box-shadow: var(--hc-shadow); }
-.dashboard-welcome h2, .app-shell .dashboard-welcome h2 { color: var(--hc-text); font-size: var(--hc-font-size-4); }
-.dashboard-welcome p, .dashboard-welcome .muted-caption { color: var(--hc-muted); }
-.dashboard-welcome .workspace-eyebrow { color: var(--hc-primary); }
-.dashboard-priority-actions a { background: #fff; color: var(--hc-primary); border-color: #e1d2c1; }
-.dashboard-priority-actions a:hover { background: #faf3eb; border-color: var(--hc-accent); }
-.app-shell .dashboard-kpis .surface-card { background: var(--hc-surface); border-top: 3px solid var(--hc-accent); }
-.dashboard-metric-heading svg { color: var(--hc-accent); }
+
 .app-shell .dashboard-kpi-value { color: var(--hc-text); font-size: var(--hc-font-size-5); font-weight: 800; font-variant-numeric: tabular-nums; }
-.app-shell .dashboard-quick-actions .btn { background: #fff; border-color: var(--hc-border); }
-.app-shell .empty-state { background: #f8f5f0; border-color: var(--hc-border); }
+
+.app-shell .empty-state { background: #f6f4ef; border-color: var(--hc-border); }
 .app-shell .pagination-row, .app-shell .form-action-bar { border-top-color: var(--hc-border); }
-.app-shell .wizard-actions { background: #fffffff5; border-color: var(--hc-border); }
-.app-shell .workflow-progress li { background: #f4efe8; border-color: var(--hc-border); }
-.app-shell .workflow-progress .is-current { background: #f0e3d5; border-color: #c8a27e; color: var(--hc-primary); }
+.app-shell .wizard-actions { background: #fffffff2; border-color: var(--hc-border); }
+.app-shell .workflow-progress li { background: #f1eee8; border-color: var(--hc-border); }
+.app-shell .workflow-progress .is-current { background: #f4e9dd; border-color: #b8ada1; color: var(--hc-primary); }
 .app-shell .workflow-progress .is-current > span { background: var(--hc-primary); border-color: var(--hc-primary); }
 .app-shell .medical-app { --med-surface: var(--hc-surface); --med-line: var(--hc-border); --med-ink: var(--hc-text); --med-muted: var(--hc-muted); }
-.app-shell .medical-primary-button { background: var(--hc-primary); border-color: var(--hc-primary); color: #fff; }
+.app-shell .medical-primary-button { background: var(--hc-primary); border-color: var(--hc-primary); color: #ffffff; }
 .app-shell .medical-primary-button:hover { background: var(--hc-primary-hover); }
-.app-shell .medical-secondary-button { background: #fff; color: var(--hc-primary); border-color: var(--hc-border); }
-.app-shell .medical-secondary-button:hover { background: #f6ece1; border-color: #cdb49f; }
+.app-shell .medical-secondary-button { background: #ffffff; color: var(--hc-primary); border-color: var(--hc-border); }
+.app-shell .medical-secondary-button:hover { background: #f4e9dd; border-color: #b8ada1; }
 .app-shell .medical-overview-metric { background: var(--hc-surface); border-color: var(--hc-border); }
-.app-shell .medical-workflow-note, .app-shell .availability-panel { background: #f0e9de; border-color: #dfd0bd; color: var(--hc-primary); }
-.app-shell .availability-resource { background: #fff; border-color: var(--hc-border); }
-.app-shell .medical-record-selection, .app-shell .medical-selector-card, .app-shell .medical-record-header { background: #f4efe7; border-color: var(--hc-border); }
+.app-shell .medical-workflow-note, .app-shell .availability-panel { background: #f4e9dd; border-color: #d6cdbf; color: var(--hc-primary); }
+.app-shell .availability-resource { background: #ffffff; border-color: var(--hc-border); }
+.app-shell .medical-record-selection, .app-shell .medical-selector-card, .app-shell .medical-record-header { background: #f1eee8; border-color: var(--hc-border); }
 .app-shell .medical-modal, .app-shell .medical-modal-actions { background: var(--hc-surface); }
-.app-shell .medical-modal-header { background: #f0e7dd; }
-.app-shell .medical-modal-backdrop { background: #1f1712ad; }
-.app-shell .medical-clinician-badge { background: #eee5d9; border-color: #d6c3ad; color: var(--hc-primary); }
-.app-shell .medical-record-summary > div { background: #f8f5f0; }
-.report-chart-track { background: #ebe1d4; }
+.app-shell .medical-modal-header { background: #f4e9dd; }
+.app-shell .medical-modal-backdrop { background: #1f1712bf; }
+
+.app-shell .medical-record-summary > div { background: #f6f4ef; }
+.report-chart-track { background: #e6e1d8; }
 .report-chart-track span { background: var(--hc-primary); }
-.app-shell .horse-overview { background: var(--hc-surface); border-top: 3px solid var(--hc-accent); }
-.horse-overview-layout { grid-template-columns: 240px minmax(0,1fr); }
-.horse-overview-layout:has(.horse-portrait) .summary-grid { grid-column: auto; }
+
 .horse-portrait { margin: 0; width: 100%; border: 1px solid var(--hc-border); border-radius: 12px; overflow: hidden; background: var(--hc-sidebar); box-shadow: var(--hc-shadow); }
-.horse-overview-layout .horse-portrait .horse-photo { display: block; width: 100%; max-height: none; height: 280px; object-fit: cover; border: 0; border-radius: 0; margin: 0 !important; }
-.horse-photo-placeholder { min-height: 280px; padding: 24px 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; color: #dbb389; background: #2d2118; }
-.horse-photo-placeholder strong { color: #f7e8d6; font-size: var(--hc-font-size-1); }
-.horse-photo-placeholder p { color: #d0c0ae; font-size: var(--hc-font-size-1); line-height: 1.65; margin: 0; }
-.horse-photo-placeholder .btn { display: inline-flex; gap: 8px; align-items: center; background: #f4e7d5; color: var(--hc-primary); border-color: #cba77f; }
-.horse-portrait figcaption { padding: 12px; color: #e6c6a4; background: var(--hc-sidebar); font-size: var(--hc-font-size-1); text-align: center; }
+
+.horse-photo-placeholder { min-height: 280px; padding: 24px 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; color: #e3c27f; background: #2e221b; }
+.horse-photo-placeholder strong { color: #f4e9dd; font-size: var(--hc-font-size-1); }
+.horse-photo-placeholder p { color: #cfc3b6; font-size: var(--hc-font-size-1); line-height: 1.65; margin: 0; }
+.horse-photo-placeholder .btn { display: inline-flex; gap: 8px; align-items: center; background: #f4e9dd; color: var(--hc-primary); border-color: #e3c27f; }
+.horse-portrait figcaption { padding: 12px; color: #eadbc8; background: var(--hc-sidebar); font-size: var(--hc-font-size-1); text-align: center; }
 /* Semantic states are the only places where green, amber, red and blue carry status meaning. */
 .app-shell :is(.badge,.ops-badge,.medical-treatment-status,.status-badge,.injury-status,.injury-severity) { border-radius: 6px; }
-.app-shell .text-bg-success, .app-shell .ops-success, .app-shell .medical-treatment-status.completed, .app-shell .injury-status.recovered, .app-shell .status-badge.fit { background: var(--hc-success-bg) !important; color: var(--hc-success-text) !important; }
-.app-shell .text-bg-warning, .app-shell .ops-warning, .app-shell .medical-treatment-status.active, .app-shell .injury-status.recovering, .app-shell .status-badge.monitoring { background: var(--hc-warning-bg) !important; color: var(--hc-warning-text) !important; }
-.app-shell .text-bg-danger, .app-shell .ops-danger, .app-shell .injury-severity.critical, .app-shell .injury-severity.severe, .app-shell .status-badge.injured, .app-shell .status-badge.isolated { background: var(--hc-danger-bg) !important; color: var(--hc-danger-text) !important; }
-.app-shell .text-bg-info, .app-shell .ops-info { background: var(--hc-info-bg) !important; color: var(--hc-info-text) !important; }
-.app-shell .text-bg-secondary, .app-shell .ops-neutral { background: var(--hc-neutral-bg) !important; color: var(--hc-neutral-text) !important; }
-.app-shell .alert-success { background: var(--hc-success-bg); color: var(--hc-success-text); border-color: #c5ded0; }
-.app-shell .alert-warning { background: var(--hc-warning-bg); color: var(--hc-warning-text); border-color: #ecd7ac; }
-.app-shell .alert-danger { background: var(--hc-danger-bg); color: var(--hc-danger-text); border-color: #e7c6c0; }
-.app-shell .alert-info { background: var(--hc-info-bg); color: var(--hc-info-text); border-color: #c7dce9; }
+.app-shell .text-bg-success, .app-shell .medical-treatment-status.completed, .app-shell .injury-status.recovered, .app-shell .status-badge.fit { background: var(--hc-success-bg) !important; color: var(--hc-success-text) !important; }
+.app-shell .text-bg-warning, .app-shell .medical-treatment-status.active, .app-shell .injury-status.recovering, .app-shell .status-badge.monitoring { background: var(--hc-warning-bg) !important; color: var(--hc-warning-text) !important; }
+.app-shell .text-bg-danger, .app-shell .injury-severity.critical, .app-shell .injury-severity.severe, .app-shell .status-badge.injured, .app-shell .status-badge.isolated { background: var(--hc-danger-bg) !important; color: var(--hc-danger-text) !important; }
+.app-shell .text-bg-info { background: var(--hc-info-bg) !important; color: var(--hc-info-text) !important; }
+.app-shell .text-bg-secondary { background: var(--hc-neutral-bg) !important; color: var(--hc-neutral-text) !important; }
+.app-shell .alert-success { background: var(--hc-success-bg); color: var(--hc-success-text); border-color: #e5f1eb; }
+.app-shell .alert-warning { background: var(--hc-warning-bg); color: var(--hc-warning-text); border-color: #eadbc8; }
+.app-shell .alert-danger { background: var(--hc-danger-bg); color: var(--hc-danger-text); border-color: #cfc3b6; }
+.app-shell .alert-info { background: var(--hc-info-bg); color: var(--hc-info-text); border-color: #e3eef6; }
 .public-layout { background: var(--hc-bg); }
-.auth-workspace .auth-card { background: #fff; border-color: var(--hc-border); box-shadow: var(--hc-shadow); }
-.auth-workspace .auth-intro { background: #eee5d9; border-color: #dac9b4; }
+.auth-workspace .auth-card { background: #ffffff; border-color: var(--hc-border); box-shadow: var(--hc-shadow); }
+.auth-workspace .auth-intro { background: #f4e9dd; border-color: #d6cdbf; }
 .auth-workspace .auth-intro-eyebrow, .auth-workspace .auth-intro h2 { color: var(--hc-primary); }
-.auth-workspace .auth-benefit-icon { background: #e3d4bf; color: var(--hc-primary); }
-.hp .hp-hero { background-color: #eee5d9; }
+.auth-workspace .auth-benefit-icon { background: #eadbc8; color: var(--hc-primary); }
+.hp .hp-hero { background-color: #f4e9dd; }
 .hp .hp-scope { background: var(--hc-bg); }
-.hp .hp-core-card { background: #fff; border-color: var(--hc-border); }
-.hp .hp-boundary { background: #eee5d9; }
-.hp .hp-role-card { background: #fff; border-color: var(--hc-border); }
-.hp .hp-cta, .public-footer, .hp .hp-footer { background: var(--hc-sidebar); color: #f7e8d6; }
-.hp .hp-cta h2 { color: #f7e8d6; }
+.hp .hp-core-card { background: #ffffff; border-color: var(--hc-border); }
+.hp .hp-boundary { background: #f4e9dd; }
+.hp .hp-role-card { background: #ffffff; border-color: var(--hc-border); }
+.hp .hp-cta, .public-footer, .hp .hp-footer { background: var(--hc-sidebar); color: #f4e9dd; }
+.hp .hp-cta h2 { color: #f4e9dd; }
 .hp .hp-button-green { background: var(--hc-primary); border-color: var(--hc-primary); }
 .hp .hp-button-green:hover { background: var(--hc-primary-hover); }
-@media(max-width:1100px) { .horse-overview-layout { grid-template-columns: 190px minmax(0,1fr); } }
+
 @media(max-width:768px) {
-    .app-shell .app-sidebar.grouped-sidebar { background: var(--hc-sidebar); border-bottom-color: #483526; }
-    .app-shell .sidebar-group summary { color: #d2c1ae; }
-    .app-shell .grouped-sidebar nav { background: var(--hc-sidebar); }
-    .app-shell .page-heading h1, .app-shell .medical-workspace-heading h1 { font-size: var(--hc-font-size-5); }
+
     .app-shell :is(.form-control,.form-select,.medical-field input,.medical-field select,.medical-field textarea) { font-size: var(--hc-font-size-2); }
 }
-@media(max-width:600px) { .horse-overview-layout { grid-template-columns: minmax(0,1fr); } .horse-portrait { max-width: 320px; } }
+@media(max-width:600px) { .horse-portrait { max-width: 320px; } }
 
 /* Compact header: identity at left, a single aligned account group at right. */
-.system-header, .app-shell .system-header { border-top: 0; background: #fcfaf7; box-shadow: 0 2px 12px #231c1606; }
+.system-header, .app-shell .system-header { border-top: 0; background: #fcfbf8; box-shadow: 0 2px 12px #231c1600; }
 .system-header .system-header-inner, .app-shell .system-header-inner { width: calc(100% - 48px); min-height: 80px; gap: 24px; padding-block: 10px; flex-wrap: nowrap; }
 .system-header .system-brand-group { display: flex; align-items: center; gap: 22px; min-width: 0; }
 .system-header .system-brand { gap: 12px; font-size: var(--hc-font-size-4); letter-spacing: -.6px; }
-.system-header .system-portal-title, .app-shell .system-portal-title { display: block; margin: 0; padding-left: 22px; border-left: 1px solid #d9cec0; max-width: none; white-space: nowrap; font-family: var(--hc-font-heading); font-size: clamp(var(--hc-font-size-2), 1.35vw, var(--hc-font-size-4)); line-height: 1.4; letter-spacing: .045em; font-weight: 800; }
+.system-header .system-portal-title, .app-shell .system-portal-title { display: block; margin: 0; padding-left: 22px; border-left: 1px solid #d6cdbf; max-width: none; white-space: nowrap; font-family: var(--hc-font-heading); font-size: clamp(var(--hc-font-size-2), 1.35vw, var(--hc-font-size-4)); line-height: 1.4; letter-spacing: .045em; font-weight: 800; }
 .system-header .brand-crest, .app-shell .system-header .brand-crest { width: 44px; height: 48px; border-radius: 8px; }
 .system-header .brand-header-logo.is-canonical-logo { width: 164px; top: -7px; }
 .system-header .system-account-controls { margin-left: auto; width: auto; gap: 16px; flex-shrink: 0; }
 .system-header .system-dashboard-link, .app-shell .system-dashboard-link { display: inline-flex; align-items: center; gap: 8px; background: transparent; min-height: 40px; padding: 8px 12px; }
 .app-shell .system-header .system-dashboard-link { display: none; }
 .system-header .system-profile { display: flex; align-items: center; gap: 10px; padding-left: 16px; border-left: 1px solid var(--hc-border); }
-.system-header .system-avatar { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: #eee5d9; color: var(--hc-primary); flex-shrink: 0; }
+.system-header .system-avatar { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: #f4e9dd; color: var(--hc-primary); flex-shrink: 0; }
 .system-header .system-account, .app-shell .system-account { max-width: 210px; font-size: var(--hc-font-size-1); line-height: 1.5; }
 .system-header .system-account > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .system-header .system-account small { font-size: var(--hc-font-size-1); }
-.system-header .notification-trigger { width: 40px; height: 40px; border-radius: 10px; background: #fff; }
-.system-header .btn { min-height: 40px; padding: 8px 14px; border-radius: 8px; font-size: var(--hc-font-size-1); font-weight: 600; background: transparent; border-color: #d9cec0; color: var(--hc-primary); white-space: nowrap; }
-.system-header .btn:hover { background: #eee5d9; border-color: var(--hc-primary); color: var(--hc-primary-hover); }
+.system-header .notification-trigger { width: 40px; height: 40px; border-radius: 8px; background: #ffffff; }
+.system-header .btn { min-height: 40px; padding: 8px 14px; border-radius: 8px; font-size: var(--hc-font-size-1); font-weight: 600; background: transparent; border-color: #d6cdbf; color: var(--hc-primary); white-space: nowrap; }
+.system-header .btn:hover { background: #f4e9dd; border-color: var(--hc-primary); color: var(--hc-primary-hover); }
 @media(max-width:1200px) {
     .system-header .system-brand-group { gap: 14px; }
     .system-header .system-portal-title, .app-shell .system-portal-title { padding-left: 14px; font-size: var(--hc-font-size-1); letter-spacing: .02em; }
@@ -193,54 +161,35 @@ body, .app-shell { background: var(--hc-bg); color: var(--hc-text); }
 /* Shared navigation palette: dark walnut frame with warm, readable controls. */
 .system-header, .app-shell .system-header {
     background: var(--hc-sidebar);
-    color: #f6f0e7;
-    border-bottom: 1px solid #49362a;
-    box-shadow: 0 3px 14px #231c1614;
+    color: #f1eee8;
+    border-bottom: 1px solid #3a2a20;
+    box-shadow: 0 3px 14px #231c161a;
 }
-.system-header .system-brand { color: #f6f0e7; }
+.system-header .system-brand { color: #f1eee8; }
 .system-header .system-portal-title, .app-shell .system-portal-title {
-    color: #e9bd88; border-left-color: #795039; text-shadow: 0 2px 8px #00000040;
+    color: #e3c27f; border-left-color: #7a4528; text-shadow: 0 2px 8px #00000033;
 }
-.system-header .system-account, .app-shell .system-account { color: #f6f0e7; }
-.system-header .system-account small, .app-shell .system-account small { color: #cbb9a6; }
-.system-header .system-profile { border-left-color: #49362a; }
-.system-header .system-avatar { background: #493124; color: #efc6a4; }
+.system-header .system-account, .app-shell .system-account { color: #f1eee8; }
+.system-header .system-account small, .app-shell .system-account small { color: #cfc3b6; }
+.system-header .system-profile { border-left-color: #3a2a20; }
+.system-header .system-avatar { background: #3a2a20; color: #eadbc8; }
 .system-header .notification-trigger,
 .system-header .btn,
 .system-header .system-dashboard-link,
 .app-shell .system-header .btn {
-    background: #30231b; border-color: #674a36; color: #f6f0e7;
+    background: #2e221b; border-color: #5f341c; color: #f1eee8;
 }
 .system-header .notification-trigger:hover,
 .system-header .notification-bell[open] .notification-trigger,
 .system-header .btn:hover,
 .system-header .system-dashboard-link:hover,
 .app-shell .system-header .btn:hover {
-    background: var(--hc-primary); border-color: #c9773f; color: #fff;
+    background: var(--hc-primary); border-color: #c9773f; color: #ffffff;
 }
-.system-header .system-account-controls { border-top-color: #49362a; }
-.system-header :is(a,button,summary):focus-visible,
-.app-shell .app-sidebar :is(a,button,summary):focus-visible {
-    outline-color: #efc6a4;
+.system-header .system-account-controls { border-top-color: #3a2a20; }
+.system-header :is(a,button,summary):focus-visible {
+    outline-color: #eadbc8;
 }
-.app-shell .app-sidebar,
-.app-shell .app-sidebar.grouped-sidebar,
-.app-shell .grouped-sidebar nav {
-    background: var(--hc-sidebar); border-color: #49362a;
-}
-.app-shell .grouped-sidebar .sidebar-link { color: #e5d9cb; border: 1px solid transparent; }
-.app-shell .grouped-sidebar .sidebar-link:hover { background: #35271e; color: #fff4e7; }
-.app-shell .grouped-sidebar .sidebar-link.active {
-    background: #493124; color: #fff4e7; border-color: #795039;
-    box-shadow: inset 3px 0 var(--hc-accent);
-}
-.app-shell .grouped-sidebar .sidebar-link.active svg { color: #efb788; }
-.app-shell .sidebar-group { border-top-color: #35291f; }
-.app-shell .sidebar-group summary { color: #cbb9a6; }
-.app-shell .sidebar-group summary:hover { background: #35271e; color: #fff4e7; }
-.app-shell .sidebar-group.has-active summary { color: #efc6a4; }
-.app-shell .sidebar-toggle { background: #30231b; border-color: #674a36; color: #f6f0e7; }
-.app-shell .sidebar-toggle:hover { background: var(--hc-primary); color: #fff; }
 
 /* Stronger hierarchy inside the workspace, using the same earth-tone palette. */
 /* Khung chọn ngựa / bộ lọc: thẻ trắng viền mảnh như thanh công cụ của bản thiết kế, nhãn chữ phụ. */
@@ -257,19 +206,17 @@ body, .app-shell { background: var(--hc-bg); color: var(--hc-text); }
 .app-shell .table td { border-bottom-color: #efebe4; }
 .app-shell .table tbody tr:hover > td { background: #fcfbf8; }
 .app-shell .btn-outline-primary {
-    --bs-btn-bg: #ead5bf; --bs-btn-color: #5f341c; --bs-btn-border-color: #c79d76;
-    --bs-btn-hover-bg: #7a4528; --bs-btn-hover-color: #fff; --bs-btn-hover-border-color: #7a4528;
+    --bs-btn-bg: #eadbc8; --bs-btn-color: #5f341c; --bs-btn-border-color: #e3c27f;
+    --bs-btn-hover-bg: #7a4528; --bs-btn-hover-color: #ffffff; --bs-btn-hover-border-color: #7a4528;
 }
-.app-shell .action-link, .app-shell .medical-secondary-button { background: #ead5bf; color: #5f341c; border-color: #c79d76; }
-.app-shell .action-link:hover, .app-shell .medical-secondary-button:hover { background: #dfbe9e; color: #5f341c; border-color: #ac7950; }
-.app-shell .pagination-row { background: #f4eadd; border-radius: 8px; padding: 14px 16px; }
-.app-shell .dashboard-welcome { background: #e8d4bc; border-color: #cba783; }
-.app-shell .section-tabs { background: #e5d3be; }
-.app-shell .section-tabs a.active, .app-shell .section-tabs a[aria-current='page'] { background: #7a4528; color: #fff; }
-.app-shell .text-bg-success { border: 1px solid #a4cbb5; }
-.app-shell .text-bg-warning { border: 1px solid #e5c478; }
-.app-shell .text-bg-danger { border: 1px solid #e1aaa2; }
-.app-shell .text-bg-info { border: 1px solid #a9c9df; }
+.app-shell .action-link, .app-shell .medical-secondary-button { background: #eadbc8; color: #5f341c; border-color: #e3c27f; }
+.app-shell .action-link:hover, .app-shell .medical-secondary-button:hover { background: #cfc3b6; color: #5f341c; border-color: #c9773f; }
+.app-shell .pagination-row { background: #f4e9dd; border-radius: 8px; padding: 14px 16px; }
+
+.app-shell .text-bg-success { border: 1px solid #d6cdbf; }
+.app-shell .text-bg-warning { border: 1px solid #e3c27f; }
+.app-shell .text-bg-danger { border: 1px solid #b8ada1; }
+.app-shell .text-bg-info { border: 1px solid #e3eef6; }
 
 @media(max-width:600px) {
     .system-header .system-brand-group { gap: 12px; }
@@ -289,12 +236,12 @@ body, .app-shell { background: var(--hc-bg); color: var(--hc-text); }
     border: 0; max-width: none; white-space: nowrap; text-align: center;
     font-family: var(--hc-font-heading); font-size: clamp(var(--hc-font-size-3), 1.5vw, var(--hc-font-size-5));
     font-weight: 700; line-height: 1.5; letter-spacing: .065em;
-    color: #f1cc97; text-shadow: 0 2px 0 #00000065, 0 0 18px #c9773f28;
+    color: #e3c27f; text-shadow: 0 2px 0 #00000066, 0 0 18px #c9773f33;
 }
 .system-header .system-portal-title::after {
     content: ''; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%);
     width: 140px; height: 2px;
-    background: linear-gradient(90deg,transparent,#c9773f,#f1cc97,#c9773f,transparent);
+    background: linear-gradient(90deg,transparent,#c9773f,#e3c27f,#c9773f,transparent);
 }
 .system-header .system-account-controls { justify-self: end; gap: 12px; }
 .system-header .system-account, .app-shell .system-account { max-width: 150px; }
@@ -328,7 +275,7 @@ body, .app-shell { background: var(--hc-bg); color: var(--hc-text); }
     display: block; width: 100%; height: 100%; padding: 0; background: transparent; object-fit: contain;
 }
 .website-logo-upload .website-current-asset {
-    background: #1f1712; border-color: #674a36; padding: 12px; height: 180px;
+    background: #1f1712; border-color: #5f341c; padding: 12px; height: 180px;
 }
 @media(max-width:600px) {
     .system-header .brand-crest:has(.is-custom-logo),
@@ -348,19 +295,19 @@ body, .app-shell { background: var(--hc-bg); color: var(--hc-text); }
 }
 
 /* Compact weekly shift editor; labels remain associated with every input. */
-.app-shell .schedule-editor { margin-top: 24px; border: 1px solid var(--hc-border); border-radius: 10px; overflow: hidden; background: #fff; }
-.app-shell .schedule-editor-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; background: #f1e5d6; }
+.app-shell .schedule-editor { margin-top: 24px; border: 1px solid var(--hc-border); border-radius: 8px; overflow: hidden; background: #ffffff; }
+.app-shell .schedule-editor-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; background: #f4e9dd; }
 .app-shell .schedule-editor-heading h3 { display: flex; align-items: center; gap: 10px; margin: 0; font: 800 var(--hc-font-size-1) var(--hc-font-body); color: #5f341c; }
-.app-shell .schedule-count { display: inline-grid; place-items: center; min-width: 24px; height: 24px; padding: 0 6px; background: #fff; border: 1px solid #d9cabb; border-radius: 6px; font-size: var(--hc-font-size-1); font-variant-numeric: tabular-nums; }
+.app-shell .schedule-count { display: inline-grid; place-items: center; min-width: 24px; height: 24px; padding: 0 6px; background: #ffffff; border: 1px solid #d6cdbf; border-radius: 6px; font-size: var(--hc-font-size-1); font-variant-numeric: tabular-nums; }
 .app-shell .schedule-editor-heading .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 10px; font-size: var(--hc-font-size-1); }
 .app-shell .schedule-columns, .app-shell .schedule-editor .profile-schedule-row { display: grid; grid-template-columns: minmax(140px,1.2fr) minmax(120px,1fr) minmax(120px,1fr) 40px; gap: 12px; align-items: center; padding: 9px 16px; }
-.app-shell .schedule-columns { background: #faf6f0; color: #6b6259; font-size: var(--hc-font-size-1); font-weight: 700; border-block: 1px solid var(--hc-border); }
-.app-shell .schedule-editor .profile-schedule-row + .profile-schedule-row { border-top: 1px solid #eee5d9; }
-.app-shell .schedule-editor .profile-schedule-row:nth-child(even) { background: #fcfaf7; }
+.app-shell .schedule-columns { background: #f6f4ef; color: #6b6259; font-size: var(--hc-font-size-1); font-weight: 700; border-block: 1px solid var(--hc-border); }
+.app-shell .schedule-editor .profile-schedule-row + .profile-schedule-row { border-top: 1px solid #f4e9dd; }
+.app-shell .schedule-editor .profile-schedule-row:nth-child(even) { background: #fcfbf8; }
 .app-shell .schedule-editor .profile-schedule-row > div { width: 100%; min-width: 0; }
 .app-shell .schedule-editor .profile-schedule-row .form-label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .app-shell .schedule-editor :is(.form-control,.form-select) { min-height: 38px; height: 38px; padding-block: 6px; font-size: var(--hc-font-size-1); }
-.app-shell .schedule-editor .schedule-remove { display: grid; place-items: center; width: 36px; height: 36px; min-height: 36px; padding: 0; margin: 0; border-color: #ebcdc7; color: #a33326; }
+.app-shell .schedule-editor .schedule-remove { display: grid; place-items: center; width: 36px; height: 36px; min-height: 36px; padding: 0; margin: 0; border-color: #fbe6e3; color: #a33326; }
 .app-shell .schedule-editor .schedule-remove:hover { background: #fbe6e3; border-color: #a33326; }
 .app-shell .schedule-time-off :is(.schedule-columns,.profile-schedule-row) { grid-template-columns: minmax(0,1fr) minmax(0,1fr) 40px; }
 .app-shell .schedule-save-bar { display: flex; justify-content: flex-end; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--hc-border); }
@@ -383,20 +330,32 @@ body, .app-shell { background: var(--hc-bg); color: var(--hc-text); }
 
 /* Informational guidance uses the brand palette; selected tabs retain light text. */
 .app-shell .alert-info {
-    background: #f1e5d6; color: #5f341c; border-color: #d0b699;
+    background: #f4e9dd; color: #5f341c; border-color: #cfc3b6;
     border-left: 4px solid var(--hc-accent);
 }
-.app-shell .section-tabs :is(button.btn-primary,button.active,button[aria-selected='true']) {
-    background: var(--hc-primary); border-color: var(--hc-primary); color: #fff8f0;
-    --bs-btn-color: #fff8f0; --bs-btn-hover-color: #fff;
-}
-.app-shell .section-tabs :is(button.btn-primary,button.active,button[aria-selected='true']):hover {
-    background: var(--hc-primary-hover); color: #fff;
-}
+
 .app-shell .training-page .wizard-actions {
-    position: static; background: #f6eee4; margin-bottom: 0; box-shadow: none;
+    position: static; background: #f4e9dd; margin-bottom: 0; box-shadow: none;
 }
 
 /* Tên và vai trò trên header luôn một dòng; vai trò dài cắt bằng dấu … (xem đủ khi rê chuột). */
 .system-header .system-account { min-width: 0; }
 .system-header .system-account :is(span, small) { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Giai đoạn 5 – mẫu M2 (xác thực): bên trái là ảnh lớn có chữ đè lên, bên phải là form gọn; trên màn hẹp chỉ còn form. */
+.auth-workspace { grid-template-columns: minmax(0, 1fr) minmax(0, 460px); align-items: stretch; gap: 32px; }
+.auth-workspace .auth-intro { position: relative; display: flex; flex-direction: column; justify-content: flex-end; min-height: 560px; background: var(--hc-sidebar); border: 0; border-radius: 12px; overflow: hidden; color: #ffffff; }
+.auth-workspace .auth-intro-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.auth-workspace .auth-intro::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, #1f171200 25%, #1f1712f2 70%, #1f1712f2 100%); }
+.auth-workspace .auth-intro-copy { position: relative; z-index: 1; padding: 32px; }
+.auth-workspace .auth-intro-eyebrow { color: var(--hc-accent); }
+.auth-workspace .auth-intro h2 { color: #ffffff; }
+.auth-workspace .auth-intro-copy > p:not(.auth-intro-eyebrow), .auth-workspace .auth-benefits p { color: #e6e1d8; }
+.auth-workspace .auth-benefits h3 { color: #ffffff; }
+.auth-workspace .auth-benefit-icon { background: #ffffff1a; color: #ffffff; }
+.auth-workspace .auth-card { border-radius: 12px; box-shadow: none; align-self: start; }
+@media (max-width: 900px) {
+    .auth-workspace { grid-template-columns: minmax(0, 1fr); }
+    .auth-workspace .auth-intro { display: none; }
+}
+.auth-workspace:has(input[name="userName"]) .auth-intro { align-self: start; height: min(640px, calc(100vh - 140px)); min-height: 520px; }
+.auth-workspace .auth-intro::after { background: linear-gradient(180deg, #1f171200 10%, #1f1712bf 50%, #1f1712f2 100%); }

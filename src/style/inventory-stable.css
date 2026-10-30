@@ -4,26 +4,22 @@
 .ops-page .ops-filter p { flex: 1 1 280px; margin: 0; color: var(--hc-muted); font-size: var(--hc-font-size-1); }
 .ops-page .ops-table-card > h2 { font-size: var(--hc-font-size-4); }
 .ops-page .ops-scroll { border: 1px solid var(--hc-border); border-radius: 8px; max-width: 100%; }
-.ops-page .ops-scroll:focus-visible { outline: 3px solid var(--hc-primary, #77482b); outline-offset: 3px; }
+.ops-page .ops-scroll:focus-visible { outline: 3px solid var(--hc-primary, #7a4528); outline-offset: 3px; }
 .ops-page .ops-table { width: 100%; table-layout: fixed; min-width: 820px; margin: 0; font-size: var(--hc-font-size-1); line-height: 1.6; }
 .ops-page .ops-table th, .ops-page .ops-table td { padding: 14px 12px; vertical-align: middle; overflow-wrap: anywhere; }
-.ops-page .ops-table th { background: #f8f5ed; color: #59412d; font-weight: 600; }
+.ops-page .ops-table th { background: #f6f4ef; color: #4a423a; font-weight: 600; }
 .ops-page .ops-table th:first-child { width: 27%; }
 .ops-page .ops-table th:last-child { width: 17%; }
-.ops-page .ops-table .ops-name { font-weight: 600; color: #453324; }
+.ops-page .ops-table .ops-name { font-weight: 600; color: #3a2a20; }
 .ops-page .ops-table .ops-number { text-align: right; font-variant-numeric: tabular-nums; }
 .ops-page .ops-actions .inline-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .ops-page .ops-actions .btn { white-space: normal; font-size: var(--hc-font-size-1); max-width: 100%; }
-.ops-page .ops-badge { display: inline-block; padding: 4px 9px; border: 1px solid transparent; border-radius: 6px; font-size: var(--hc-font-size-1); font-weight: 600; line-height: 1.5; }
-.ops-page .ops-warning { color: #794b18; background: #fff1d9; border-color: #ebcd98; }
-.ops-page .ops-success { color: #285741; background: #edf5ef; border-color: #c5dccb; }
-.ops-page .ops-neutral { color: #5d605c; background: #f2f2ee; border-color: #deded5; }
-.ops-page .ops-occupied { color: #684126; background: #f7ece0; border-color: #e2cdb8; }
-.ops-page .ops-empty { padding: 24px; margin: 0; background: #faf8f1; border-radius: 8px; color: var(--hc-muted); }
+
+.ops-page .ops-empty { padding: 24px; margin: 0; background: #f6f4ef; border-radius: 8px; color: var(--hc-muted); }
 .ops-page .ops-section-heading { display: flex; justify-content: space-between; align-items: start; gap: 16px; margin-bottom: 16px; }
 .ops-page .ops-section-heading h2 { margin: 0; min-width: 0; overflow-wrap: anywhere; scroll-margin-top: 120px; }
 .ops-page .ops-section-heading .btn { flex-shrink: 0; }
-.ops-page .ops-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 16px; margin-bottom: 24px; padding: 16px; border: 1px solid var(--hc-border); border-radius: 8px; background: #faf8f1; }
+.ops-page .ops-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 16px; margin-bottom: 24px; padding: 16px; border: 1px solid var(--hc-border); border-radius: 8px; background: #f6f4ef; }
 .ops-page .ops-facts dt { color: var(--hc-muted); font-size: var(--hc-font-size-1); font-weight: 500; margin-bottom: 6px; }
 .ops-page .ops-facts dd { margin: 0; overflow-wrap: anywhere; font-size: var(--hc-font-size-1); }
 .ops-page .ops-detail .ops-table-card { padding: 0; border: 0; box-shadow: none; margin-bottom: 0; }
@@ -51,7 +47,7 @@
 .stall-tile { width: 100%; height: 100%; display: grid; gap: 8px; align-content: start; padding: 14px; text-align: left; border: 1px solid var(--hc-border); border-radius: 12px; background: var(--hc-surface); color: var(--hc-text); cursor: pointer; font: inherit; }
 .stall-tile:hover { border-color: var(--hc-primary); }
 .stall-tile:focus-visible { outline: 2px solid var(--hc-primary); outline-offset: 2px; }
-.stall-tile.is-occupied { background: #fcfaf6; border-left: 4px solid var(--hc-accent); }
+.stall-tile.is-occupied { background: #fcfbf8; border-left: 4px solid var(--hc-accent); }
 .stall-tile.is-selected { border-color: var(--hc-primary); box-shadow: 0 0 0 2px #7a452833; }
 .stall-name { font: 800 var(--hc-font-size-3)/1.2 var(--hc-font-body); }
 .stall-horse { font-size: var(--hc-font-size-1); font-weight: 600; min-height: 1.4em; overflow-wrap: anywhere; }
