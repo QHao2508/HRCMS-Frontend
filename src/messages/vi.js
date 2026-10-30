@@ -1628,4 +1628,9 @@ export const VI = Object.freeze({
     "HD_ARCHIVED": "Đã ngừng quản lý",
     "HD_ID_LINE_SYSTEM": "Mã hệ thống",
     "HD_ID_LINE_DOCUMENT": "Số giấy tờ",
+    "CARE_PAGE_HELP": "Việc cho ăn, vệ sinh, tắm chải và điều trị theo ngày; chọn ngựa để xem riêng từng con.",
+    "INCIDENT_PAGE_HELP": "Báo cáo và theo dõi sự cố của ngựa; sự cố được chuyển đến đúng người xử lý.",
+    "PREVENTIVE_PAGE_HELP": "Lịch tiêm phòng, tẩy giun và đóng móng định kỳ của từng ngựa.",
+    "ISSUE_PAGE_HELP": "Ghi nhận vật tư lấy ra dùng; tồn kho được trừ ngay sau khi lưu.",
+    "REPORTS_PAGE_HELP": "Số buổi tập, tỉ lệ hoàn thành, quãng đường và việc chăm sóc theo khoảng thời gian.",
 });

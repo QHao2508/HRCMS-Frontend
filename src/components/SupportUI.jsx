@@ -5,6 +5,7 @@ import { MSG, msg } from '../messages/index.js';
 import { useMutation } from '../context/useMutation.js';
 import { Field, MutationState, Pagination, ResourceState } from './WorkflowUI.jsx';
 import Drawer from './ui/Drawer.jsx';
+import { EmptyState } from './ui/States.jsx';
 import { Plus } from 'lucide-react';
 
 /**
@@ -29,11 +30,11 @@ export function SupportForm({ title, fields, initial = {}, submit, reload, disab
         </form></>;
     if (collapsible) return <div className="form-launcher"><button type="button" className={danger ? 'btn btn-outline-danger' : 'btn btn-primary'} aria-haspopup="dialog" disabled={disabled} onClick={() => setOpen(true)}>{!danger && <><Plus size={18} aria-hidden="true" />{' '}</>}{title}</button>
         <Drawer open={open} title={title} busy={mutation.pending} onClose={close}>{body}</Drawer></div>;
-    return <section className="surface-card support-form" aria-labelledby={headingId}><div className="card-heading"><h2 id={headingId}>{title}</h2></div>{body}</section>;
+    return <section className="hc-card support-form" aria-labelledby={headingId}><div className="hc-card-head"><h2 id={headingId}>{title}</h2></div>{body}</section>;
 }
 export function SupportTable({ resource, columns, actions, tableClassName = 'table' }) {
-    return <section className="surface-card" aria-busy={!!resource.loading}><ResourceState resource={resource} />{resource.data && <>
-        {!resource.data.items.length ? <div className="empty-state"><strong>{msg(MSG.SUPPORT_EMPTY)}</strong><p>{msg(MSG.UX_EMPTY_HELP)}</p></div> : <><p className="table-scroll-hint">{msg(MSG.UX_TABLE_SCROLL)}</p><div className="table-responsive" role="region" aria-label={msg(MSG.SUPPORT_ACTIONS)} tabIndex={0}><table className={`${tableClassName} support-data-table`}><thead><tr>{columns.map(c => <th scope="col" key={c.key}>{c.label}</th>)}{actions && <th scope="col">{msg(MSG.SUPPORT_ACTIONS)}</th>}</tr></thead>
+    return <section className="hc-card is-flush support-table-card" aria-busy={!!resource.loading}><ResourceState resource={resource} />{resource.data && <>
+        {!resource.data.items.length ? <EmptyState title={msg(MSG.SUPPORT_EMPTY)} description={msg(MSG.UX_EMPTY_HELP)} /> : <><p className="table-scroll-hint">{msg(MSG.UX_TABLE_SCROLL)}</p><div className="table-responsive hc-table-wrap" role="region" aria-label={msg(MSG.SUPPORT_ACTIONS)} tabIndex={0}><table className={`${tableClassName} hc-table support-data-table`}><thead><tr>{columns.map(c => <th scope="col" key={c.key}>{c.label}</th>)}{actions && <th scope="col">{msg(MSG.SUPPORT_ACTIONS)}</th>}</tr></thead>
             <tbody>{resource.data.items.map(row => <tr key={row.id}>{columns.map(c => <td key={c.key} data-label={c.label}>{c.render ? c.render(row) : row[c.key] ?? '—'}</td>)}{actions && <td data-label={msg(MSG.SUPPORT_ACTIONS)}>{actions(row)}</td>}</tr>)}</tbody></table></div></>}
         <Pagination data={resource.data} onChange={resource.setPage} /></>}</section>;
 }

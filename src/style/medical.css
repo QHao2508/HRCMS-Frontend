@@ -1592,3 +1592,15 @@
 
 /* Ô chọn trong y tế dùng cùng kiểu với ô chọn ở các trang khác (mũi tên tùy biến, không dùng giao diện mặc định). */
 .medical-app select:not(.form-select) { appearance: none; -webkit-appearance: none; padding-right: 40px; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23443b31' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 14px center; background-size: 14px 12px; }
+
+/* Giai đoạn 4: khu y tế dùng PageHeader + Tabs chung; nội dung cách thanh tab như các màn chi tiết khác. */
+.medical-app { display: grid; gap: 20px; }
+.medical-app > .hc-page-header { margin-bottom: 0; }
+.medical-app > .hc-tabs { margin-top: -4px; }
+.medical-app .hc-eyebrow { display: inline-flex; align-items: center; gap: 6px; }
+.medical-app .hc-page-actions .hc-badge { gap: 6px; }
+/* Ô số liệu và khung chọn ngựa: nền trung tính như thẻ chỉ số khác, chữ số màu chữ chính. */
+.app-shell .medical-app :is(.medical-record-selection, .medical-selector-card, .medical-record-header) { background: var(--hc-surface); }
+.medical-app .medical-lock-summary > div, .medical-app .medical-horse-context > div { background: var(--hc-bg); border: 1px solid var(--hc-border); border-radius: 8px; }
+.medical-app .medical-lock-summary strong { color: var(--hc-text); }
+.medical-app .medical-horse-context span, .medical-app .medical-lock-summary span { color: var(--hc-muted); }

@@ -243,11 +243,11 @@ body, .app-shell { background: var(--hc-bg); color: var(--hc-text); }
 .app-shell .sidebar-toggle:hover { background: var(--hc-primary); color: #fff; }
 
 /* Stronger hierarchy inside the workspace, using the same earth-tone palette. */
-.app-shell { --hc-border: #d9cabb; }
+/* Khung chọn ngựa / bộ lọc: thẻ trắng viền mảnh như thanh công cụ của bản thiết kế, nhãn chữ phụ. */
 .app-shell :is(.filter-panel,.filter-bar,.filters-panel,.medical-selector-card,.medical-record-selection) {
-    background: #eadbc9; border-color: #d0b699; border-left: 4px solid var(--hc-accent);
+    background: var(--hc-surface); border: 1px solid var(--hc-border); border-radius: 12px;
 }
-.app-shell :is(.filter-panel,.filter-bar,.filters-panel) .form-label { color: #5f341c; font-weight: 700; }
+.app-shell :is(.filter-panel,.filter-bar,.filters-panel) .form-label { color: var(--hc-muted); font-weight: 700; }
 /* Bảng theo bản thiết kế: tiêu đề nền sáng, chữ phụ đậm; dòng không kẻ sọc, rê chuột đổi nền nhẹ. */
 .app-shell :is(.table,.medical-table) th {
     background: #faf9f6; color: var(--hc-muted); border-bottom-color: var(--hc-border); font-weight: 700;

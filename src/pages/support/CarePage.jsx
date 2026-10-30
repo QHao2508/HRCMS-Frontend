@@ -15,7 +15,7 @@ const types = { Feeding: 'SUPPORT_FEEDING', Cleaning: 'SUPPORT_CLEANING', Bathin
 const label = value => msg(MSG[types[value]] || MSG.CHUA_XAC_DINH);
 export default function CarePage() {
     const { user } = useAuth(); const horses = useChoices('/api/horses'); const [params] = useSearchParams(); const [horseId, setHorseId] = useState(() => params.get('horseId') || '');
-    return <><PageHeading title={msg(MSG.SUPPORT_CARE)} /><HorseSelect resource={horses} value={horseId} onChange={setHorseId} optional />
+    return <><PageHeading title={msg(MSG.SUPPORT_CARE)} description={msg(MSG.CARE_PAGE_HELP)} /><HorseSelect resource={horses} value={horseId} onChange={setHorseId} optional />
         <CareList key={horseId} horseId={horseId} user={user} horses={horses.data || []} /></>;
 }
 function CareList({ horseId, user, horses }) {

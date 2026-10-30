@@ -17,7 +17,7 @@ const typeLabels = [MSG.SUPPORT_TRAINING_OBSERVATION, MSG.SUPPORT_CARE_OBSERVATI
 const severityLabels = [MSG.SUPPORT_NEEDS_REVIEW, MSG.SUPPORT_LOW, MSG.SUPPORT_MEDIUM, MSG.SUPPORT_HIGH, MSG.MEDICAL_CRITICAL];
 export default function IncidentPage() {
     const { user } = useAuth(); const horses = useChoices('/api/horses'); const [horseId, setHorseId] = useState('');
-    return <><PageHeading title={msg(MSG.SUPPORT_INCIDENTS)} /><HorseSelect resource={horses} value={horseId} onChange={setHorseId} optional /><IncidentList key={horseId} horseId={horseId} horses={horses.data || []} user={user} /></>;
+    return <><PageHeading title={msg(MSG.SUPPORT_INCIDENTS)} description={msg(MSG.INCIDENT_PAGE_HELP)} /><HorseSelect resource={horses} value={horseId} onChange={setHorseId} optional /><IncidentList key={horseId} horseId={horseId} horses={horses.data || []} user={user} /></>;
 }
 function IncidentList({ horseId, horses, user }) {
     const resource = usePaged('/api/care/incidents', { horseId: horseId || undefined }); const [selected, setSelected] = useState(null);

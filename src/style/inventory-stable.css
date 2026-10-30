@@ -45,3 +45,17 @@
 .ops-page .ops-stalls .ops-table th:nth-child(5) { width: 22%; }
 .ops-page .ops-stalls .ops-table th:last-child { width: 13%; }
 @media (max-width: 767px) { .ops-page .ops-section-heading { flex-wrap: wrap; } }
+
+/* Chuồng trại (#34): lưới ô chuồng; ô đang có ngựa viền đậm, bấm ô để xem chi tiết và thao tác. */
+.stall-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
+.stall-tile { width: 100%; height: 100%; display: grid; gap: 8px; align-content: start; padding: 14px; text-align: left; border: 1px solid var(--hc-border); border-radius: 12px; background: var(--hc-surface); color: var(--hc-text); cursor: pointer; font: inherit; }
+.stall-tile:hover { border-color: var(--hc-primary); }
+.stall-tile:focus-visible { outline: 2px solid var(--hc-primary); outline-offset: 2px; }
+.stall-tile.is-occupied { background: #fcfaf6; border-left: 4px solid var(--hc-accent); }
+.stall-tile.is-selected { border-color: var(--hc-primary); box-shadow: 0 0 0 2px #7a452833; }
+.stall-name { font: 800 var(--hc-font-size-3)/1.2 var(--hc-font-body); }
+.stall-horse { font-size: var(--hc-font-size-1); font-weight: 600; min-height: 1.4em; overflow-wrap: anywhere; }
+.stall-badges { display: flex; flex-wrap: wrap; gap: 6px; }
+.stall-meta { display: flex; justify-content: space-between; gap: 8px; font-size: var(--hc-font-size-1); color: var(--hc-muted); }
+.stall-open { color: var(--hc-primary); font-weight: 700; }
+.ops-stalls .hc-pagination { margin-top: 12px; }

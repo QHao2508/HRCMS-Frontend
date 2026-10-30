@@ -10,7 +10,7 @@ const types = ['Vaccination', 'Deworming', 'Farrier'];
 const typeLabels = [MSG.SUPPORT_VACCINATION, MSG.SUPPORT_DEWORMING, MSG.SUPPORT_FARRIER];
 export default function PreventivePage() {
     const horses = useChoices('/api/horses'); const [horseId, setHorseId] = useState('');
-    return <><PageHeading title={msg(MSG.SUPPORT_PREVENTIVE)} /><HorseSelect resource={horses} value={horseId} onChange={setHorseId} />{horseId && <PreventiveHorse key={horseId} horseId={horseId} />}</>;
+    return <><PageHeading title={msg(MSG.SUPPORT_PREVENTIVE)} description={msg(MSG.PREVENTIVE_PAGE_HELP)} /><HorseSelect resource={horses} value={horseId} onChange={setHorseId} />{horseId && <PreventiveHorse key={horseId} horseId={horseId} />}</>;
 }
 function PreventiveHorse({ horseId }) {
     const { user } = useAuth(); const base = `/api/horses/${id(horseId)}/medical/preventive-care`; const resource = usePaged(base);

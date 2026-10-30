@@ -53,7 +53,7 @@ export function ItemHistory({ item }) {
 export function InventoryIssuePage() {
     const { user } = useAuth(); const manager = user.role === 'ClubManager'; const items = useChoices('/api/inventory'); const [itemId, setItemId] = useState('');
     const active = (items.data || []).filter(x => !x.archived); const item = active.find(x => x.id === itemId);
-    return <><PageHeading title={msg(MSG.FLOW34_CONSUME)} action={<Link className="btn btn-outline-primary" to="/inventory">{msg(MSG.SUPPORT_INVENTORY)}</Link>} /><ResourceState resource={items} />
+    return <><PageHeading title={msg(MSG.FLOW34_CONSUME)} description={msg(MSG.ISSUE_PAGE_HELP)} action={<Link className="btn btn-outline-primary" to="/inventory">{msg(MSG.SUPPORT_INVENTORY)}</Link>} /><ResourceState resource={items} />
         <section className="surface-card"><Field label={msg(MSG.SUPPORT_ITEM)} name="itemId" value={itemId} options={choices(active)} required onChange={e => setItemId(e.target.value)} help={item ? msg(MSG.INV_STOCK_AFTER, { stock: item.stock, unit: item.unit }) : undefined} /></section>
         {item && <SupportForm key={item.id} title={msg(MSG.INV_ISSUE_TITLE)} initial={{ direction: 'Out', quantity: '', reason: '' }} reload={items.reload} submit={f => {
             const quantity = Number(f.quantity);

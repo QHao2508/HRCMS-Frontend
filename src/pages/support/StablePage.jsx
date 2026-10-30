@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../../context/useAuth.js';
 import { MSG, msg } from '../../messages/index.js';
-import { Field, PageHeading, ResourceState } from '../../components/WorkflowUI.jsx';
+import { Field, PageHeading, Pagination, ResourceState } from '../../components/WorkflowUI.jsx';
 import { SupportForm } from '../../components/SupportUI.jsx';
 import { choices, supportLabel, useChoices, usePaged } from '../../services/supportResources.js';
 import { change, id } from '../../services/supportService.js';
@@ -23,13 +23,17 @@ export default function StablePage() {
 export function Stalls({ stableId, stableName, horses, manager, groom }) {
     const resource = usePaged('/api/care/stalls', { stableId }); const [selected, setSelected] = useState(null);
     return <>{manager && <SupportForm collapsible submitLabel={msg(MSG.SUPPORT_NEW_STALL)} title={msg(MSG.SUPPORT_NEW_STALL)} initial={{ name: '' }} reload={resource.reload} submit={f => change('/api/care/stalls', { ...f, stableId })} fields={[{ name: 'name', label: msg(MSG.SUPPORT_NAME), required: true, maxLength: 100 }]} />}
-        <div className="ops-stalls"><OperationsTable title={msg(MSG.OPS_STALL_LIST)} emptyText={msg(MSG.OPS_EMPTY_STALLS)} resource={{ ...resource, setPage: page => { setSelected(null); resource.setPage(page); } }} columns={[
-            { key: 'name', label: msg(MSG.SUPPORT_STALL), render: x => displayText(x.name) },
-            { key: 'stable', label: msg(MSG.SUPPORT_STABLE), render: () => stableName },
-            { key: 'occupied', label: msg(MSG.OPS_OCCUPANCY), render: x => <OperationsBadge state={occupancyState(x.occupied)} /> },
-            { key: 'cleaningStatus', label: msg(MSG.STALL_CLEANING_STATUS), render: x => <OperationsBadge state={{ label: supportLabel(x.cleaningStatus), tone: x.cleaningStatus === 'Clean' ? 'success' : x.cleaningStatus === 'NeedsCleaning' ? 'warning' : 'neutral' }} /> },
-            { key: 'horseId', label: msg(MSG.MEDICAL_HORSE), render: x => stallHorse(x, horses.data) },
-        ]} actions={row => <button className="btn btn-outline-primary" onClick={() => setSelected(row)}>{msg(MSG.CHI_TIET)}</button>} /></div>
+        <section className="hc-card ops-stalls" aria-busy={!!resource.loading}><div className="hc-card-head"><h2>{msg(MSG.OPS_STALL_LIST)}</h2>{resource.data && <span className="hc-card-action hl-muted">{stableName}</span>}</div><ResourceState resource={resource} />
+            {resource.data && !resource.loading && !resource.error && (!resource.data.items.length ? <div className="ops-empty hc-empty" role="status"><p className="hc-empty-title">{msg(MSG.OPS_EMPTY_STALLS)}</p></div>
+                : <ul className="stall-grid">{resource.data.items.map(x => { const cleaning = { label: supportLabel(x.cleaningStatus), tone: x.cleaningStatus === 'Clean' ? 'success' : x.cleaningStatus === 'NeedsCleaning' ? 'warning' : 'neutral' };
+                    return <li key={x.id}><button type="button" className={`stall-tile${x.occupied ? ' is-occupied' : ''}${selected?.id === x.id ? ' is-selected' : ''}`} aria-pressed={selected?.id === x.id} onClick={() => setSelected(x)}>
+                        <span className="stall-name">{displayText(x.name)}</span>
+                        <span className="stall-horse">{x.occupied ? stallHorse(x, horses.data) : <span className="hl-muted">{msg(MSG.SUPPORT_VACANT)}</span>}</span>
+                        <span className="stall-badges"><OperationsBadge state={occupancyState(x.occupied)} /><OperationsBadge state={cleaning} /></span>
+                        <span className="stall-meta"><span>{stableName}</span><span className="stall-open">{msg(MSG.CHI_TIET)}</span></span>
+                    </button></li>; })}</ul>)}
+            {resource.data && <Pagination data={resource.data} onChange={page => { setSelected(null); resource.setPage(page); }} />}
+        </section>
         {selected && <OperationsDetail key={selected.id} title={displayText(selected.name)} onClose={() => setSelected(null)}><dl className="ops-facts">
             <div><dt>{msg(MSG.SUPPORT_STABLE)}</dt><dd>{stableName}</dd></div><div><dt>{msg(MSG.OPS_OCCUPANCY)}</dt><dd><OperationsBadge state={occupancyState(selected.occupied)} /></dd></div><div><dt>{msg(MSG.STALL_CLEANING_STATUS)}</dt><dd>{supportLabel(selected.cleaningStatus)}</dd></div><div><dt>{msg(MSG.MEDICAL_HORSE)}</dt><dd>{stallHorse(selected, horses.data)}</dd></div>
         </dl>{manager && selected.occupied === false && <><ResourceState resource={horses} /><SupportForm disabled={horses.loading || !!horses.error} submitLabel={msg(MSG.SUPPORT_OCCUPY)} title={msg(MSG.SUPPORT_OCCUPY)} initial={{ horseId: '' }} reload={() => { setSelected(null); resource.reload(); }} submit={f => change(`/api/care/stalls/${id(selected.id)}/occupancy`, f)} fields={[{ name: 'horseId', label: msg(MSG.MEDICAL_HORSE), options: choices(horses.data), required: true }]} /></>}

@@ -1,35 +1,32 @@
-import { NavLink, useSearchParams } from 'react-router-dom';
-import { Activity, ClipboardPlus, HeartPulse, ShieldCheck, Stethoscope, Bandage, ClipboardCheck } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
+import { Activity, ShieldCheck } from 'lucide-react';
 import { MSG, msg } from '../../messages/index.js';
+import PageHeader from '../ui/PageHeader.jsx';
+import StatusBadge from '../ui/StatusBadge.jsx';
+import Tabs from '../ui/Tabs.jsx';
 import '../../style/medical.css';
 
 const links = [
-    ['/medical', MSG.MEDICAL_WORKSPACE_OVERVIEW, Stethoscope],
-    ['/medical/examination', MSG.MEDICAL_WORKSPACE_RECORDS, ClipboardPlus],
-    ['/medical/injury', MSG.MEDICAL_WORKSPACE_INJURIES, Bandage],
-    ['/medical/treatment', MSG.MEDICAL_WORKSPACE_TREATMENTS, HeartPulse],
-    ['/medical/restrictions', MSG.MEDICAL_WORKSPACE_RESTRICTIONS, ShieldCheck],
-    ['/medical/follow-up', MSG.MEDICAL_WORKSPACE_FOLLOWUP, ClipboardCheck],
+    ['/medical', MSG.MEDICAL_WORKSPACE_OVERVIEW],
+    ['/medical/examination', MSG.MEDICAL_WORKSPACE_RECORDS],
+    ['/medical/injury', MSG.MEDICAL_WORKSPACE_INJURIES],
+    ['/medical/treatment', MSG.MEDICAL_WORKSPACE_TREATMENTS],
+    ['/medical/restrictions', MSG.MEDICAL_WORKSPACE_RESTRICTIONS],
+    ['/medical/follow-up', MSG.MEDICAL_WORKSPACE_FOLLOWUP],
 ];
 
+/**
+ * Khung chung của khu y tế: phần đầu trang và thanh tab giống các màn khác (không còn header nâu riêng).
+ * Ngựa đang chọn (?horseId=) được giữ khi chuyển tab để bác sĩ không phải chọn lại.
+ */
 export default function MedicalLayout({ children }) {
     const [search] = useSearchParams();
     const patient = search.get('horseId');
     const patientQuery = patient ? `?horseId=${encodeURIComponent(patient)}` : '';
     return <section className="medical-app">
-        <header className="medical-workspace-heading">
-            <div><span className="medical-workspace-eyebrow"><Activity size={16} aria-hidden="true" />{msg(MSG.MEDICAL_WORKSPACE_EYEBROW)}</span>
-                <h1>{msg(MSG.MEDICAL_WORKSPACE_TITLE)}</h1><p>{msg(MSG.MEDICAL_WORKSPACE_DESCRIPTION)}</p></div>
-            <span className="medical-clinician-badge"><ShieldCheck size={18} aria-hidden="true" />{msg(MSG.MEDICAL_WORKSPACE_VET)}</span>
-        </header>
-        <div className="medical-body">
-            <nav className="medical-nav" aria-label={msg(MSG.MEDICAL_WORKSPACE_NAV)}>
-                {links.map(([to, key, Icon]) => <NavLink key={to} to={to + patientQuery} end={to === '/medical'}
-                    className={({ isActive }) => `medical-nav-link${isActive ? ' active' : ''}`}>
-                    <Icon size={18} aria-hidden="true" /><span>{msg(key)}</span>
-                </NavLink>)}
-            </nav>
-            <div className="medical-content">{children}</div>
-        </div>
+        <PageHeader eyebrow={<><Activity size={14} aria-hidden="true" />{' '}{msg(MSG.MEDICAL_WORKSPACE_EYEBROW)}</>} title={msg(MSG.MEDICAL_WORKSPACE_TITLE)} description={msg(MSG.MEDICAL_WORKSPACE_DESCRIPTION)}
+            actions={<StatusBadge tone="info"><ShieldCheck size={14} aria-hidden="true" />{msg(MSG.MEDICAL_WORKSPACE_VET)}</StatusBadge>} />
+        <Tabs label={msg(MSG.MEDICAL_WORKSPACE_NAV)} tabs={links.map(([to, key]) => ({ id: to, label: msg(key), to: to + patientQuery }))} />
+        <div className="medical-content">{children}</div>
     </section>;
 }
