@@ -11,6 +11,7 @@ import { TrainerSpecialties } from './TrainerCandidates.jsx';
 import { templateCandidates, assignTemplate } from '../services/trainingService.js';
 import { requiredTypes, trainerEligibility, canAssignTrainer } from '../services/templateCurriculum.js';
 import '../style/training.css';
+import Drawer from './ui/Drawer.jsx';
 const labels = { Eligible: MSG.CURRIC_ELIGIBLE, MissingSpecialty: MSG.CURRIC_MISSING_SPECIALTY, BelowMinimumLevel: MSG.CURRIC_BELOW_LEVEL, RequirementsMissing: MSG.CURRIC_REQUIREMENTS_MISSING, Unverified: MSG.CURRIC_ELIGIBILITY_UNKNOWN };
 export default function TemplateTrainerAssignment({ template, onClose, opening = template.id }) {
     const { user } = useAuth();
@@ -27,8 +28,7 @@ export default function TemplateTrainerAssignment({ template, onClose, opening =
         if (!canEdit || busy || !selected || (assigned ? !canAssignTrainer(template, selected) : !selected.assigned)) return;
         return mutation.run(() => assignTemplate(template.id, selected.id, assigned), resource.reload);
     }
-    return <section ref={panel} className="surface-card training-action-panel training-assignment">
-        <div className="card-heading"><h2 tabIndex={-1} data-training-form-heading>{msg(MSG.CURRIC_ASSIGN)}{' · '}{template.name}</h2><button type="button" className="btn btn-outline-secondary" onClick={onClose}>{msg(MSG.UI_CLOSE)}</button></div>
+    return <Drawer open size="lg" busy={mutation.pending} title={`${msg(MSG.CURRIC_ASSIGN)} · ${template.name}`} onClose={onClose}><section ref={panel} className="training-action-panel training-assignment">
         <div className="training-requirements"><strong>{msg(MSG.CURRIC_REQUIREMENTS)}</strong><p>{types.map(getEnumLabel).join(', ') || msg(MSG.CURRIC_REQUIREMENTS_MISSING)}</p>{configured && <p>{msg(MSG.CURRIC_MIN_LEVEL)}{': '}{msg(MSG['SCHED_LEVEL_' + template.minimumExpertiseLevel])}</p>}</div>
         {!configured && <p className="alert alert-warning">{msg(MSG.CURRIC_REQUIREMENTS_MISSING)}</p>}
         <ResourceState resource={resource}/><MutationState mutation={mutation} reload={resource.reload}/>
@@ -41,5 +41,5 @@ export default function TemplateTrainerAssignment({ template, onClose, opening =
             return <tr key={candidate.id} className={candidate.id === trainerId ? 'table-success' : ''}><td><strong>{candidate.name}</strong></td><td><TrainerSpecialties specialties={candidate.specialties} required={types} minimum={template.minimumExpertiseLevel}/><details className="mt-2"><summary>{msg(MSG.CURRIC_ALL_SKILLS)}</summary><TrainerSpecialties specialties={candidate.specialties}/></details></td><td><span className={'badge ' + (state === 'Eligible' ? 'text-bg-success' : 'bg-warning-subtle text-warning-emphasis')}>{msg(labels[state])}</span></td><td><span className={'badge ' + (candidate.assigned ? 'text-bg-primary' : 'bg-light text-dark border')}>{msg(candidate.assigned ? MSG.CURRIC_ASSIGNED : MSG.CURRIC_NOT_ASSIGNED)}</span></td></tr>;
         })}</tbody></table></div>
 </>}
-    </section>;
+    </section></Drawer>;
 }

@@ -2,7 +2,7 @@ import { useListFilters } from '../../context/useListFilters.js';
 import { SupportForm } from '../../components/SupportUI.jsx';
 import { change, id, read } from '../../services/supportService.js';
 import { Link } from 'react-router-dom';
-import {useCallback,useEffect,useRef,useState} from 'react';
+import {useCallback,useState} from 'react';
 import {MSG,msg} from '../../messages/index.js';
 import {ALL_ROLES,ROLES,getRoleLabel} from '../../constants/roles.js';
 import {useRegistrationResource} from '../../context/useRegistrationResource.js';
@@ -24,10 +24,10 @@ export default function StaffPage(){
 
 function StaffStatus({selected,reload,onClose}) {
  const load=useCallback(()=>read(`/api/staff/${id(selected.id)}/workload`),[selected.id]); const resource=useRegistrationResource(load);
- const panel=useRef(null); useEffect(()=>{panel.current?.scrollIntoView?.({behavior:'smooth',block:'start'});},[selected.id]);
- return <section ref={panel} className="surface-card"><div className="d-flex justify-content-between align-items-start gap-2"><h2>{msg(MSG.BR_WORKLOAD)}</h2><button type="button" className="btn btn-outline-secondary" onClick={onClose}>{msg(MSG.UI_CLOSE)}</button></div><p>{msg(MSG.BR_WORKLOAD_HELP)}</p><p className="form-text">{msg(MSG.SUPPORT_STAFF_ACTIVE_HELP)}</p><ResourceState resource={resource}/>{resource.data && <><dl className="summary-grid">{[[MSG.BR_ASSIGNMENTS,resource.data.assignments],[MSG.BR_SESSIONS,resource.data.sessions],[MSG.BR_CARE,resource.data.careTasks]].map(([key,value])=><div key={key}><dt>{msg(key)}</dt><dd>{value}</dd></div>)}</dl><p className="form-text">{msg(MSG.BR_PREVIEW)}</p><ul>{resource.data.preview.map(x=><li key={x.kind+'-'+x.referenceId}><Link className="action-link" to={x.kind==='Session'?`/training/sessions/${x.referenceId}`:x.kind==='Care'?'/care/tasks':`/horses/${x.horseId}`}>{x.horseName}</Link>{' '}{msg(MSG.SYMBOL_SEPARATOR_DOT)}{' '}{x.kind==='Assignment'?getRoleLabel(x.state):msg(x.kind==='Care'?MSG.BR_CARE:MSG.BR_SESSIONS)}</li>)}</ul></>}
+ const name=[selected.firstName,selected.lastName].filter(Boolean).join(' ');
+ return <Drawer open size="lg" title={`${msg(MSG.BR_WORKLOAD)} · ${name}`} onClose={onClose}><section className="staff-status"><p>{msg(MSG.BR_WORKLOAD_HELP)}</p><p className="form-text">{msg(MSG.SUPPORT_STAFF_ACTIVE_HELP)}</p><ResourceState resource={resource}/>{resource.data && <><dl className="summary-grid">{[[MSG.BR_ASSIGNMENTS,resource.data.assignments],[MSG.BR_SESSIONS,resource.data.sessions],[MSG.BR_CARE,resource.data.careTasks]].map(([key,value])=><div key={key}><dt>{msg(key)}</dt><dd>{value}</dd></div>)}</dl><p className="form-text">{msg(MSG.BR_PREVIEW)}</p><ul>{resource.data.preview.map(x=><li key={x.kind+'-'+x.referenceId}><Link className="action-link" to={x.kind==='Session'?`/training/sessions/${x.referenceId}`:x.kind==='Care'?'/care/tasks':`/horses/${x.horseId}`}>{x.horseName}</Link>{' '}{msg(MSG.SYMBOL_SEPARATOR_DOT)}{' '}{x.kind==='Assignment'?getRoleLabel(x.state):msg(x.kind==='Care'?MSG.BR_CARE:MSG.BR_SESSIONS)}</li>)}</ul></>}
  <SupportForm title={msg(MSG.SUPPORT_STAFF_CONFIRM)} disabled={resource.loading || !!resource.error} initial={{email:'',emergency:'false',reason:''}} fields={f=>[{name:'email',label:msg(MSG.SUPPORT_STAFF_CONFIRM_EMAIL),type:'email',required:true},...(selected.active?[{name:'emergency',label:msg(MSG.BR_EMERGENCY),options:[{value:'false',label:msg(MSG.BR_NORMAL)},{value:'true',label:msg(MSG.BR_EMERGENCY_OPTION)}]},...(f.emergency==='true'?[{name:'reason',label:msg(MSG.BR_REASON),multiline:true,required:true,maxLength:2000}]:[])]:[])]} reload={reload} submit={f=>{if(f.email.trim().toLowerCase()!==selected.email.toLowerCase())throw Object.assign(new Error(msg(MSG.SUPPORT_CONFIRM_ERROR)),{status:400});return change(`/api/staff/${id(selected.id)}/active`,{active:!selected.active,emergency:selected.active && f.emergency==='true',reason:f.reason.trim()},'put');}}/>
- </section>;
+ </section></Drawer>;
 }
 
 /** Cho phép xuống dòng ngay sau @ thay vì bẻ giữa chữ khi email dài. */

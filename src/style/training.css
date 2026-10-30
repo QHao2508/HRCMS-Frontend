@@ -62,3 +62,4 @@
 .plan-hero-row > .plan-facts { flex: 1 1 100%; }
 .plan-status-form .btn, .plan-actions .btn { white-space: nowrap; }
 .plan-hero:has(.session-progress) { padding-bottom: 0; }
+.session-side .session-skip-button { width: 100%; }

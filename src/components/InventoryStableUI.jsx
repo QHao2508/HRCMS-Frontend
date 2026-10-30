@@ -1,4 +1,3 @@
-import { useEffect, useRef } from 'react';
 import { MSG, msg } from '../messages/index.js';
 import { Pagination, ResourceState } from './WorkflowUI.jsx';
 import '../style/inventory-stable.css';
@@ -18,8 +17,3 @@ export function OperationsTable({ resource, columns, actions, title, emptyText =
 const badgeTones = { success: 'success', warning: 'warning', danger: 'danger', info: 'info', occupied: 'info', neutral: 'neutral' };
 export function OperationsBadge({ state }) { return <StatusBadge tone={badgeTones[state.tone] || 'neutral'} dot>{state.label}</StatusBadge>; }
 
-export function OperationsDetail({ title, onClose, children }) {
-    const heading = useRef(null);
-    useEffect(() => { heading.current?.focus({ preventScroll: true }); heading.current?.scrollIntoView({ block: 'start', behavior: 'instant' }); }, []);
-    return <section className="hc-card ops-detail"><div className="ops-section-heading"><h2 ref={heading} tabIndex={-1}>{title}</h2><button type="button" className="btn btn-outline-secondary" onClick={onClose}>{msg(MSG.OPS_CLOSE_DETAIL)}</button></div>{children}</section>;
-}

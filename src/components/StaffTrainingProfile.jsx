@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import Drawer from './ui/Drawer.jsx';
 import { Plus, Trash2, CalendarDays, Clock3 } from 'lucide-react';
 import { MSG, msg } from '../messages/index.js';
 import { TRAINING_TYPE } from '../constants/training.js';
@@ -18,7 +19,9 @@ export default function StaffTrainingProfile({ staff, onClose, opening = staff.i
     const load = useCallback(() => getTrainingProfile(staff.id), [staff.id]);
     const resource = useRegistrationResource(load); const mutation = useMutation();
     const panel = useTrainingFormFocus(opening, !resource.loading);
-    return <section ref={panel} className="surface-card training-action-panel training-profile"><div className="d-flex justify-content-between align-items-start gap-2"><h2 tabIndex={-1} data-training-form-heading>{msg(MSG.SCHED_PROFILE)}{' · '}{[staff.firstName, staff.lastName].filter(Boolean).join(' ')}</h2>{onClose && <button type="button" className="btn btn-outline-secondary" onClick={onClose}>{msg(MSG.UI_CLOSE)}</button>}</div><p>{msg(MSG.SCHED_PROFILE_HELP)}</p><ResourceState resource={resource}/><MutationState mutation={mutation} reload={resource.reload}/>{resource.data && <ProfileForm staff={staff} data={resource.data} reload={resource.reload} mutation={mutation}/>}</section>;
+    const title = `${msg(MSG.SCHED_PROFILE)} · ${[staff.firstName, staff.lastName].filter(Boolean).join(' ')}`;
+    const content = <section ref={panel} className="training-action-panel training-profile"><p>{msg(MSG.SCHED_PROFILE_HELP)}</p><ResourceState resource={resource}/><MutationState mutation={mutation} reload={resource.reload}/>{resource.data && <ProfileForm staff={staff} data={resource.data} reload={resource.reload} mutation={mutation}/>}</section>;
+    return onClose ? <Drawer open size="lg" busy={mutation.pending} title={title} onClose={onClose}>{content}</Drawer> : <section className="hc-card"><div className="hc-card-head"><h2>{title}</h2></div>{content}</section>;
 }
 function ProfileForm({ staff, data, reload, mutation }) {
     const [levels, setLevels] = useState(Object.fromEntries(data.specialties.map(x => [x.trainingType, x.level])));

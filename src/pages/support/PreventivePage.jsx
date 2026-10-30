@@ -6,6 +6,7 @@ import { HorseSelect, SupportForm, SupportTable } from '../../components/Support
 import { useChoices, usePaged } from '../../services/supportResources.js';
 import { change, id } from '../../services/supportService.js';
 import { clubToday } from '../../services/workflowHelpers.js';
+import { displayDate } from '../../services/displayDate.js';
 const types = ['Vaccination', 'Deworming', 'Farrier'];
 const typeLabels = [MSG.SUPPORT_VACCINATION, MSG.SUPPORT_DEWORMING, MSG.SUPPORT_FARRIER];
 export default function PreventivePage() {
@@ -20,6 +21,6 @@ function PreventiveHorse({ horseId }) {
         { name: 'dueDate', label: msg(MSG.SUPPORT_DUE), type: 'date', required: true }, { name: 'notes', label: msg(MSG.GHI_CHU), multiline: true, maxLength: 4000 },
     ]} />}
         <SupportTable resource={resource} columns={[{ key: 'type', label: msg(MSG.SUPPORT_TYPE), render: x => msg(typeLabels[types.indexOf(x.type)] || MSG.CHUA_XAC_DINH) }, { key: 'dueDate', label: msg(MSG.SUPPORT_DUE) }, { key: 'completedDate', label: msg(MSG.SUPPORT_COMPLETED_DATE) }]} actions={user.role === 'Veterinarian' ? row => !row.completedDate && <button className="btn btn-outline-primary" onClick={() => setSelected(row)}>{msg(MSG.SUPPORT_COMPLETE)}</button> : undefined} />
-        {selected && <SupportForm key={selected.id} submitLabel={msg(MSG.SUPPORT_COMPLETE)} title={msg(MSG.SUPPORT_COMPLETE)} initial={{ completedDate: clubToday(), notes: '' }} reload={() => { setSelected(null); resource.reload(); }} submit={f => change(`${base}/${id(selected.id)}/complete`, f)} fields={[{ name: 'completedDate', label: msg(MSG.SUPPORT_COMPLETED_DATE), type: 'date', max: clubToday(), required: true }, { name: 'notes', label: msg(MSG.GHI_CHU), multiline: true, maxLength: 4000 }]} />}
+        {selected && <SupportForm drawer onClose={() => setSelected(null)} key={selected.id} submitLabel={msg(MSG.SUPPORT_COMPLETE)} title={`${msg(MSG.SUPPORT_COMPLETE)} · ${msg(typeLabels[types.indexOf(selected.type)] || MSG.CHUA_XAC_DINH)}`} intro={<p className="form-text">{msg(MSG.SUPPORT_DUE)}{': '}{displayDate(selected.dueDate)}</p>} initial={{ completedDate: clubToday(), notes: '' }} reload={() => { setSelected(null); resource.reload(); }} submit={f => change(`${base}/${id(selected.id)}/complete`, f)} fields={[{ name: 'completedDate', label: msg(MSG.SUPPORT_COMPLETED_DATE), type: 'date', max: clubToday(), required: true }, { name: 'notes', label: msg(MSG.GHI_CHU), multiline: true, maxLength: 4000 }]} />}
     </>;
 }

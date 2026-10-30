@@ -5,7 +5,8 @@ import { Field, PageHeading, Pagination, ResourceState } from '../../components/
 import { SupportForm } from '../../components/SupportUI.jsx';
 import { choices, supportLabel, useChoices, usePaged } from '../../services/supportResources.js';
 import { change, id } from '../../services/supportService.js';
-import { OperationsBadge, OperationsDetail, OperationsTable } from '../../components/InventoryStableUI.jsx';
+import { OperationsBadge, OperationsTable } from '../../components/InventoryStableUI.jsx';
+import Drawer from '../../components/ui/Drawer.jsx';
 import { displayText, occupancyState, operationTime, stallHorse, stayState } from '../../services/inventoryStableDisplay.js';
 export default function StablePage() {
     const { user } = useAuth(); const manager = user.role === 'ClubManager'; const stables = useChoices('/api/care/stables'); const [stableId, setStableId] = useState('');
@@ -34,12 +35,12 @@ export function Stalls({ stableId, stableName, horses, manager, groom }) {
                     </button></li>; })}</ul>)}
             {resource.data && <Pagination data={resource.data} onChange={page => { setSelected(null); resource.setPage(page); }} />}
         </section>
-        {selected && <OperationsDetail key={selected.id} title={displayText(selected.name)} onClose={() => setSelected(null)}><dl className="ops-facts">
+        <Drawer open={!!selected} size="lg" title={selected ? `${displayText(selected.name)} · ${stableName}` : ''} onClose={() => setSelected(null)}>{selected && <div key={selected.id} className="stall-drawer"><dl className="ops-facts">
             <div><dt>{msg(MSG.SUPPORT_STABLE)}</dt><dd>{stableName}</dd></div><div><dt>{msg(MSG.OPS_OCCUPANCY)}</dt><dd><OperationsBadge state={occupancyState(selected.occupied)} /></dd></div><div><dt>{msg(MSG.STALL_CLEANING_STATUS)}</dt><dd>{supportLabel(selected.cleaningStatus)}</dd></div><div><dt>{msg(MSG.MEDICAL_HORSE)}</dt><dd>{stallHorse(selected, horses.data)}</dd></div>
         </dl>{manager && selected.occupied === false && <><ResourceState resource={horses} /><SupportForm disabled={horses.loading || !!horses.error} submitLabel={msg(MSG.SUPPORT_OCCUPY)} title={msg(MSG.SUPPORT_OCCUPY)} initial={{ horseId: '' }} reload={() => { setSelected(null); resource.reload(); }} submit={f => change(`/api/care/stalls/${id(selected.id)}/occupancy`, f)} fields={[{ name: 'horseId', label: msg(MSG.MEDICAL_HORSE), options: choices(horses.data), required: true }]} /></>}
             {manager && selected.occupied === true && <SupportForm submitLabel={msg(MSG.SUPPORT_VACATE)} title={msg(MSG.SUPPORT_VACATE)} initial={{ confirm: '' }} reload={() => { setSelected(null); resource.reload(); }} fields={[{ name: 'confirm', label: msg(MSG.SUPPORT_CONFIRM_STALL), required: true }]} submit={f => { if (f.confirm !== selected.name) throw Object.assign(new Error(msg(MSG.SUPPORT_CONFIRM_ERROR)), { status: 400 }); return change(`/api/care/stalls/${id(selected.id)}/vacate`); }} />}
             {(manager || (groom && selected.canClean === true)) ? <SupportForm submitLabel={msg(MSG.STALL_UPDATE_CLEANING)} title={msg(MSG.STALL_UPDATE_CLEANING)} initial={{ status: selected.cleaningStatus }} reload={() => { setSelected(null); resource.reload(); }} submitDisabled={f => f.status === selected.cleaningStatus} fields={[{ name: 'status', label: msg(MSG.STALL_CLEANING_STATUS), options: ['Clean', 'NeedsCleaning'].map(value => ({ value, label: supportLabel(value) })), required: true }]} submit={f => change(`/api/care/stalls/${id(selected.id)}/cleaning`, { status: f.status }, 'put')} /> : <p className="form-text">{msg(MSG.STALL_NO_CLEAN_PERMISSION)}</p>}
-        <StallHistory stallId={selected.id} /></OperationsDetail>}
+        <StallHistory stallId={selected.id} /></div>}</Drawer>
     </>;
 }
 

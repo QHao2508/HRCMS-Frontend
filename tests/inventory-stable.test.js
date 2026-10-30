@@ -158,7 +158,7 @@ test('S6 reloading stable choices does not unmount an already selected stall and
     globalThis.__s6.stableId = 'stable-a'; globalThis.__s6.selection = { ...stall, canClean: true };
     globalThis.__s6.resources = [{ loading: true }, { data: [] }, { data: page([stall]) }, { data: page([]) }];
     const html = render(h(Stable));
-    assert.ok(html.includes(msg(MSG.STALL_UPDATE_CLEANING))); assert.ok(html.includes('Ô A01')); assert.ok(html.includes(msg(MSG.OPS_CLOSE_DETAIL)));
+    assert.ok(html.includes(msg(MSG.STALL_UPDATE_CLEANING))); assert.ok(html.includes('Ô A01')); assert.match(html, /role="dialog"/);
 });
 test('S6 Stall list shows stable, occupied, cleaning, matched horse and no unauthorized extra name', async () => {
     const html = stalls(); for (const value of ['Ô A01', 'Khu A', 'Tên ngựa trong scope', msg(MSG.SUPPORT_OCCUPIED), msg(MSG.SUPPORT_DIRTY)]) assert.ok(html.includes(value));

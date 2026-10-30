@@ -19,3 +19,10 @@
 @keyframes hc-drawer-fade { from { opacity: 0; } }
 @keyframes hc-drawer-slide { from { transform: translateX(24px); opacity: .6; } }
 @media (prefers-reduced-motion: reduce) { .hc-drawer, .hc-drawer-backdrop { animation: none; } }
+.hc-discard { margin-top: 16px; padding: 12px 14px; border: 1px solid var(--hc-warning-dot); border-radius: 8px; background: var(--hc-warning-bg); color: var(--hc-warning-text); font-size: var(--hc-font-size-1); }
+.hc-discard p { margin: 0 0 10px; font-weight: 600; }
+.hc-discard div { display: flex; flex-wrap: wrap; gap: 8px; }
+.hc-drawer-section { display: grid; gap: 16px; }
+.hc-drawer-section + .hc-drawer-section { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--hc-border); }
+.hc-drawer-section > h3 { margin: 0; font: 800 var(--hc-font-size-2)/1.35 var(--hc-font-body); color: var(--hc-text); }
+.hc-drawer .support-form { border: 0; padding: 0; box-shadow: none; background: transparent; }

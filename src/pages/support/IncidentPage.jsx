@@ -5,6 +5,7 @@ import { useMutation } from '../../context/useMutation.js';
 import { useRegistrationResource } from '../../context/useRegistrationResource.js';
 import { MSG, msg } from '../../messages/index.js';
 import { PageHeading, MutationState, ResourceState } from '../../components/WorkflowUI.jsx';
+import Drawer from '../../components/ui/Drawer.jsx';
 import { HorseSelect, SupportForm, SupportTable } from '../../components/SupportUI.jsx';
 import { useChoices, usePaged, when } from '../../services/supportResources.js';
 import { change, id, read } from '../../services/supportService.js';
@@ -27,14 +28,13 @@ function IncidentList({ horseId, horses, user }) {
         { name: 'description', label: msg(MSG.SUPPORT_DESCRIPTION), multiline: true, required: true, maxLength: 4000, help: msg(MSG.INCIDENT_PHOTO_AFTER_SAVE) },
     ]} />}
         <SupportTable resource={resource} columns={[{ key: 'horseId', label: msg(MSG.MEDICAL_HORSE), render: x => horses.find(h => h.id === x.horseId)?.name || x.horseId }, { key: 'occurredAt', label: msg(MSG.SUPPORT_OCCURRED), render: x => when(x.occurredAt) }, { key: 'type', label: msg(MSG.SUPPORT_TYPE), render: x => msg(typeLabels[types.indexOf(x.type)] || MSG.CHUA_XAC_DINH) }, { key: 'severity', label: msg(MSG.SUPPORT_SEVERITY), render: x => <span className={`badge text-bg-${({ Low: 'info', Medium: 'warning', High: 'danger', Critical: 'danger', NeedsReview: 'secondary' })[x.severity] || 'secondary'}`}>{msg(severityLabels[severities.indexOf(x.severity)] || MSG.CHUA_XAC_DINH)}</span> }, { key: 'description', label: msg(MSG.SUPPORT_DESCRIPTION) }, { key: 'resolved', label: msg(MSG.TRANG_THAI), render: x => <span className={`badge text-bg-${x.resolved ? 'success' : 'warning'}`}>{msg(x.resolved ? MSG.SUPPORT_RESOLVED : MSG.SUPPORT_NEEDS_REVIEW)}</span> }]} actions={row => <button className="btn btn-outline-primary" onClick={() => setSelected(row)}>{msg(MSG.CHI_TIET)}</button>} />
-        {selected && <IncidentDetails key={selected.id} incident={selected} user={user} reload={() => { setSelected(null); resource.reload(); }} />}
+        <Drawer open={!!selected} size="lg" title={selected ? `${msg(MSG.SUPPORT_INCIDENT_DETAILS)} · ${horses.find(h => h.id === selected.horseId)?.name || ''}` : ''} onClose={() => setSelected(null)}>{selected && <IncidentDetails key={selected.id} incident={selected} user={user} reload={() => { setSelected(null); resource.reload(); }} />}</Drawer>
     </>;
 }
 function IncidentDetails({ incident, user, reload }) {
     const base = `/api/care/incidents/${id(incident.id)}`; const load = useCallback(() => read(`${base}/photos`), [base]); const resource = useRegistrationResource(load);
     const mutation = useMutation(); const [file, setFile] = useState(null);
-    useEffect(() => { document.getElementById("incident-details")?.scrollIntoView({ behavior: "smooth", block: "start" }); }, [incident.id]);
-    return <section id="incident-details" className="surface-card incident-details"><h2>{msg(MSG.SUPPORT_INCIDENT_DETAILS)}</h2><p>{incident.description}</p>{incident.resolved && <><h3>{msg(MSG.BR_RESOLUTION)}</h3><p>{incident.resolution || "—"}</p><p>{msg(MSG.BR_RESOLVED_AT)}{' '}{when(incident.resolvedAt)}</p></>}<MutationState mutation={mutation} reload={() => { resource.reload(); reload(); }} /><ResourceState resource={resource} />
+    return <section id="incident-details" className="incident-details"><p className="incident-description">{incident.description}</p>{incident.resolved && <><h3>{msg(MSG.BR_RESOLUTION)}</h3><p>{incident.resolution || "—"}</p><p>{msg(MSG.BR_RESOLVED_AT)}{' '}{when(incident.resolvedAt)}</p></>}<MutationState mutation={mutation} reload={() => { resource.reload(); reload(); }} /><ResourceState resource={resource} />
         <h3>{msg(MSG.INCIDENT_PHOTO_TITLE)}</h3><p className="form-text">{msg(incident.resolved ? MSG.INCIDENT_PHOTO_RESOLVED : incident.reporterId !== user.id ? MSG.INCIDENT_PHOTO_REPORTER_ONLY : MSG.INCIDENT_PHOTO_HELP)}</p>
         {resource.data?.map(photo => <IncidentPhoto key={photo.id} base={base} photo={photo} />)}
         {!resource.data?.length && <p>{msg(MSG.SUPPORT_NO_PHOTOS)}</p>}

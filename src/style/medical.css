@@ -1252,3 +1252,13 @@
 .medical-app .medical-lock-summary > div, .medical-app .medical-horse-context > div { background: var(--hc-bg); border: 1px solid var(--hc-border); border-radius: 8px; }
 .medical-app .medical-lock-summary strong { color: var(--hc-text); }
 .medical-app .medical-horse-context span, .medical-app .medical-lock-summary span { color: var(--hc-muted); }
+
+/* Hộp thoại khu y tế theo cùng kiểu hộp thoại chung (hc-modal): đầu hộp trắng có đường kẻ, tiêu đề 18/800, nút đóng 40px, nền phủ không làm mờ. */
+.app-shell .medical-app .medical-modal-backdrop { background: color-mix(in srgb, var(--hc-text) 45%, transparent); backdrop-filter: none; }
+.app-shell .medical-app .medical-modal { background: var(--hc-surface); border: 0; box-shadow: 0 24px 64px #1f171233; }
+.app-shell .medical-app .medical-modal-header { background: var(--hc-surface); border-bottom: 1px solid var(--hc-border); padding: 18px 24px; align-items: flex-start; }
+.app-shell .medical-app .medical-modal-header :is(h2,h3) { margin: 0 0 4px; font: 800 var(--hc-font-size-3)/1.35 var(--hc-font-body); color: var(--hc-text); }
+.app-shell .medical-app .medical-modal-header p, .app-shell .medical-app .medical-modal-header span { color: var(--hc-muted); font-size: var(--hc-font-size-1); letter-spacing: 0; text-transform: none; font-weight: 600; }
+.app-shell .medical-app .medical-icon-button { display: grid; place-items: center; width: 40px; height: 40px; min-width: 40px; min-height: 40px; padding: 0; border: 0; border-radius: 8px; background: transparent; color: var(--hc-muted); font-size: var(--hc-font-size-4); }
+.app-shell .medical-app .medical-icon-button:hover:not(:disabled) { background: var(--hc-bg); color: var(--hc-text); }
+.app-shell .medical-app .medical-modal-actions { border-top: 1px solid var(--hc-border); }

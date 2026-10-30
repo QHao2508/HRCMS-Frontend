@@ -1180,7 +1180,6 @@ export const VI = Object.freeze({
     "RESTRICT_QUANG_DUONG_TOI_DA": "Quãng đường tối đa:",
     "RESTRICT_M": "m",
     "RESTRICT_CAM_CHAY_NUOC_RUT": "Cấm chạy nước rút",
-    "RESTRICT_F03_E": "F03-E",
     "RESTRICT_THEM_HAN_CHE_VAN_DONG": "Thêm hạn chế vận động",
     "RESTRICT_BAC_SI_THU_Y_QUYET": "Bác sĩ thú y quyết định các giới hạn vận động.",
     "RESTRICT_TEXT": "×",
@@ -1223,7 +1222,6 @@ export const VI = Object.freeze({
     "TREAT_TAI_KHAM": "Tái khám",
     "TREAT_TRANG_THAI_2": "Trạng thái",
     "TREAT_TEXT": "→",
-    "TREAT_F03_D": "F03-D",
     "TREAT_TAO_PHAC_DO_DIEU_TRI": "Tạo phác đồ điều trị",
     "TREAT_BAC_SI_THU_Y_LAP": "Bác sĩ thú y lập phác đồ điều trị.",
     "TREAT_TEXT_2": "×",
@@ -1633,4 +1631,6 @@ export const VI = Object.freeze({
     "PREVENTIVE_PAGE_HELP": "Lịch tiêm phòng, tẩy giun và đóng móng định kỳ của từng ngựa.",
     "ISSUE_PAGE_HELP": "Ghi nhận vật tư lấy ra dùng; tồn kho được trừ ngay sau khi lưu.",
     "REPORTS_PAGE_HELP": "Số buổi tập, tỉ lệ hoàn thành, quãng đường và việc chăm sóc theo khoảng thời gian.",
+    "UX_KEEP_EDITING": "Tiếp tục sửa",
+    "UX_DISCARD_CONFIRM": "Bỏ thay đổi",
 });

@@ -1,4 +1,5 @@
 import RegistrationErrors from '../../components/registrations/RegistrationErrors.jsx';
+import Modal from "../../components/ui/Modal.jsx";
 import PageHeader from "../../components/ui/PageHeader.jsx";
 import { Skeleton } from "../../components/ui/States.jsx";
 import { BackLink } from "../../components/WorkflowUI.jsx";
@@ -145,11 +146,11 @@ export function RegistrationDetailContent({ initialRecord, initialAttachments, r
                 </button>
                 <button type="button" className="btn btn-outline-danger" disabled={!!pending} onClick={() => setConfirmCancel(true)}>{msg(MSG.HUY_HO_SO)}</button>
             </div>
-            {confirmCancel && <div className="alert alert-warning mt-3" role="alert">
-                <p>{msg(MSG.HUY_HO_SO_NAY_HO_SO_SE_CHI_DUOC_XEM_THAY_DOI_CHUA_LUU_SE_BI_BO)}</p>
-                <button type="button" className="btn btn-danger me-2" disabled={!!pending} onClick={cancel}>{msg(MSG.XAC_NHAN_HUY)}</button>
-                <button type="button" className="btn btn-secondary" disabled={!!pending} onClick={() => setConfirmCancel(false)}>{msg(MSG.GIU_HO_SO)}</button>
-            </div>}
+            <Modal open={confirmCancel} busy={!!pending} title={msg(MSG.HUY_HO_SO)} onClose={() => setConfirmCancel(false)} footer={<>
+                <button type="button" className="btn btn-outline-primary" disabled={!!pending} onClick={() => setConfirmCancel(false)}>{msg(MSG.GIU_HO_SO)}</button>
+                <button type="button" className="btn btn-danger" disabled={!!pending} onClick={cancel}>{msg(MSG.XAC_NHAN_HUY)}</button></>}>
+                <p className="mb-0">{msg(MSG.HUY_HO_SO_NAY_HO_SO_SE_CHI_DUOC_XEM_THAY_DOI_CHUA_LUU_SE_BI_BO)}</p>
+            </Modal>
         </section>}
     </>;
 }

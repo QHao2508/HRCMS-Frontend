@@ -23,6 +23,7 @@ import { getPlan,createSession,listSessions,getSession,editSession,startSession,
 import { PageHeading,ResourceState,Pagination,BackLink,Field,StateBadge,MutationState} from "../../components/WorkflowUI.jsx";
 import PageHeader from "../../components/ui/PageHeader.jsx";
 import Drawer from "../../components/ui/Drawer.jsx";
+import Modal from "../../components/ui/Modal.jsx";
 import { Card } from "../../components/ui/Card.jsx";
 import { KeyValueList } from "../../components/ui/KeyValueList.jsx";
 import { DataTable, FilterChips } from "../../components/ui/DataTable.jsx";
@@ -138,9 +139,13 @@ function SessionContent({data,reload,user}) {
                 {canRecord && <Card title={msg(MSG.GHI_NHAN_KET_QUA)} className="session-next"><button className="btn btn-success w-100" aria-haspopup="dialog" disabled={locked} onClick={()=>setPanel('result')}>{msg(MSG.GHI_NHAN_KET_QUA)}</button></Card>}
                 {canEvaluate && <Card title={msg(MSG.DANH_GIA_CUA_TRAINER)} className="session-next"><button className="btn btn-success w-100" aria-haspopup="dialog" disabled={locked} onClick={()=>setPanel('evaluate')}>{msg(MSG.DANH_GIA_CUA_TRAINER)}</button></Card>}
                 {canEdit && <Card title={msg(MSG.DIEU_CHINH_VA_PHAN_CONG_RIDER)}><button className="btn btn-outline-primary w-100" aria-haspopup="dialog" disabled={locked} onClick={()=>setPanel('edit')}>{msg(MSG.CHINH_SUA_BUOI_TAP)}</button></Card>}
-                {canSkip && <details className="hc-card session-skip"><summary>{msg(MSG.BO_QUA_BUOI_TAP)}</summary><form className="mt-3" onSubmit={e=>{e.preventDefault();if(reason.trim())mutation.run(()=>skipSession(s.id,reason.trim()),reload);}}><label htmlFor="skip-reason" className="form-label">{msg(MSG.LY_DO)}</label><textarea id="skip-reason" className="form-control mb-3" value={reason} onChange={e=>setReason(e.target.value)} maxLength={2000} required disabled={locked}/><button className="btn btn-outline-danger w-100" disabled={locked || !reason.trim()}>{msg(MSG.XAC_NHAN_BO_QUA)}</button></form></details>}
+                {canSkip && <button type="button" className="btn btn-outline-danger session-skip-button" aria-haspopup="dialog" disabled={locked} onClick={()=>setPanel('skip')}>{msg(MSG.BO_QUA_BUOI_TAP)}</button>}
             </aside>}
         </div>
+        <Modal open={canSkip && panel === 'skip'} busy={mutation.pending} title={msg(MSG.BO_QUA_BUOI_TAP)} onClose={()=>setPanel(null)} footer={<><button type="button" className="btn btn-outline-primary" onClick={()=>setPanel(null)}>{msg(MSG.HUY)}</button><button type="submit" form="skip-session-form" className="btn btn-danger" disabled={locked || !reason.trim()}>{msg(MSG.XAC_NHAN_BO_QUA)}</button></>}>
+            <MutationState mutation={mutation} reload={reload}/>
+            <form id="skip-session-form" onSubmit={e=>{e.preventDefault();if(reason.trim())mutation.run(()=>skipSession(s.id,reason.trim()),reload);}}><label htmlFor="skip-reason" className="form-label">{msg(MSG.LY_DO)}</label><textarea id="skip-reason" className="form-control" rows={4} value={reason} onChange={e=>setReason(e.target.value)} maxLength={2000} required disabled={locked}/></form>
+        </Modal>
         <Drawer open={canEdit && panel === 'edit'} size="lg" busy={mutation.pending} title={msg(MSG.CHINH_SUA_BUOI_TAP)} onClose={()=>setPanel(null)}>
             <MutationState mutation={mutation} reload={reload}/>
             <form onSubmit={e=>{e.preventDefault();mutation.run(()=>editSession(s.id,sessionPayload(form)),reload);}}><SessionFields template={data.template} form={form} change={e=>setForm(e.target.name === "templateExerciseKey" ? chooseExercise(form,data.template,e.target.value) : {...form,[e.target.name]:e.target.value})} riders={data.riders} min={plan.startDate} max={plan.endDate} disabled={locked}/><TrainingAvailability horseId={s.horseId} form={form} onPick={scheduledAt=>setForm({...form,scheduledAt})} exceptSessionId={s.id} min={plan.startDate} max={plan.endDate} disabled={locked}/>

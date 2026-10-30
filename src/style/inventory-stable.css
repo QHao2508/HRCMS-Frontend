@@ -55,3 +55,4 @@
 .stall-meta { display: flex; justify-content: space-between; gap: 8px; font-size: var(--hc-font-size-1); color: var(--hc-muted); }
 .stall-open { color: var(--hc-primary); font-weight: 700; }
 .ops-stalls .hc-pagination { margin-top: 12px; }
+.stall-drawer { display: grid; gap: 16px; }
