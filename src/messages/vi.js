@@ -1635,4 +1635,8 @@ export const VI = Object.freeze({
     "UX_DISCARD_CONFIRM": "Bỏ thay đổi",
     "SCHED_SELECTED": "Đang chọn người này",
     "SCHED_LOAD_COUNT": "Đang phụ trách {count} ngựa",
+    "NOTE_SKIPPED_REASON": "Lý do bỏ qua",
+    "NOTE_HORSE_ARCHIVED": "Ngựa đã ngừng hoạt động",
+    "UX_AUTO_RELOADING": "Đang tải lại dữ liệu mới nhất…",
+    "UX_AUTO_RELOADED": "Đã tự động tải lại dữ liệu mới nhất. Kiểm tra lại thông tin rồi thao tác tiếp.",
 });

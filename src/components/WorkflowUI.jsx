@@ -2,7 +2,7 @@ import { getEnumLabel } from "../constants/enumLabels.js";
 import { MSG, msg } from "../messages/index.js";
 import { Link } from "react-router-dom";
 import RegistrationError from "./registrations/RegistrationError.jsx";
-import { Children, isValidElement, useId } from 'react';
+import { Children, isValidElement, useEffect, useId, useRef, useState } from 'react';
 import PageHeader from './ui/PageHeader.jsx';
 import { Pagination as NumberedPagination } from './ui/DataTable.jsx';
 import StatusBadge from './ui/StatusBadge.jsx';
@@ -51,7 +51,26 @@ export function Field({ label, name, value, onChange, options, multiline, help, 
  * Nhãn/thông báo lấy từ catalog; enum và dữ liệu người dùng giữ nguyên giá trị.
  * @param options0 Đối tượng destructuring: { mutation, reload }. Các props/callback lấy từ caller.
  */
-export function MutationState({ mutation, reload }) { return <><RegistrationError error={mutation.error} />{mutation.notice && <p className="alert alert-success" role="status">{mutation.notice}</p>}{mutation.pending && <p role="status">{msg(MSG.DANG_XU_LY)}</p>}{mutation.uncertain && <div className="alert alert-warning">{msg(MSG.HAY_TAI_LAI_DU_LIEU_TRUOC_KHI_THUC_HIEN_THAO_TAC_TIEP_THEO)}<button className="btn btn-outline-primary ms-2" onClick={() => { mutation.reset(); reload(); }}>{msg(MSG.TAI_LAI)}</button></div>}</>; }
+export function MutationState({ mutation, reload, autoReload = true }) {
+    // Lỗi "chưa chắc chắn" (409/404/403/5xx/mất mạng) nghĩa là dữ liệu trên màn hình có thể đã cũ:
+    // tự tải lại ngay rồi mở khóa thao tác, thay vì bắt người dùng bấm "Tải lại".
+    const latest = useRef({ mutation, reload });
+    useEffect(() => { latest.current = { mutation, reload }; });
+    const [reloadFailed, setReloadFailed] = useState(false);
+    useEffect(() => {
+        if (!autoReload || !mutation.uncertain) return;
+        let active = true;
+        Promise.resolve().then(() => latest.current.reload?.()).then(
+            () => { if (active) { setReloadFailed(false); latest.current.mutation.settle?.(); } },
+            () => { if (active) setReloadFailed(true); });
+        return () => { active = false; };
+    }, [autoReload, mutation.uncertain]);
+    const manual = mutation.uncertain && (!autoReload || reloadFailed);
+    return <><RegistrationError error={mutation.error} />{mutation.notice && <p className="alert alert-success" role="status">{mutation.notice}</p>}{mutation.pending && <p role="status">{msg(MSG.DANG_XU_LY)}</p>}
+        {mutation.uncertain && !manual && <p className="form-text" role="status">{msg(MSG.UX_AUTO_RELOADING)}</p>}
+        {mutation.refreshed && !mutation.uncertain && mutation.error && <p className="form-text" role="status">{msg(MSG.UX_AUTO_RELOADED)}</p>}
+        {manual && <div className="alert alert-warning">{msg(MSG.HAY_TAI_LAI_DU_LIEU_TRUOC_KHI_THUC_HIEN_THAO_TAC_TIEP_THEO)}<button className="btn btn-outline-primary ms-2" onClick={() => { mutation.reset(); setReloadFailed(false); reload(); }}>{msg(MSG.TAI_LAI)}</button></div>}</>;
+}
 /**
  * Chọn màu badge từ enum trạng thái và trả nhãn tiếng Việt an toàn.
  * @param options0 Đối tượng destructuring: { value }. Các props/callback lấy từ caller.

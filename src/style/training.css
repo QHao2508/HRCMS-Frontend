@@ -77,3 +77,4 @@
 .candidate-card .candidate-issues { margin: 0; }
 .candidate-card > .btn { align-self: flex-start; }
 .candidate-selected { margin: 0; font-size: var(--hc-font-size-1); font-weight: 700; color: var(--hc-primary); }
+.note-text { white-space: pre-line; overflow-wrap: anywhere; }

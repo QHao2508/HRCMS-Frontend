@@ -34,7 +34,7 @@ function IncidentList({ horseId, horses, user }) {
 function IncidentDetails({ incident, user, reload }) {
     const base = `/api/care/incidents/${id(incident.id)}`; const load = useCallback(() => read(`${base}/photos`), [base]); const resource = useRegistrationResource(load);
     const mutation = useMutation(); const [file, setFile] = useState(null);
-    return <section id="incident-details" className="incident-details"><p className="incident-description">{incident.description}</p>{incident.resolved && <><h3>{msg(MSG.BR_RESOLUTION)}</h3><p>{incident.resolution || "—"}</p><p>{msg(MSG.BR_RESOLVED_AT)}{' '}{when(incident.resolvedAt)}</p></>}<MutationState mutation={mutation} reload={() => { resource.reload(); reload(); }} /><ResourceState resource={resource} />
+    return <section id="incident-details" className="incident-details"><p className="incident-description">{incident.description}</p>{incident.resolved && <><h3>{msg(MSG.BR_RESOLUTION)}</h3><p>{incident.resolution || "—"}</p><p>{msg(MSG.BR_RESOLVED_AT)}{' '}{when(incident.resolvedAt)}</p></>}<MutationState mutation={mutation} reload={resource.reload} /><ResourceState resource={resource} />
         <h3>{msg(MSG.INCIDENT_PHOTO_TITLE)}</h3><p className="form-text">{msg(incident.resolved ? MSG.INCIDENT_PHOTO_RESOLVED : incident.reporterId !== user.id ? MSG.INCIDENT_PHOTO_REPORTER_ONLY : MSG.INCIDENT_PHOTO_HELP)}</p>
         {resource.data?.map(photo => <IncidentPhoto key={photo.id} base={base} photo={photo} />)}
         {!resource.data?.length && <p>{msg(MSG.SUPPORT_NO_PHOTOS)}</p>}

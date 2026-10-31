@@ -58,7 +58,7 @@ export default function AssignmentForm({ horse, user, reload }) {
         <h2>{msg(isManager ? MSG.PHAN_CONG_NHAN_SU_CHINH_THUC : MSG.CHON_TRAINER_PHU_TRACH)}</h2>
         <p className="form-text">{msg(MSG.BR_HANDOVER_HELP)}</p>
         <p className="card-description">{msg(isManager ? MSG.MANAGER_XAC_NHAN_HEADTRAINER_GROOM_VA_BAC_SI_THU_Y_HEADTRAINER_DUOC_GIAO : MSG.CHI_HEADTRAINER_DANG_PHU_TRACH_NGUA_DUOC_CHON_TRAINER)}</p>
-        <MutationState mutation={mutation} reload={reload} />
+        <MutationState mutation={mutation} reload={staff.reload} />
         <ResourceState resource={staff} />
         {isTrainer && staff.data && <TrainerCandidates candidates={staff.data} selectedId={form.staffId} onSelect={id => update('staffId', id)} />}
         {replacingHead && <div className="alert alert-info" role="note">

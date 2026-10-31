@@ -50,3 +50,9 @@ test('candidate display distinguishes verified specialization, workload and unco
     assert.match(html, /Chuyên sâu/); assert.match(html, /Chưa xác nhận/); assert.match(html, /Đang phụ trách 2 ngựa/); assert.match(html, /candidate-card is-match is-selected/); assert.match(html, /Đang chọn người này/);
 });
 test('working hour fields preserve minute precision', () => { assert.equal(toMinute('06:30'), 390); assert.equal(minuteText(390), '06:30'); assert.equal(minuteText(1080), '18:00'); });
+test('system skip notes are shown in Vietnamese while user text is kept', async () => {
+    const { noteText } = await server.ssrLoadModule('/src/utils/noteText.js');
+    assert.equal(noteText('Skipped: doi giao an'), 'Lý do bỏ qua: doi giao an');
+    assert.equal(noteText('Ngựa mệt\nSkipped: HorseArchived'), 'Ngựa mệt\nLý do bỏ qua: Ngựa đã ngừng hoạt động');
+    assert.equal(noteText('Không có gì'), 'Không có gì'); assert.equal(noteText(null), null);
+});

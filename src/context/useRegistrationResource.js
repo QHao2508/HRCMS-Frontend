@@ -22,7 +22,10 @@ export function useRegistrationResource(load, { realtime = false } = {}) {
         return () => { active = false; };
     }, [load, attempt, revision]);
     const current = result?.load === load && result?.attempt === attempt && result?.revision === revision ? result : null;
-    return { loading: !current, data: current?.data, error: current?.error, reload:
+    // Tải lại cùng nguồn dữ liệu (reload): giữ dữ liệu đang hiển thị cho tới khi có kết quả mới, để màn hình không bị tháo ra
+    // (mất thông báo lỗi, form đang mở) chỉ vì đang làm mới. Đổi nguồn (load khác) thì vẫn hiện trạng thái đang tải như cũ.
+    const stale = !current && result?.load === load && result?.data !== undefined ? result : null;
+    return { loading: !current && !stale, refreshing: !!stale, data: (current || stale)?.data, error: current?.error, reload:
     /**
      * Yêu cầu loader chạy lại để lấy trạng thái thật từ API, không tự giả lập dữ liệu thành công.
      */

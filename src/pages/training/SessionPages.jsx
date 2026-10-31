@@ -33,6 +33,7 @@ import '../../style/lists.css';
 import '../../style/horses.css';
 import TrainingSearch from '../../components/TrainingSearch.jsx';
 import TrainingAvailability from '../../components/TrainingAvailability.jsx';
+import { noteText } from '../../utils/noteText.js';
 const trainingTypes=Object.values(TRAINING_TYPE);
 const intensityOptions=Object.values(INTENSITY);
 
@@ -130,7 +131,7 @@ function SessionContent({data,reload,user}) {
         {!panel && <MutationState mutation={mutation} reload={reload}/>}{(data.horse.historyOnly || data.horse.horse.archived) && <p className="alert alert-info">{msg(MSG.TRAINING_HISTORY_READ_ONLY)}</p>}
         <div className="session-layout">
             <div className="session-main">
-                <Card title={msg(MSG.THONG_TIN_BUOI_TAP)}><KeyValueList items={[[msg(MSG.BR_DURATION),s.durationMinutes ?? msg(MSG.BR_DURATION_UNKNOWN)],[msg(MSG.BR_END),s.scheduledEndAt ? clubDateTime(s.scheduledEndAt) : null],[msg(MSG.QUANG_DUONG),formatMetres(s.distanceMetres)],[msg(MSG.CUONG_DO),getEnumLabel(s.intensity)],[msg(MSG.MAT_SAN),Object.hasOwn(TRAINING_SURFACE,s.surface)?TRAINING_SURFACE[s.surface]:(s.surface||null)],[msg(MSG.MUC_TIEU),s.target],[msg(MSG.WORK_RIDER),s.riderId ? (data.riderName || msg(MSG.DA_DUOC_PHAN_CONG)) : msg(MSG.CHUA_PHAN_CONG)],[msg(MSG.GHI_CHU),s.notes]]} /></Card>
+                <Card title={msg(MSG.THONG_TIN_BUOI_TAP)}><KeyValueList items={[[msg(MSG.BR_DURATION),s.durationMinutes ?? msg(MSG.BR_DURATION_UNKNOWN)],[msg(MSG.BR_END),s.scheduledEndAt ? clubDateTime(s.scheduledEndAt) : null],[msg(MSG.QUANG_DUONG),formatMetres(s.distanceMetres)],[msg(MSG.CUONG_DO),getEnumLabel(s.intensity)],[msg(MSG.MAT_SAN),Object.hasOwn(TRAINING_SURFACE,s.surface)?TRAINING_SURFACE[s.surface]:(s.surface||null)],[msg(MSG.MUC_TIEU),s.target],[msg(MSG.WORK_RIDER),s.riderId ? (data.riderName || msg(MSG.DA_DUOC_PHAN_CONG)) : msg(MSG.CHUA_PHAN_CONG)],[msg(MSG.GHI_CHU),s.notes && <span className="note-text">{noteText(s.notes)}</span>]]} /></Card>
                 {data.result && <Card title={msg(MSG.KET_QUA_BUOI_TAP)}><KeyValueList items={[[msg(MSG.QUANG_DUONG),formatMetres(data.result.distanceMetres)],[msg(MSG.THOI_GIAN),msg(MSG.GIAY, { p0: data.result.timeSeconds })],[msg(MSG.TOC_DO),msg(MSG.SPEED_VALUE, { value: data.result.speedMetresPerSecond })],[msg(MSG.NHIP_TIM),data.result.heartRate || null],[msg(MSG.PHAN_HOI),data.result.feedback],[msg(MSG.BAT_THUONG),data.result.abnormalObservation ? msg(MSG.CO) : msg(MSG.KHONG)]]} /></Card>}
                 {data.evaluation && <Card title={msg(MSG.DANH_GIA_DA_LUU)}><p style={{whiteSpace:"pre-wrap"}}>{data.evaluation.comment}</p><p className="muted-caption mb-0">{data.evaluation.adjustFutureSessions ? msg(MSG.CO_DE_NGHI_DIEU_CHINH_CAC_BUOI_TAP_TUONG_LAI) : msg(MSG.TIEP_TUC_THEO_KE_HOACH_HIEN_TAI)}</p></Card>}
             </div>

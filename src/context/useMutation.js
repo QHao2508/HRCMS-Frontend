@@ -18,7 +18,7 @@ export function useMutation() {
     async function run(action, onSuccess, notice = msg(MSG.DA_LUU_THAY_DOI)) {
         if (gate.current || state.uncertain) return false;
         gate.current = true;
-        setState({ pending: true, error: null, notice: "", uncertain: false });
+        setState({ pending: true, error: null, notice: "", uncertain: false, refreshed: false });
         try { const data = await action(); if (onSuccess) await onSuccess(data); setState({ pending: false, error: null, notice, uncertain: false }); return true; }
         catch (error) { setState({ pending: false, error, notice: "", uncertain: isUncertainMutationError(error) }); return false; }
         finally { gate.current = false; }
@@ -27,5 +27,7 @@ export function useMutation() {
      * Xóa lỗi/thông báo/trạng thái uncertain của hook trước một lượt thao tác mới đã được kiểm tra.
      */
     function reset() { if (!gate.current) setState({ pending: false, error: null, notice: "", uncertain: false }); }
-    return { ...state, run, reset };
+    /** Dữ liệu đã được tải lại sau một lỗi chưa chắc chắn: mở khóa thao tác nhưng vẫn giữ thông báo lỗi để người dùng biết vì sao. */
+    function settle() { if (!gate.current) setState(prev => ({ ...prev, uncertain: false, refreshed: true })); }
+    return { ...state, run, reset, settle };
 }
