@@ -149,7 +149,7 @@ export function HorseDetail() {
             <Tabs label={msg(MSG.HO_SO_NGUA)} tabs={tabs} active={tab} onChange={selectTab} />
         </section>
         <RestrictionAlert horseId={id} user={user} onOpen={() => selectTab('health')} />
-        <Drawer open={assigning} title={horse.name} onClose={() => setAssigning(false)}><AssignmentForm key={`${id}-${user.id}`} horse={data} user={user} reload={() => { setAssigning(false); resource.reload(); }} /></Drawer>
+        <Drawer open={assigning} title={horse.name} size="lg" onClose={() => setAssigning(false)}><AssignmentForm key={`${id}-${user.id}`} horse={data} user={user} reload={() => { setAssigning(false); resource.reload(); }} /></Drawer>
 
         {tab === 'overview' && <div className="hd-columns">
             <div className="hd-main">

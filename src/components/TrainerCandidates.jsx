@@ -1,6 +1,8 @@
 import { MSG, msg } from '../messages/index.js';
 import { getEnumLabel } from '../constants/enumLabels.js';
 import { serverMessage } from '../messages/serverMessages.js';
+import Avatar from './ui/Avatar.jsx';
+import StatusBadge from './ui/StatusBadge.jsx';
 import '../style/training.css';
 export function TrainerSpecialties({ specialties = [], required, minimum }) {
     const types = required?.length ? required : specialties.map(skill => skill.trainingType);
@@ -27,20 +29,21 @@ export default function TrainerCandidates({ candidates, selectedId, onSelect }) 
     return <section className="trainer-candidates">
         <h3>{msg(MSG.SCHED_CANDIDATES)}</h3>
         <p>{msg(MSG.SCHED_CANDIDATES_HELP)}</p>
-        <div className="table-responsive"><table className="table">
-            <thead><tr><th scope="col">{msg(MSG.NHAN_SU)}</th><th scope="col">{msg(MSG.SCHED_SKILLS)}</th><th scope="col">{msg(MSG.SCHED_LOAD)}</th><th scope="col">{msg(MSG.TRANG_THAI)}</th></tr></thead>
-            <tbody>{candidates.map(x => <tr key={x.id} className={x.id === selectedId ? 'table-success' : ''}>
-                <td>{x.name}</td>
-                <td><TrainerSpecialties specialties={x.specialties}/></td>
-                <td>{x.assignedHorses}</td>
-                <td>
-                    <span className={x.matches ? 'availability-match' : 'muted-caption'}>{msg(x.matches ? MSG.SCHED_MATCH : MSG.SCHED_NO_MATCH)}</span>
-                    {!x.matches && x.issues?.length > 0 && <ul className="candidate-issues">{x.issues.map(issue =>
-                        <li key={issue.messageKey + issue.args.join()}>{serverMessage(issue.messageKey, issue.args, msg(MSG.SCHED_NO_MATCH))}</li>)}</ul>}
-                    {x.matches && onSelect && x.id !== selectedId && <button type="button" className="btn btn-sm btn-outline-primary d-block mt-1" onClick={() => onSelect(x.id)}>{msg(MSG.SCHED_PICK_TRAINER)}</button>}
-                </td>
-            </tr>)}</tbody>
-        </table></div>
+        <ul className="candidate-list">{candidates.map(x => {
+            const selected = x.id === selectedId;
+            return <li key={x.id} className={'candidate-card' + (x.matches ? ' is-match' : '') + (selected ? ' is-selected' : '')} aria-current={selected || undefined}>
+                <div className="candidate-head">
+                    <Avatar name={x.name} size="sm" round />
+                    <div className="candidate-name"><strong>{x.name}</strong><span>{msg(MSG.SCHED_LOAD_COUNT, { count: x.assignedHorses })}</span></div>
+                    <StatusBadge tone={x.matches ? 'success' : 'warning'} dot>{msg(x.matches ? MSG.SCHED_MATCH : MSG.SCHED_NO_MATCH)}</StatusBadge>
+                </div>
+                <div className="candidate-skills"><span className="candidate-label">{msg(MSG.SCHED_SKILLS)}</span><TrainerSpecialties specialties={x.specialties}/></div>
+                {!x.matches && x.issues?.length > 0 && <ul className="candidate-issues">{x.issues.map(issue =>
+                    <li key={issue.messageKey + issue.args.join()}>{serverMessage(issue.messageKey, issue.args, msg(MSG.SCHED_NO_MATCH))}</li>)}</ul>}
+                {selected ? <p className="candidate-selected">{msg(MSG.SCHED_SELECTED)}</p>
+                    : x.matches && onSelect && <button type="button" className="btn btn-sm btn-outline-primary" onClick={() => onSelect(x.id)}>{msg(MSG.SCHED_PICK_TRAINER)}</button>}
+            </li>;
+        })}</ul>
         {!candidates.some(x => x.matches) && <p className="alert alert-info">{msg(MSG.SCHED_NO_CANDIDATES)}</p>}
     </section>;
 }

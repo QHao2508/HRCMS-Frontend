@@ -47,6 +47,6 @@ test('missing hours and missing duration have explicit states rather than invent
 test('candidate display distinguishes verified specialization, workload and unconfirmed profiles', () => {
     const html = renderToStaticMarkup(h(TrainerCandidates, { selectedId: 'qualified', candidates: [{ id: 'qualified', name: 'Qualified Staff', matches: true, specialties: [{ trainingType: 'Trot', level: 3 }], assignedHorses: 2 }, { id: 'unknown', name: 'Unknown Staff', matches: false, specialties: [], assignedHorses: 0 }, { id: 'template', name: 'Template Staff', matches: false, specialties: [{ trainingType: 'Walk', level: 3 }], assignedHorses: 0, issues: [{ messageKey: 'TrainerNotQualifiedForTemplate', args: ['Canter đều'] }] }], onSelect: () => {} }));
     assert.match(html, /giáo án “Canter đều”/); assert.doesNotMatch(html, /Chọn người này/); // người phù hợp duy nhất đã được chọn
-    assert.match(html, /Chuyên sâu/); assert.match(html, /Chưa xác nhận/); assert.match(html, /Số ngựa đang phụ trách/); assert.match(html, /table-success/);
+    assert.match(html, /Chuyên sâu/); assert.match(html, /Chưa xác nhận/); assert.match(html, /Đang phụ trách 2 ngựa/); assert.match(html, /candidate-card is-match is-selected/); assert.match(html, /Đang chọn người này/);
 });
 test('working hour fields preserve minute precision', () => { assert.equal(toMinute('06:30'), 390); assert.equal(minuteText(390), '06:30'); assert.equal(minuteText(1080), '18:00'); });

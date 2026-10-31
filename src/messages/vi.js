@@ -1633,4 +1633,6 @@ export const VI = Object.freeze({
     "REPORTS_PAGE_HELP": "Số buổi tập, tỉ lệ hoàn thành, quãng đường và việc chăm sóc theo khoảng thời gian.",
     "UX_KEEP_EDITING": "Tiếp tục sửa",
     "UX_DISCARD_CONFIRM": "Bỏ thay đổi",
+    "SCHED_SELECTED": "Đang chọn người này",
+    "SCHED_LOAD_COUNT": "Đang phụ trách {count} ngựa",
 });

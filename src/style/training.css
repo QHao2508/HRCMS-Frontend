@@ -63,3 +63,17 @@
 .plan-status-form .btn, .plan-actions .btn { white-space: nowrap; }
 .plan-hero:has(.session-progress) { padding-bottom: 0; }
 .session-side .session-skip-button { width: 100%; }
+/* Ứng viên huấn luyện viên: thẻ xếp dọc, đọc đủ thông tin cả khi nằm trong ngăn kéo hẹp. */
+.candidate-list { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 10px; align-items: start; }
+@media (min-width: 720px) { .hc-drawer.is-lg .candidate-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.candidate-card { display: flex; flex-direction: column; gap: 10px; padding: 14px; border: 1px solid var(--hc-border); border-radius: 12px; background: var(--hc-surface); min-width: 0; }
+.candidate-card.is-selected { border-color: var(--hc-primary); box-shadow: 0 0 0 2px color-mix(in srgb, var(--hc-primary) 25%, transparent); }
+.candidate-head { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.candidate-name { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.35; }
+.candidate-name strong { overflow-wrap: anywhere; }
+.candidate-name span, .candidate-label { font-size: var(--hc-font-size-1); color: var(--hc-muted); }
+.candidate-label { display: block; margin-bottom: 4px; font-weight: 700; }
+.candidate-skills .trainer-specialties { display: flex; flex-wrap: wrap; gap: 6px; }
+.candidate-card .candidate-issues { margin: 0; }
+.candidate-card > .btn { align-self: flex-start; }
+.candidate-selected { margin: 0; font-size: var(--hc-font-size-1); font-weight: 700; color: var(--hc-primary); }
