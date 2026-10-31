@@ -107,7 +107,7 @@ export default function AppLayout() {
         {menuOpen && <div className="ws-backdrop" aria-hidden="true" onClick={closeMenu} />}
         <aside ref={sidebar} className={`ws-sidebar${menuOpen ? ' is-open' : ''}`}>
             <div className="ws-brand-row">
-                <Link className="ws-brand" to="/dashboard" aria-label={msg(MSG.WS_BRAND_HOME)} onClick={closeMenu}>
+                <Link className="ws-brand" to="/" aria-label={msg(MSG.WS_BRAND_HOME)} onClick={closeMenu}>
                     <span className="ws-brand-tile" aria-hidden="true"><BrandLogo className="ws-brand-logo" fallback={msg(MSG.WS_BRAND_INITIAL)} /></span>
                     <span className="ws-brand-text"><strong>{msg(MSG.WS_BRAND_NAME)}</strong><small>{msg(MSG.WS_BRAND_SUB)}</small></span>
                 </Link>

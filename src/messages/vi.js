@@ -1527,7 +1527,7 @@ export const VI = Object.freeze({
     "DURATION_HOURS_MINUTES": "{hours} giờ {minutes} phút",
     "WS_BRAND_NAME": "HorseClub",
     "WS_BRAND_SUB": "Hệ thống quản lý CLB",
-    "WS_BRAND_HOME": "HorseClub – về tổng quan",
+    "WS_BRAND_HOME": "HorseClub – về trang chủ",
     "WS_SEARCH_LABEL": "Tìm ngựa",
     "WS_SEARCH_PLACEHOLDER": "Tìm ngựa theo tên, mã…",
     "WS_SEARCH_SUBMIT": "Tìm",

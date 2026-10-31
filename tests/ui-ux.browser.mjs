@@ -167,6 +167,13 @@ try {
         assert.equal(await page.locator('.ws-brand-tile img').count(),0);
         await context.close();results.push({interaction:'broken CMS logo does not display an old logo',status:'pass'});
     }
+    // Signed-in users return to the public home page from the sidebar brand and can go back to the workspace.
+    {
+        const {context,page}=await setup('ClubManager');await page.goto(base+'/horses');await ready(page);
+        await page.getByRole('link',{name:msg(MSG.WS_BRAND_HOME),exact:true}).click();await page.waitForURL(base+'/');await page.locator('h1').first().waitFor();
+        await page.getByRole('link',{name:msg(MSG.HOME_REFERENCE_MANAGEMENT)}).first().click();await page.waitForURL('**/dashboard');
+        await context.close();results.push({interaction:'sidebar brand opens home and home returns to workspace',status:'pass'});
+    }
     // Photo failures remain visible and a retry can recover without reloading the horse profile.
     {
         const {context,page}=await setup('HorseOwner');
