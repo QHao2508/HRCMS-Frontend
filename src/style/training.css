@@ -78,3 +78,7 @@
 .candidate-card > .btn { align-self: flex-start; }
 .candidate-selected { margin: 0; font-size: var(--hc-font-size-1); font-weight: 700; color: var(--hc-primary); }
 .note-text { white-space: pre-line; overflow-wrap: anywhere; }
+.candidate-meta { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 0; }
+.candidate-meta dt { font-size: var(--hc-font-size-1); font-weight: 700; color: var(--hc-muted); margin-bottom: 4px; }
+.candidate-meta dd { margin: 0; }
+.candidate-skills details summary { font-size: var(--hc-font-size-1); cursor: pointer; color: var(--hc-muted); }

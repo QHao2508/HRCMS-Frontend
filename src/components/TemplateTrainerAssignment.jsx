@@ -12,6 +12,8 @@ import { templateCandidates, assignTemplate } from '../services/trainingService.
 import { requiredTypes, trainerEligibility, canAssignTrainer } from '../services/templateCurriculum.js';
 import '../style/training.css';
 import Drawer from './ui/Drawer.jsx';
+import Avatar from './ui/Avatar.jsx';
+import StatusBadge from './ui/StatusBadge.jsx';
 const labels = { Eligible: MSG.CURRIC_ELIGIBLE, MissingSpecialty: MSG.CURRIC_MISSING_SPECIALTY, BelowMinimumLevel: MSG.CURRIC_BELOW_LEVEL, RequirementsMissing: MSG.CURRIC_REQUIREMENTS_MISSING, Unverified: MSG.CURRIC_ELIGIBILITY_UNKNOWN };
 export default function TemplateTrainerAssignment({ template, onClose, opening = template.id }) {
     const { user } = useAuth();
@@ -36,10 +38,25 @@ export default function TemplateTrainerAssignment({ template, onClose, opening =
             { value: '', label: msg(MSG.CURRIC_SELECT_TRAINER) }, ...resource.data.map(candidate => ({ value: candidate.id, label: candidate.name + ' · ' + msg(labels[trainerEligibility(template, candidate)]) + (candidate.assigned ? ' · ' + msg(MSG.CURRIC_ASSIGNED) : ''), disabled: !canAssignTrainer(template, candidate) && !candidate.assigned })),
         ]}/><p className="form-text">{msg(MSG.CURRIC_ASSIGN_HELP)}</p></div>
         {canEdit && <div className="training-assignment-actions"><button className="btn btn-primary" disabled={!assignable} onClick={() => changeAssignment(true)}>{msg(MSG.CURRIC_ASSIGN)}</button>{selected?.assigned && <button className="btn btn-outline-danger" disabled={busy} onClick={() => changeAssignment(false)}>{msg(MSG.CURRIC_REVOKE)}</button>}</div>}
-        <div className="table-responsive"><table className="table training-candidate-table"><thead><tr><th scope="col">{msg(MSG.TRAINING_TRAINER)}</th><th scope="col">{msg(MSG.CURRIC_RELEVANT_SKILLS)}</th><th scope="col">{msg(MSG.CURRIC_ELIGIBILITY)}</th><th scope="col">{msg(MSG.CURRIC_ASSIGNMENT_STATUS)}</th></tr></thead><tbody>{resource.data.map(candidate => {
+        <ul className="candidate-list">{resource.data.map(candidate => {
             const state = trainerEligibility(template, candidate);
-            return <tr key={candidate.id} className={candidate.id === trainerId ? 'table-success' : ''}><td><strong>{candidate.name}</strong></td><td><TrainerSpecialties specialties={candidate.specialties} required={types} minimum={template.minimumExpertiseLevel}/><details className="mt-2"><summary>{msg(MSG.CURRIC_ALL_SKILLS)}</summary><TrainerSpecialties specialties={candidate.specialties}/></details></td><td><span className={'badge ' + (state === 'Eligible' ? 'text-bg-success' : 'bg-warning-subtle text-warning-emphasis')}>{msg(labels[state])}</span></td><td><span className={'badge ' + (candidate.assigned ? 'text-bg-primary' : 'bg-light text-dark border')}>{msg(candidate.assigned ? MSG.CURRIC_ASSIGNED : MSG.CURRIC_NOT_ASSIGNED)}</span></td></tr>;
-        })}</tbody></table></div>
+            const chosen = candidate.id === trainerId;
+            const pickable = canEdit && !busy && !chosen && (canAssignTrainer(template, candidate) || candidate.assigned);
+            return <li key={candidate.id} className={'candidate-card' + (state === 'Eligible' ? ' is-match' : '') + (chosen ? ' is-selected' : '')} aria-current={chosen || undefined}>
+                <div className="candidate-head">
+                    <Avatar name={candidate.name} size="sm" round />
+                    <div className="candidate-name"><strong>{candidate.name}</strong></div>
+                </div>
+                <dl className="candidate-meta">
+                    <div><dt>{msg(MSG.CURRIC_ELIGIBILITY)}</dt><dd><StatusBadge tone={state === 'Eligible' ? 'success' : 'warning'} dot>{msg(labels[state])}</StatusBadge></dd></div>
+                    <div><dt>{msg(MSG.CURRIC_ASSIGNMENT_STATUS)}</dt><dd><StatusBadge tone={candidate.assigned ? 'info' : 'neutral'}>{msg(candidate.assigned ? MSG.CURRIC_ASSIGNED : MSG.CURRIC_NOT_ASSIGNED)}</StatusBadge></dd></div>
+                </dl>
+                <div className="candidate-skills"><span className="candidate-label">{msg(MSG.CURRIC_RELEVANT_SKILLS)}</span><TrainerSpecialties specialties={candidate.specialties} required={types} minimum={template.minimumExpertiseLevel}/>
+                    <details className="mt-2"><summary>{msg(MSG.CURRIC_ALL_SKILLS)}</summary><TrainerSpecialties specialties={candidate.specialties}/></details></div>
+                {chosen ? <p className="candidate-selected">{msg(MSG.SCHED_SELECTED)}</p>
+                    : pickable && <button type="button" className="btn btn-sm btn-outline-primary" onClick={() => setTrainerId(candidate.id)}>{msg(MSG.SCHED_PICK_TRAINER)}</button>}
+            </li>;
+        })}</ul>
 </>}
     </section></Drawer>;
 }
