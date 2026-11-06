@@ -41,7 +41,7 @@ export const PREFERENCES = Object.freeze([
 ]);
 // Checked-in ClubOptions.cs/appsettings.json baseline; server overrides remain authoritative.
 export const INTAKE_LIMITS = Object.freeze({ maxFileBytes: 10485760, maxAttachments: 20,
-    minHeight: 1, maxHeight: 300, minWeight: 1, maxWeight: 2000, timeZone: "Asia/Ho_Chi_Minh" });
+    minHeight: 100, maxHeight: 200, minWeight: 100, maxWeight: 1200, timeZone: "Asia/Ho_Chi_Minh" });
 /** Múi giờ câu lạc bộ dùng để hiển thị thời gian (UTC+7). */
 export const CLUB_TIME_ZONE = INTAKE_LIMITS.timeZone;
 
